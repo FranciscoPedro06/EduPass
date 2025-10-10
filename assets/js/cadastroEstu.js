@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 🔙 Botão de voltar para tela de login
   backButton.addEventListener("click", () => {
-    window.location.href = "index.html";
+    window.history.back();
   });
 
   // 📤 Ao enviar o formulário
