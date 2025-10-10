@@ -1,110 +1,150 @@
-/* === ESTILO GERAL === */
-body {
-  background-color: #2563eb; /* Azul principal */
-  min-height: 100vh;
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* === HEADER === */
-header {
-  background-color: white;
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  position: relative;
-}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #0000FF;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-header button {
-  position: absolute;
-  left: 1rem;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  border: 4px solid #2563eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+    .header {
+      background-color: #FFFFFF;
+      border-bottom: 1px solid #E5E7EB;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-header button:hover {
-  background-color: #eff6ff; /* azul clarinho */
-}
+    .back-button {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 4px solid #0000FF;
+      background-color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-header svg {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #2563eb;
-}
+    .back-button:hover {
+      background-color: #F3F4F6;
+      transform: scale(1.05);
+    }
 
-header h1 {
-  color: #2563eb;
-  font-size: 1.875rem;
-  font-weight: 700;
-  text-align: center;
-  flex: 1;
-}
+    .back-button:active {
+      transform: scale(0.95);
+    }
 
-/* === MAIN === */
-main {
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 80px);
-}
+    .header-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #0000FF;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
-.card {
-  background-color: white;
-  border-radius: 1.5rem;
-  padding: 2rem;
-  width: 100%;
-  max-width: 28rem;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-}
+    .main-content {
+      flex: 1;
+      padding: 32px 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-.section {
-  margin-bottom: 3rem;
-}
+    .card-container {
+      width: 100%;
+      max-width: 600px;
+    }
 
-.section h2 {
-  color: black;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-}
+    .card {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 48px;
+      padding: 48px 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
 
-/* === ROTAS === */
-.rota {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
+    .section {
+      margin-bottom: 48px;
+    }
 
-.rota svg {
-  width: 2rem;
-  height: 2rem;
-  color: #2563eb;
-  flex-shrink: 0;
-}
+    .section:last-child {
+      margin-bottom: 0;
+    }
 
-.rota button {
-  flex: 1;
-  padding: 1rem 1.5rem;
-  border: 2px solid #2563eb;
-  border-radius: 9999px;
-  color: black;
-  font-size: 1.125rem;
-  font-weight: 500;
-  background: transparent;
-  transition: background-color 0.3s;
-  cursor: pointer;
-}
+    .section-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 24px;
+      text-align: center;
+    }
 
-.rota button:hover {
-  background-color: #eff6ff;
-}
+    .route-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .route-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background-color: #FFFFFF;
+      border: 3px solid #0000FF;
+      border-radius: 32px;
+      padding: 20px 32px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .route-item:hover {
+      background-color: #F3F4F6;
+      transform: translateX(4px);
+    }
+
+    .route-item:active {
+      transform: scale(0.98);
+    }
+
+    .arrow-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .route-name {
+      flex: 1;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .header-title {
+        font-size: 24px;
+      }
+
+      .card {
+        padding: 32px 24px;
+        border-radius: 32px;
+      }
+
+      .section-title {
+        font-size: 28px;
+      }
+
+      .route-item {
+        padding: 16px 24px;
+        font-size: 16px;
+      }
+    }
