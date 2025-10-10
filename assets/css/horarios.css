@@ -1,113 +1,195 @@
-/* HEADER */
-.header {
-  background-color: white;
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  position: relative;
-}
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.btn-voltar {
-  position: absolute;
-  left: 1rem;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 9999px;
-  border: 4px solid #2563eb; /* azul Tailwind 600 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s;
-}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #0000FF;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-.btn-voltar:hover {
-  background-color: #bfdbfe; /* azul 200 */
-}
+    .header {
+      background-color: #FFFFFF;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
 
-.icone-voltar {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #2563eb;
-}
+    .back-button {
+      position: absolute;
+      left: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 3px solid #0000FF;
+      background-color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-.titulo-pagina {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #2563eb;
-  text-align: center;
-  flex: 1;
-}
+    .back-button:hover {
+      background-color: #F3F4F6;
+      transform: scale(1.05);
+    }
 
-/* CONTEÚDO PRINCIPAL */
-.conteudo-principal {
-  padding: 1.5rem;
-  padding-top: 3rem;
-}
+    .back-button:active {
+      transform: scale(0.95);
+    }
 
-.caixa-horarios {
-  background-color: white;
-  border-radius: 1.5rem;
-  padding: 2rem;
-  max-width: 42rem;
-  margin: 0 auto;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-}
+    .header-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #0000FF;
+    }
 
-.titulo-lista {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-}
+    .main-content {
+      flex: 1;
+      padding: 48px 24px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-y: auto;
+    }
 
-/* LISTA DE HORÁRIOS */
-.lista-horarios {
-  max-height: 600px;
-  overflow-y: auto;
-  padding-right: 0.5rem;
-}
+    .schedule-card {
+      background-color: #FFFFFF;
+      border-radius: 48px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
 
-.item-horario {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 0;
-  border-bottom: 1px solid #f3f4f6;
-}
+    .card-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 40px;
+      text-align: center;
+    }
 
-.info-viagem {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+    .trips-container {
+      max-height: 800px;
+      overflow-y: auto;
+      padding-right: 8px;
+      position: relative;
+    }
 
-.icone-calendario {
-  width: 2rem;
-  height: 2rem;
-  color: #2563eb;
-}
+    /* Custom scrollbar */
+    .trips-container::-webkit-scrollbar {
+      width: 6px;
+    }
 
-.dia {
-  font-weight: 700;
-  font-size: 1.125rem;
-}
+    .trips-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-.rota {
-  color: #4b5563;
-}
+    .trips-container::-webkit-scrollbar-thumb {
+      background: #0000FF;
+      border-radius: 3px;
+    }
 
-.info-hora {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+    .trip-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      border-bottom: 1px solid #E5E7EB;
+    }
 
-.icone-relogio {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #2563eb;
-}
+    .trip-item:last-child {
+      border-bottom: none;
+    }
 
-.hora {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
+    .trip-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .calendar-icon {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+    }
+
+    .trip-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .trip-day {
+      font-size: 20px;
+      font-weight: bold;
+      color: #111827;
+    }
+
+    .trip-route {
+      font-size: 16px;
+      color: #6B7280;
+    }
+
+    .trip-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .clock-icon {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .trip-time {
+      font-size: 20px;
+      font-weight: 600;
+      color: #111827;
+      min-width: 60px;
+      text-align: right;
+    }
+
+    @media (max-width: 768px) {
+      .header-title {
+        font-size: 24px;
+      }
+
+      .back-button {
+        width: 48px;
+        height: 48px;
+      }
+
+      .schedule-card {
+        padding: 32px 24px;
+        border-radius: 32px;
+      }
+
+      .card-title {
+        font-size: 24px;
+        margin-bottom: 24px;
+      }
+
+      .trip-day {
+        font-size: 18px;
+      }
+
+      .trip-route {
+        font-size: 14px;
+      }
+
+      .trip-time {
+        font-size: 18px;
+      }
+    }
