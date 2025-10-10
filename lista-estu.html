@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estudantes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/lista-estu.css" />
+  </head>
+
+  <body class="custom-blue min-h-screen">
+    <header class="bg-white p-4 flex items-center relative">
+      <button
+        class="absolute left-4 w-12 h-12 rounded-full border-4 custom-blue-border flex items-center justify-center hover:bg-blue-100 transition-colors"
+        onclick="history.back()"
+        title="Voltar"
+      >
+        <svg
+          class="w-6 h-6 custom-blue-text"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="3"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+      </button>
+      <h1 class="custom-blue-text text-2xl font-bold text-center flex-1">
+        Estudantes
+      </h1>
+    </header>
+
+    <main class="p-6 overflow-y-auto" style="max-height: calc(100vh - 80px)">
+      <div class="space-y-6">
+        <!-- Cartão 1 -->
+        <div class="bg-white rounded-3xl p-8 shadow-lg">
+          <div class="flex justify-center mb-6">
+            <div
+              class="w-32 h-32 custom-blue rounded-full flex items-center justify-center"
+            >
+              <svg
+                class="w-16 h-16 text-white"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <h2 class="text-xl font-bold text-center mb-8">
+            Ludmila Vitória Santos<br />Ribeiro Carvalho
+          </h2>
+
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <svg
+                class="w-6 h-6 custom-blue-text flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"
+                />
+              </svg>
+              <div>
+                <span class="font-bold">CURSO:</span> DESENVOLVIMENTO DE
+                SISTEMAS
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <svg
+                class="w-6 h-6 custom-blue-text flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="12" r="10" stroke-width="2" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6v6l4 2"
+                />
+              </svg>
+              <div><span class="font-bold">TURNO:</span> NOTURNO</div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <svg
+                class="w-6 h-6 custom-blue-text flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  x="3"
+                  y="6"
+                  width="18"
+                  height="12"
+                  rx="2"
+                  stroke-width="2"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 10h4M7 14h2"
+                />
+                <circle cx="16" cy="12" r="2" stroke-width="2" />
+              </svg>
+              <div><span class="font-bold">ID:</span> 2280473926</div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div
+                class="w-6 h-6 bg-green-500 rounded-full flex-shrink-0"
+              ></div>
+              <div class="font-bold">Ativo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cartão 2 -->
+        <div class="bg-white rounded-3xl p-8 shadow-lg">
+          <div class="flex justify-center mb-6">
+            <div
+              class="w-32 h-32 custom-blue rounded-full flex items-center justify-center"
+            >
+              <svg
+                class="w-16 h-16 text-white"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <h2 class="text-xl font-bold text-center mb-8">
+            Evelyn da Cruz Estrela
+          </h2>
+
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <svg
+                class="w-6 h-6 custom-blue-text flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"
+                />
+              </svg>
+              <div>
+                <span class="font-bold">CURSO:</span> DESENVOLVIMENTO DE
+                SISTEMAS
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <svg
+                class="w-6 h-6 custom-blue-text flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="12" r="10" stroke-width="2" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6v6l4 2"
+                />
+              </svg>
+              <div><span class="font-bold">TURNO:</span> NOTURNO</div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <svg
+                class="w-6 h-6 custom-blue-text flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  x="3"
+                  y="6"
+                  width="18"
+                  height="12"
+                  rx="2"
+                  stroke-width="2"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 10h4M7 14h2"
+                />
+                <circle cx="16" cy="12" r="2" stroke-width="2" />
+              </svg>
+              <div><span class="font-bold">ID:</span> 2547856635</div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div
+                class="w-6 h-6 bg-green-500 rounded-full flex-shrink-0"
+              ></div>
+              <div class="font-bold">Ativo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
