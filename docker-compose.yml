@@ -1,0 +1,15 @@
+
+
+services:
+  expo:
+    build: .
+    container_name: expo-app
+    volumes:
+      - .:/app
+      - /node_modules
+    ports:
+      - "19000:19000" # Metro Bundler
+      - "19001:19001" # Debugger
+      - "19002:19002" # DevTools
+    stdin_open: true
+    tty: true
