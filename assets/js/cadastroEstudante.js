@@ -25,12 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (valor.length <= 9) {
       valor = valor.replace(/(\d{2})(\d{3})(\d{3})(\d{1})/, '$1.$2.$3-$4');
     } else if (valor.length <= 11) {
+      // Formato CPF: XXX.XXX.XXX-XX
       valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
     }
     
     e.target.value = valor;
   });
 
+  // ===== FUNÇÕES DE VALIDAÇÃO =====
+
+  // Validação do CPF
   function validarCPF(cpf) {
     cpf = cpf.replace(/\D/g, '');
     
@@ -85,9 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return { valido: false, mensagem: 'A data de nascimento não pode ser futura!' };
     }
     
-    // Verifica idade mínima (5 anos) e máxima (120 anos)
-    if (idade < 5) {
-      return { valido: false, mensagem: 'Idade mínima: 5 anos!' };
+    if (idade < 15) {
+      return { valido: false, mensagem: 'Idade mínima: 15 anos!' };
     }
     
     if (idade > 120) {
@@ -108,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!tiposPermitidos.includes(arquivo.type)) {
       return { valido: false, mensagem: 'Formato inválido! Use apenas JPG ou PNG.' };
     }
-
+    
     return { valido: true };
   }
 
@@ -146,36 +149,54 @@ document.addEventListener("DOMContentLoaded", () => {
     const turnosValidos = ['manhã', 'manha', 'tarde', 'noturno', 'integral'];
     
     if (!turnosValidos.some(t => turno.includes(t))) {
-      return { valido: false, mensagem: 'Turno inválido! Use: Manhã, Tarde, Noturno ou Integral.' };
+      return { valido: false, mensagem: 'Turno inválido! Use: Manhã, Tarde, noturno ou Integral.' };
     }
     
     return { valido: true };
   }
 
   function mostrarAlerta(mensagem, tipo = 'erro') {
+    let containerAlertas = document.getElementById('container-alertas');
+    if (!containerAlertas) {
+      containerAlertas = document.createElement('div');
+      containerAlertas.id = 'container-alertas';
+      containerAlertas.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 350px;
+      `;
+      document.body.appendChild(containerAlertas);
+    }
+
     const alerta = document.createElement('div');
     alerta.className = `alerta alerta-${tipo}`;
     alerta.textContent = mensagem;
     alerta.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
       padding: 15px 20px;
       background-color: ${tipo === 'erro' ? '#ef4444' : '#10b981'};
       color: white;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      z-index: 1000;
       font-weight: 500;
       animation: slideIn 0.3s ease-out;
-      max-width: 300px;
+      word-wrap: break-word;
     `;
     
-    document.body.appendChild(alerta);
+    containerAlertas.appendChild(alerta);
     
     setTimeout(() => {
       alerta.style.animation = 'slideOut 0.3s ease-out';
-      setTimeout(() => alerta.remove(), 300);
+      setTimeout(() => {
+        alerta.remove();
+        if (containerAlertas.children.length === 0) {
+          containerAlertas.remove();
+        }
+      }, 300);
     }, 3500);
   }
 
@@ -206,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     console.log("[v1] Validando cadastro...");
     
-    // Remover classes de erro anteriores
     document.querySelectorAll('.input, .file-label').forEach(el => {
       el.classList.remove('erro');
     });
@@ -221,13 +241,11 @@ document.addEventListener("DOMContentLoaded", () => {
     
     let erros = [];
     
-    // Validar nome
     const validacaoNome = validarNome(nome);
     if (!validacaoNome.valido) {
       erros.push({ elemento: inputs[0], mensagem: validacaoNome.mensagem });
     }
     
-    // Validar documento
     const docLimpo = documento.replace(/\D/g, '');
     
     if (docLimpo.length === 0) {
@@ -244,32 +262,27 @@ document.addEventListener("DOMContentLoaded", () => {
       erros.push({ elemento: inputs[1], mensagem: 'CPF (11 dígitos) ou RG (7-9 dígitos) inválido!' });
     }
     
-    // Validar data de nascimento
     const validacaoData = validarDataNascimento(dataNasc);
     if (!validacaoData.valido) {
       erros.push({ elemento: inputs[2], mensagem: validacaoData.mensagem });
     }
     
-    // Validar foto
     const validacaoFoto = validarFoto(foto);
     if (!validacaoFoto.valido) {
       const label = document.querySelector(`label[for="foto"]`);
       erros.push({ elemento: label, mensagem: validacaoFoto.mensagem });
     }
     
-    // Validar curso
     const validacaoCurso = validarCurso(curso);
     if (!validacaoCurso.valido) {
       erros.push({ elemento: inputs[3], mensagem: validacaoCurso.mensagem });
     }
     
-    // Validar turno
     const validacaoTurno = validarTurno(turno);
     if (!validacaoTurno.valido) {
       erros.push({ elemento: inputs[4], mensagem: validacaoTurno.mensagem });
     }
     
-    // Se houver erros, mostrar alertas vermelhos
     if (erros.length > 0) {
       console.log("[v1] Erros encontrados:", erros.length);
       erros.forEach((erro, index) => {
@@ -281,13 +294,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     
-    // Se passou em todas as validações
     console.log("[v1] Cadastro concluído com sucesso!");
     console.log("Dados:", { nome, documento, dataNascimento: dataNasc, curso, turno });
     
     mostrarAlerta('Cadastro realizado com sucesso!', 'sucesso');
     
-    // Redirecionar após 2 segundos
     setTimeout(() => {
       window.location.href = "index.html";
     }, 2000);
