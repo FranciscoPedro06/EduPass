@@ -151,6 +151,120 @@
         font-size: 18px;
       }
     }
+
+    /* Added popup/modal styles */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0000FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .popup-overlay.hidden {
+      display: none;
+    }
+
+    .popup-content {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      animation: popupFadeIn 0.4s ease-out;
+    }
+
+    @keyframes popupFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .popup-title {
+      color: white;
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 32px;
+      line-height: 1.2;
+    }
+
+    .popup-description {
+      color: white;
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 48px;
+      padding: 0 20px;
+    }
+
+    .popup-info-box {
+      background: white;
+      border-radius: 50px;
+      padding: 20px 32px;
+      margin-bottom: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .popup-info-box svg {
+      flex-shrink: 0;
+    }
+
+    .popup-button {
+      background: #1a4d1a;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 20px 80px;
+      font-size: 24px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .popup-button:hover {
+      background: #145014;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .popup-button:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 480px) {
+      .popup-title {
+        font-size: 36px;
+      }
+
+      .popup-description {
+        font-size: 16px;
+      }
+
+      .popup-info-box {
+        font-size: 16px;
+        padding: 16px 24px;
+      }
+
+      .popup-button {
+        padding: 16px 60px;
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -162,6 +276,42 @@
       </svg>
     </button>
     <h1 class="header-title">Reconhecimento facial</h1>
+  </div>
+
+  <!-- Added first popup -->
+  <div id="popup1" class="popup-overlay">
+    <div class="popup-content">
+      <h2 class="popup-title">Iniciar a verificação</h2>
+      <p class="popup-description">
+        Este processo foi criado para confirmar sua identidade e proteger você contra roubo de identidade.
+      </p>
+      <div class="popup-info-box">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+        <span>PREPARA-SE PARA TIRAR A SELFIE</span>
+      </div>
+      <button class="popup-button" onclick="showPopup2()">Iniciar</button>
+    </div>
+  </div>
+
+  <!-- Added second popup -->
+  <div id="popup2" class="popup-overlay hidden">
+    <div class="popup-content">
+      <h2 class="popup-title">Instruções</h2>
+      <p class="popup-description">
+        Posicione seu rosto no centro do círculo. Certifique-se de estar em um local bem iluminado e remova óculos ou acessórios.
+      </p>
+      <div class="popup-info-box">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4M12 8h.01"/>
+        </svg>
+        <span>MANTENHA O ROSTO CENTRALIZADO</span>
+      </div>
+      <button class="popup-button" onclick="startVerification()">Continuar</button>
+    </div>
   </div>
 
   <!-- Main content with card structure matching horarios.html -->
@@ -177,14 +327,26 @@
   <script>
     const video = document.getElementById('video');
     const message = document.getElementById('message');
+    const popup1 = document.getElementById('popup1');
+    const popup2 = document.getElementById('popup2');
 
     function goBack() {
       window.history.back();
     }
 
+    function showPopup2() {
+      popup1.classList.add('hidden');
+      popup2.classList.remove('hidden');
+    }
+
+    function startVerification() {
+      popup2.classList.add('hidden');
+      startCamera();
+    }
+
     async function startCamera() {
       try {
-        console.log('EduPass Solicitando permissão da câmera...');
+        console.log('[v0] Solicitando permissão da câmera...');
         
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
@@ -219,13 +381,13 @@
       }
     }
 
-    window.addEventListener('load', startCamera);
+    // Camera now starts only after popups are dismissed
 
     window.addEventListener('beforeunload', () => {
       if (video.srcObject) {
         const tracks = video.srcObject.getTracks();
         tracks.forEach(track => track.stop());
-        console.log('[v0] Stream da câmera encerrado');
+        console.log('Stream da câmera encerrado');
       }
     });
   </script>
