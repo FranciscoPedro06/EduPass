@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarAlerta("Cadastro realizado com sucesso!", 'sucesso');
 
     setTimeout(() => {
-      window.location.href = "index.html";
+      window.location.href = "./cadastroEstudante.html";
     }, 2000);
   });
 

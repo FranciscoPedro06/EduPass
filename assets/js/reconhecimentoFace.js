@@ -3,10 +3,11 @@ const message = document.getElementById("message");
 const popup1 = document.getElementById("popup1");
 const popup2 = document.getElementById("popup2");
 
-function goBack() {
-  window.history.back();
-}
-
+  if (backButton) {
+    backButton.addEventListener("click", () => {
+      window.history.back();
+    });
+  }
 function showPopup2() {
   popup1.classList.add("hidden");
   popup2.classList.remove("hidden");

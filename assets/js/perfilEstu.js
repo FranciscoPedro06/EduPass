@@ -1,113 +1,95 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const editBtn = document.getElementById('editProfileBtn');
-  const backButton = document.getElementById('backButton');
+document.addEventListener("DOMContentLoaded", () => {
+  const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+  if (!usuario) {
+    alert('Nenhum usuário encontrado. Cadastre-se primeiro.');
+    return;
+  }
+
+  // Nome
+  const studentNameEl = document.querySelector('.student-name');
+  if (studentNameEl) studentNameEl.textContent = usuario.nome;
+
+  // Foto
+  const profileIconInner = document.querySelector('.profile-icon-inner');
+  if (profileIconInner && usuario.foto) {
+    profileIconInner.style.backgroundImage = `url(${usuario.foto})`;
+    profileIconInner.style.backgroundSize = 'cover';
+    profileIconInner.style.backgroundPosition = 'center';
+  }
+
+  // Preencher info-items dinamicamente
+  const infoItems = document.querySelectorAll('.info-item');
+  infoItems.forEach(item => {
+    const key = item.dataset.key;
+    if (!key) return;
+
+    let label = '';
+    let valor = usuario[key] || '';
+
+    
+
+  switch (key) {
+    case 'curso':
+      label = 'CURSO';
+      valor = usuario.curso;
+      break;
+
+    case 'turno':
+      label = 'TURNO';
+      valor = usuario.turno;
+      break;
+
+    case 'nascimento':
+      label = 'NASCIMENTO';
+      if (usuario.nascimento) {
+        const partes = usuario.nascimento.split('-'); // ["2002","09","15"]
+        valor = `${partes[2]}/${partes[1]}/${partes[0]}`; // "15/09/2002"
+      } else {
+        valor = 'Não informado';
+      }
+      break;
+
+    case 'documento':
+      label = 'DOCUMENTO';
+      valor = usuario.documento;
+      break;
+
+    case 'cpf':
+      label = 'CPF';
+      valor = usuario.cpf || usuario.documento; // se CPF estiver vazio, usa documento
+      break;
+
+    case 'email':
+      label = 'EMAIL';
+      valor = usuario.email;
+      break;
+
+    default:
+      valor = 'Pequeno erro!';
+  }
+
+
+    item.innerHTML = `
+      <div class="info-icon">
+        <!-- Você pode adicionar SVGs aqui se quiser -->
+      </div>
+      <div class="info-text">
+        <span class="info-label">${label}:</span> ${valor}
+      </div>
+    `;
+  });
 
   // Botão voltar
-  if (backButton) {
-    backButton.addEventListener('click', () => {
-      window.history.back();
-    });
-  }
+  const backButton = document.getElementById('backButton');
+  if (backButton) backButton.addEventListener('click', () => window.history.back());
 
-  // ===== FUNÇÕES DE ALERTA VISUAL =====
-  
-  function mostrarAlerta(mensagem, tipo = 'info') {
-    let containerAlertas = document.getElementById('container-alertas');
-    if (!containerAlertas) {
-      containerAlertas = document.createElement('div');
-      containerAlertas.id = 'container-alertas';
-      containerAlertas.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        max-width: 350px;
-      `;
-      document.body.appendChild(containerAlertas);
-    }
-
-    // Definir cores baseadas no tipo
-    let corFundo;
-    switch(tipo) {
-      case 'sucesso':
-        corFundo = '#10b981';
-        break;
-      case 'erro':
-        corFundo = '#ef4444';
-        break;
-      case 'aviso':
-        corFundo = '#f59e0b';
-        break;
-      case 'info':
-      default:
-        corFundo = '#3b82f6';
-        break;
-    }
-
-    const alerta = document.createElement('div');
-    alerta.className = `alerta alerta-${tipo}`;
-    alerta.innerHTML = mensagem;
-    alerta.style.cssText = `
-      padding: 15px 20px;
-      background-color: ${corFundo};
-      color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      font-weight: 500;
-      animation: slideIn 0.3s ease-out;
-      word-wrap: break-word;
-      line-height: 1.5;
-    `;
-    
-    containerAlertas.appendChild(alerta);
-    
-    setTimeout(() => {
-      alerta.style.animation = 'slideOut 0.3s ease-out';
-      setTimeout(() => {
-        alerta.remove();
-        if (containerAlertas.children.length === 0) {
-          containerAlertas.remove();
-        }
-      }, 300);
-    }, 4000);
-  }
-
-  // Adicionar estilos de animação
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes slideIn {
-      from { transform: translateX(400px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(400px); opacity: 0; }
-    }
-    .alerta strong {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 1.05em;
-    }
-  `;
-  document.head.appendChild(style);
-
-  // ===== FUNÇÃO DE EDIÇÃO DO PERFIL =====
-  
-  function editProfile() {
-    console.log('[v0] Edit profile clicked');
-    mostrarAlerta('Funcionalidade de edição de perfil em desenvolvimento', 'aviso');
-    
-    // Caso queira redirecionar futuramente:
-    // setTimeout(() => {
-    //   window.location.href = 'editar-perfil.html';
-    // }, 1500);
-  }
-
-  // Adiciona evento ao botão de edição
+  // Botão editar
+  const editBtn = document.getElementById('editProfileBtn');
   if (editBtn) {
-    editBtn.addEventListener('click', editProfile);
+    editBtn.addEventListener('click', () => {
+      alert('Funcionalidade de edição em desenvolvimento');
+      // Futuro: window.location.href = 'editar-perfil.html';
+    });
   }
 });
