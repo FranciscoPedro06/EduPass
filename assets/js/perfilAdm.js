@@ -1,11 +1,16 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const backButton = document.getElementById("backButton");
+document.addEventListener('DOMContentLoaded', () => {
+  const editBtn = document.querySelector('button.w-full.custom-blue');
+  const backButton = document.querySelector('button[onclick="history.back()"]');
 
+  // Botão voltar - remover o onclick inline e adicionar event listener
   if (backButton) {
-    backButton.addEventListener("click", () => {
+    backButton.removeAttribute('onclick');
+    backButton.addEventListener('click', () => {
       window.history.back();
     });
   }
+
+  // ===== FUNÇÕES DE ALERTA VISUAL =====
   
   function mostrarAlerta(mensagem, tipo = 'info') {
     let containerAlertas = document.getElementById('container-alertas');
@@ -25,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.appendChild(containerAlertas);
     }
 
+    // Definir cores baseadas no tipo
     let corFundo;
     switch(tipo) {
       case 'sucesso':
@@ -70,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 4000);
   }
 
+  // Adicionar estilos de animação
   const style = document.createElement('style');
   style.textContent = `
     @keyframes slideIn {
@@ -87,13 +94,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   `;
   document.head.appendChild(style);
+
+  // ===== FUNÇÃO DE EDIÇÃO DO PERFIL =====
   
-  window.selectRoute = function(routeName, direction) {
-    console.log(`Rota selecionada: ${routeName} (${direction})`);
+  function editProfile() {
+    console.log('[v0] Edit profile clicked - Administrador');
+    mostrarAlerta('Funcionalidade de edição de perfil em desenvolvimento', 'aviso');
     
-    const direcaoTexto = direction === 'ida' ? 'Ida' : 'Volta';
-    const mensagem = `<strong>Parada selecionada:</strong> ${routeName}<br><strong>Direção:</strong> ${direcaoTexto}`;
-    
-    mostrarAlerta(mensagem, 'info');
-  };
+    // Caso queira redirecionar futuramente:
+    // setTimeout(() => {
+    //   window.location.href = 'editar-perfil-adm.html';
+    // }, 1500);
+  }
+
+  // Adiciona evento ao botão de edição
+  if (editBtn) {
+    editBtn.addEventListener('click', editProfile);
+  }
 });
