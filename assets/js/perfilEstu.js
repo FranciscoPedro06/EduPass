@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const usuario = JSON.parse(localStorage.getItem('usuario'));
+  const emailLogado = sessionStorage.getItem('usuarioLogado'); // pegar email logado
+  const estudantes = JSON.parse(localStorage.getItem('estudantes')) || [];
+  const usuario = estudantes.find(u => u.email === emailLogado); // agora sim temos usuario
 
   if (!usuario) {
     alert('Nenhum usuário encontrado. Cadastre-se primeiro.');
@@ -27,53 +29,49 @@ document.addEventListener("DOMContentLoaded", () => {
     let label = '';
     let valor = usuario[key] || '';
 
-    
+    switch (key) {
+      case 'curso':
+        label = 'CURSO';
+        valor = usuario.curso || 'Não informado';
+        break;
 
-  switch (key) {
-    case 'curso':
-      label = 'CURSO';
-      valor = usuario.curso;
-      break;
+      case 'turno':
+        label = 'TURNO';
+        valor = usuario.turno || 'Não informado';
+        break;
 
-    case 'turno':
-      label = 'TURNO';
-      valor = usuario.turno;
-      break;
+      case 'nascimento':
+        label = 'NASCIMENTO';
+        if (usuario.nascimento) {
+          const partes = usuario.nascimento.split('-'); // ["2002","09","15"]
+          valor = `${partes[2]}/${partes[1]}/${partes[0]}`;
+        } else {
+          valor = 'Não informado';
+        }
+        break;
 
-    case 'nascimento':
-      label = 'NASCIMENTO';
-      if (usuario.nascimento) {
-        const partes = usuario.nascimento.split('-'); // ["2002","09","15"]
-        valor = `${partes[2]}/${partes[1]}/${partes[0]}`; // "15/09/2002"
-      } else {
-        valor = 'Não informado';
-      }
-      break;
+      case 'documento':
+        label = 'DOCUMENTO';
+        valor = usuario.documento || '---';
+        break;
 
-    case 'documento':
-      label = 'DOCUMENTO';
-      valor = usuario.documento;
-      break;
+      case 'cpf':
+        label = 'CPF';
+        valor = usuario.cpf || usuario.documento || '---';
+        break;
 
-    case 'cpf':
-      label = 'CPF';
-      valor = usuario.cpf || usuario.documento; // se CPF estiver vazio, usa documento
-      break;
+      case 'email':
+        label = 'EMAIL';
+        valor = usuario.email || '---';
+        break;
 
-    case 'email':
-      label = 'EMAIL';
-      valor = usuario.email;
-      break;
-
-    default:
-      valor = 'Pequeno erro!';
-  }
-
+      default:
+        label = key.toUpperCase();
+        valor = usuario[key] || '---';
+    }
 
     item.innerHTML = `
-      <div class="info-icon">
-        <!-- Você pode adicionar SVGs aqui se quiser -->
-      </div>
+      <div class="info-icon"></div>
       <div class="info-text">
         <span class="info-label">${label}:</span> ${valor}
       </div>

@@ -45,10 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return resto === parseInt(cpf.substring(10, 11));
   }
 
-  function validarRG(rg) {
-    rg = rg.replace(/\D/g, '');
-    return rg.length >= 7 && rg.length <= 9;
-  }
+ 
 
   function validarDataNascimento(data) {
     if (!data) return { valido: false, mensagem: 'Data de nascimento obrigatória!' };
@@ -83,13 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return { valido: true };
   }
 
-  function validarTelefone(telefone) {
-    const regex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
-    if (!regex.test(telefone)) {
-      return { valido: false, mensagem: 'Telefone inválido!' };
-    }
-    return { valido: true };
-  }
 
 
   function validarNome(nome) {
