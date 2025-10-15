@@ -1,0 +1,28 @@
+.custom-blue {
+  background-color: #0000ff;
+}
+
+.custom-blue-text {
+  color: #0000ff;
+}
+
+.custom-blue-border {
+  border-color: #0000ff;
+}
+
+.custom-green {
+  background-color: #1a4d2e;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #0000ff;
+  border-radius: 4px;
+}

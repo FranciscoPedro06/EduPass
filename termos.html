@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Termo de Concordância</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/css/termos.css">
+</head>
+<body class="custom-blue min-h-screen">
+    
+  <header class="bg-white py-4 px-4 relative">
+    <button class="absolute left-4 w-12 h-12 rounded-full border-4 custom-blue-border flex items-center justify-center hover:bg-blue-50 transition-colors" onclick="history.back()" title="Voltar">
+      <svg class="w-6 h-6 custom-blue-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <h1 class="text-2xl font-bold custom-blue-text text-center">Termo</h1>
+  </header>
+
+  <main class="p-6 flex items-start justify-center min-h-[calc(100vh-72px)]">
+    <div class="bg-white rounded-3xl p-8 w-full max-w-2xl shadow-lg flex flex-col" style="max-height: calc(100vh - 120px);">
+       Scrollable Terms Content 
+      <div class="flex-1 overflow-y-auto custom-scrollbar pr-4 mb-6">
+        <div class="space-y-4 text-sm leading-relaxed">
+          <p class="font-bold text-base">
+            TERMO DE CONCORDÂNCIA E PRIVACIDADE
+          </p>
+          
+          <p>
+            Ao utilizar este aplicativo e fornecer seus dados pessoais, você concorda de forma livre, informada e inequívoca com a coleta, uso, armazenamento e tratamento das informações, conforme estabelecido pela Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018).
+          </p>
+
+          <div>
+            <p class="font-semibold">1. Finalidade do Uso dos Dados:</p>
+            <p>
+              Os dados fornecidos serão utilizados exclusivamente para: Identificação e cadastro de usuários; Comunicação e envio de informações solicitadas; Melhorias nos serviços oferecidos pelo site; Cumprimento de obrigações legais e regulatórias.
+            </p>
+          </div>
+
+          <div>
+            <p class="font-semibold">2. Segurança das Informações:</p>
+            <p>
+              Adotamos medidas de segurança administrativas e tecnológicas para proteger seus dados contra acessos não autorizados, perdas ou vazamentos.
+            </p>
+          </div>
+
+          <div>
+            <p class="font-semibold">3. Compartilhamento de Dados:</p>
+            <p>
+              Seus dados não serão compartilhados com terceiros sem sua autorização prévia, exceto em cumprimento de obrigação legal.
+            </p>
+          </div>
+
+          <div>
+            <p class="font-semibold">4. Direitos do Titular:</p>
+            <p class="mb-2">Você tem o direito de:</p>
+            <p>Acessar, corrigir ou atualizar seus dados;</p>
+            <p>Solicitar exclusão de dados;</p>
+            <p>Revogar este consentimento a qualquer momento, por meio de solicitação formal.</p>
+          </div>
+
+          <div>
+            <p class="font-semibold">5. Armazenamento dos Dados:</p>
+            <p>
+              Os dados serão mantidos pelo tempo necessário para atender às finalidades informadas, sendo eliminados de forma segura ao final do prazo legal.
+            </p>
+          </div>
+
+          <p class="mt-4">
+            Ao clicar em "Concordo", você declara ter lido e aceitado este Termo de Concordância e Privacidade.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 mb-6">
+        <input 
+          type="checkbox" 
+          id="agree" 
+          class="w-5 h-5 rounded border-2 border-gray-300 cursor-pointer"
+        >
+        <label for="agree" class="text-sm font-semibold cursor-pointer select-none">
+          Li e concordo com o termo de uso.
+        </label>
+      </div>
+
+      <button 
+        id="acceptBtn"
+        disabled
+        class="custom-green text-white font-bold py-4 px-8 rounded-full w-full transition-opacity disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+        onclick="handleAccept()"
+      >
+        Concordar
+      </button>
+    </div>
+  </main>
+
+   Linked external JavaScript file 
+  <script src="assets/js/termos.js"></script>
+</body>
+</html>
