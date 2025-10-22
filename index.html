@@ -1,134 +1,413 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Estudante</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="assets/css/login.css" />
-  </head>
-  <body class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-2xl">
-      <!-- Título -->
-      <div class="text-center mb-12">
-        <h1
-          class="text-white font-extrabold tracking-wide"
-          style="font-size: 80px"
-        >
-          EduPass
-        </h1>
-        <p class="text-gray-200 text-2xl mt-4" style="font-size: 50px">
-          Bem-vindo!
-        </p>
-      </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPass - Login</title>
+  <style>
+    /* 1. Reset e Variáveis de Estilo (PADRÃO GLOBAL) */
+    :root {
+      --primary-color: #007BFF;
+      --primary-dark: #0069D9;
+      --primary-tint: rgba(0, 123, 255, 0.08); /* Para banners */
+      --primary-tint-border: rgba(0, 123, 255, 0.2); /* Borda do banner */
+      
+      --bg-color: #F3F4F6;
+      --card-color: #FFFFFF;
+      
+      --primary-text: #111827;
+      --secondary-text: #6B7280;
+      
+      --border-color: #D1D5DB;
+      --input-bg: #F9FAFB;
+      
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --card-radius: 24px;
+      --button-radius: 12px;
+      
+      --success: #10b981;
+      --error: #ef4444;
+    }
 
-      <!-- Card de Login -->
-      <div class="bg-gray-100 rounded-3xl p-8 md:p-12 shadow-xl">
-        <form class="space-y-6">
-          <!-- Campo de Email -->
-          <div class="flex items-center gap-4">
-            <svg
-              class="w-8 h-8 text-blue-600 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-            <input
-              type="email"
-              placeholder="Digite seu email"
-              class="flex-1 px-6 py-4 rounded-full border-2 border-blue-600 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-700"
-            />
-          </div>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-          <!-- Campo de Senha -->
-          <div class="flex items-center gap-4">
-            <svg
-              class="w-8 h-8 text-blue-600 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
-            <div class="flex-1 relative">
-              <input
-                type="password"
-                id="password"
-                placeholder="Digite sua senha"
-                class="w-full px-6 py-4 rounded-full border-2 border-blue-600 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-700"
-              />
-              <button
-                type="button"
-                onclick="togglePassword()"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <svg
-                  class="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
 
-          <!-- Lembrar senha e Esqueceu senha -->
-          <div class="flex items-center justify-between px-4">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" class="w-4 h-4 rounded border-gray-300" />
-              <span class="text-gray-700 text-sm">Lembrar senha</span>
-            </label>
-            <a href="#" class="text-gray-400 text-sm hover:text-gray-600"
-              >Esqueceu a senha?</a
-            >
-          </div>
+    body {
+      background-color: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      min-height: 100vh;
+    }
 
-          <!-- Botão Entrar -->
-          <button
-            type="submit"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl py-4 rounded-full transition-colors mt-8"
-          >
-            Entrar
-          </button>
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+    }
 
-          <!-- Link de Cadastro -->
-          <p class="text-center text-gray-700 mt-6">
-            Ainda não possui cadastro?
-            <a
-              href="#"
-              class="text-gray-700 underline hover:text-gray-900"
-              id="Clique"
-              >Clique aqui</a
-            >
-          </p>
-        </form>
-      </div>
+    /* 2. Header */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--primary-color);
+    }
+
+    .header p {
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: var(--secondary-text);
+    }
+
+    /* 3. Card de Login */
+    .login-card {
+      background: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+    }
+
+    /* 4. Formulário (Mobile First) */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--primary-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--button-radius);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background: var(--input-bg);
+      color: var(--primary-text);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+      background: var(--card-color);
+    }
+
+    .form-input::placeholder {
+      color: var(--secondary-text);
+    }
+
+    .form-input.erro {
+      border-color: var(--error) !important;
+      animation: shake 0.3s ease;
+    }
+    
+    .password-group {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 0.5rem;
+      top: 37px; 
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--secondary-text);
+      padding: 0.5rem;
+      display: flex;
+    }
+
+    .password-toggle:hover {
+      color: var(--primary-text);
+    }
+
+    .password-toggle svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .form-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      cursor: pointer;
+      accent-color: var(--primary-color);
+    }
+
+    .checkbox-wrapper label {
+      cursor: pointer;
+      color: var(--primary-text);
+      user-select: none;
+    }
+
+    .forgot-password {
+      color: var(--secondary-text);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .forgot-password:hover {
+      color: var(--primary-color);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary-color);
+      color: var(--card-color);
+      border: none;
+      border-radius: var(--button-radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 102, 255, 0.2);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .signup-link {
+      text-align: center;
+      color: var(--secondary-text);
+      font-size: 0.875rem;
+    }
+
+    .signup-link a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .signup-link a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    /* 5. Alertas */
+    .alert-container {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 350px;
+    }
+
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 0.5rem;
+      color: var(--card-color);
+      font-weight: 500;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      animation: slideIn 0.3s ease-out;
+      word-wrap: break-word;
+    }
+
+    .alert-error { background: var(--error); }
+    .alert-success { background: var(--success); }
+
+    /* 6. Animações */
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(400px); opacity: 0; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    /* 7. Responsividade (Mobile First) */
+    @media (min-width: 640px) {
+      .header h1 {
+        font-size: 2.75rem;
+      }
+      .login-card {
+        padding: 2.5rem;
+      }
+      .form-footer {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+    
+  </style>
+</head>
+<body>
+  
+  <div class="login-container">
+    <div class="header">
+      <h1>EduPass</h1>
+      <p>Bem-vindo!</p>
     </div>
-    <script src="assets/js/login.js"></script>
-  </body>
+
+    <div class="login-card">
+      <form id="loginForm">
+        
+        <div class="form-group">
+          <label for="email" class="form-label">E-mail</label>
+          <input type="email" id="email" class="form-input" placeholder="Digite seu email" required>
+        </div>
+
+        <div class="form-group password-group">
+          <label for="password" class="form-label">Senha</label>
+          <input type="password" id="password" class="form-input" placeholder="Digite sua senha" required>
+          <button type="button" class="password-toggle" onclick="togglePassword()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="form-footer">
+          <div class="checkbox-wrapper">
+            <input type="checkbox" id="remember">
+            <label for="remember">Lembrar senha</label>
+          </div>
+          <a href="#" class="forgot-password">Esqueceu a senha?</a>
+        </div>
+
+        <button type="submit" class="btn-submit">Entrar</button>
+
+        <p class="signup-link">
+          Ainda não possui cadastro? <a href="cadastroEstu.html">Clique aqui</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Todo o seu JavaScript original foi mantido aqui...
+    function togglePassword() {
+      const input = document.getElementById('password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+    function mostrarAlerta(mensagem, tipo = 'error') {
+      let container = document.getElementById('alert-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'alert-container';
+        container.className = 'alert-container';
+        document.body.appendChild(container);
+      }
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${tipo}`;
+      alert.textContent = mensagem;
+      container.appendChild(alert);
+      setTimeout(() => {
+        alert.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => alert.remove(), 300);
+      }, 3500);
+    }
+    function validarEmail(email) {
+      email = email.trim();
+      if (!email) return { valido: false, mensagem: 'E-mail é obrigatório!' };
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!regex.test(email)) return { valido: false, mensagem: 'E-mail inválido!' };
+      return { valido: true };
+    }
+    function validarSenha(senha) {
+      senha = senha.trim();
+      if (!senha) return { valido: false, mensagem: 'Senha é obrigatória!' };
+      if (senha.length < 6) return { valido: false, mensagem: 'Senha deve ter no mínimo 6 caracteres!' };
+      return { valido: true };
+    }
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const email = emailInput.value.trim();
+      const senha = passwordInput.value.trim();
+      [emailInput, passwordInput].forEach(input => input.classList.remove('erro'));
+      const validacaoEmail = validarEmail(email);
+      const validacaoSenha = validarSenha(senha);
+      if (!validacaoEmail.valido) {
+        emailInput.classList.add('erro');
+        mostrarAlerta(validacaoEmail.mensagem, 'error');
+        return;
+      }
+      if (!validacaoSenha.valido) {
+        passwordInput.classList.add('erro');
+        mostrarAlerta(validacaoSenha.mensagem, 'error');
+        return;
+      }
+      const estudantes = JSON.parse(localStorage.getItem('estudantes')) || [];
+      const usuarioEncontrado = estudantes.find(u => u.email === email && u.senha === senha);
+      if (usuarioEncontrado) {
+        sessionStorage.setItem('usuarioLogado', email);
+        mostrarAlerta('Login realizado com sucesso!', 'success');
+        setTimeout(() => window.location.href = 'dashboard.html', 1500);
+        return;
+      }
+      if (email === 'tccADM@gmail.com' && senha === 'admin123') {
+        sessionStorage.setItem('usuarioLogado', email);
+        mostrarAlerta('Login realizado com sucesso!', 'success');
+        setTimeout(() => window.location.href = 'admin.html', 1500);
+        return;
+      }
+      mostrarAlerta('Usuário ou senha incorretos!', 'error');
+      emailInput.classList.add('erro');
+      passwordInput.classList.add('erro');
+    });
+    document.getElementById('email').addEventListener('input', function() {
+      this.classList.remove('erro');
+    });
+    document.getElementById('password').addEventListener('input', function() {
+      this.classList.remove('erro');
+    });
+  </script>
+</body>
 </html>
