@@ -4,87 +4,373 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rotas - EduPass</title>
-  <link rel="stylesheet" href="assets/css/rotas.css">
+  <style>
+    /* 1. Reset e Variáveis de Estilo (PADRÃO GLOBAL) */
+    :root {
+      --primary-color: #007BFF;
+      --primary-dark: #0069D9;
+      --primary-tint: rgba(0, 123, 255, 0.08); 
+      --primary-tint-border: rgba(0, 123, 255, 0.2);
+      
+      --bg-color: #F3F4F6;
+      --card-color: #FFFFFF;
+      
+      --primary-text: #111827;
+      --secondary-text: #6B7280;
+      
+      --border-color: #D1D5DB;
+      --input-bg: #F9FAFB;
+      --list-border: #E5E7EB; 
+      
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --card-radius: 24px;
+      --button-radius: 12px;
+      --item-radius: 16px; 
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--primary-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 2. Header (Padrão) */
+    .header {
+      background-color: var(--card-color);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
+    }
+    .back-button {
+      position: absolute;
+      left: 12px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-color);
+      background-color: var(--card-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--primary-color);
+    }
+    .back-button:hover { background-color: var(--bg-color); transform: scale(1.05); }
+    .back-button svg { width: 24px; height: 24px; }
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary-color);
+      padding-left: 56px; 
+      padding-right: 56px;
+      text-align: center;
+      flex: 1;
+    }
+    
+    /* 3. Conteúdo Específico da Página */
+    .main-content {
+      flex: 1;
+      padding: 24px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; 
+      overflow-y: auto; 
+    }
+    .card-container { 
+      width: 100%;
+      max-width: 600px; 
+    }
+    .routes-card { 
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 24px; 
+      box-shadow: var(--card-shadow);
+    }
+
+    .section {
+      margin-bottom: 32px; 
+    }
+    .section:last-child {
+      margin-bottom: 0;
+    }
+    /* Título da Seção Melhorado */
+    .section-title {
+      font-size: 14px; /* Menor */
+      font-weight: 600;
+      color: var(--secondary-text); /* Cinza */
+      margin-bottom: 12px; /* Menos espaço */
+      text-transform: uppercase; /* Caixa alta */
+      letter-spacing: 0.05em; /* Leve espaçamento */
+      padding-left: 4px; /* Alinhamento sutil */
+    }
+
+    /* Lista de Rotas Melhorada */
+    .route-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px; 
+    }
+    .route-item {
+      display: flex;
+      align-items: center;
+      gap: 12px; /* Reduzido */
+      background-color: var(--card-color); 
+      border: 1px solid var(--list-border); 
+      border-radius: var(--item-radius); 
+      padding: 14px 16px; /* Ajustado */
+      font-size: 16px;
+      font-weight: 500; 
+      color: var(--primary-text);
+      cursor: pointer;
+      transition: all 0.15s ease-out; /* Mais rápido */
+    }
+    /* Hover State Melhorado */
+    .route-item:hover {
+      background-color: var(--primary-tint); 
+      border-color: var(--primary-tint-border);
+      /* Leve sombra azul */
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1); 
+      transform: none; /* Remove scale no hover, deixa para o active */
+    }
+    /* Active State (Clique) */
+    .route-item:active {
+      transform: scale(0.98); /* Efeito de pressionar */
+      background-color: rgba(0, 123, 255, 0.15); /* Um pouco mais escuro */
+    }
+    /* Ícone Melhorado (Chevron) */
+    .route-icon svg { 
+      width: 20px; /* Menor */
+      height: 20px;
+      color: var(--secondary-text); /* Cinza por padrão */
+      flex-shrink: 0;
+      transition: color 0.15s ease-out;
+    }
+    .route-item:hover .route-icon svg {
+        color: var(--primary-color); /* Azul no hover */
+    }
+    
+    .route-name {
+      flex: 1;
+      text-align: left; 
+    }
+    
+    /* Classe para feedback visual ao clicar */
+    .route-item.selected-flash {
+        animation: selectFlash 0.4s ease-out;
+    }
+    @keyframes selectFlash {
+        0% { background-color: var(--card-color); }
+        50% { background-color: var(--primary-tint); border-color: var(--primary-tint-border); }
+        100% { background-color: var(--card-color); }
+    }
+
+
+    /* Sistema de Alerta (Necessário para JS) */
+    #container-alertas {
+      position: fixed; top: 20px; right: 20px; z-index: 1000;
+      display: flex; flex-direction: column; gap: 10px; max-width: 350px;
+    }
+    .alerta {
+      padding: 15px 20px; color: white; border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: 500;
+      animation: slideIn 0.3s ease-out; word-wrap: break-word; line-height: 1.5;
+    }
+    .alerta-sucesso { background-color: var(--success); }
+    .alerta-erro    { background-color: var(--error); }
+    .alerta-aviso   { background-color: var(--warning); }
+    .alerta-info    { background-color: var(--info); }
+    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+     .alerta strong {
+      display: block; 
+      margin-bottom: 4px; 
+    }
+
+    /* Media Queries */
+    @media (min-width: 640px) {
+      .header { padding: 16px 24px; }
+      .back-button { left: 24px; width: 48px; height: 48px; }
+      .header-title { font-size: 24px; padding-left: 72px; padding-right: 72px;}
+      .main-content { padding: 32px 24px; }
+      .routes-card { padding: 32px; border-radius: 32px; }
+      .section-title { font-size: 15px; margin-bottom: 16px; }
+      .route-item { padding: 18px 24px; font-size: 17px; }
+    }
+     @media (min-width: 1024px) {
+       .header-title { font-size: 28px; }
+       .routes-card { padding: 40px; }
+       .section-title { font-size: 16px; }
+     }
+  </style>
 </head>
 <body>
-   
+    
   <div class="header">
     <button class="back-button" id="backButton">
-      <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M19 12H5M12 19l-7-7 7-7"/>
       </svg>
     </button>
     <h1 class="header-title">Rotas</h1>
   </div>
 
-
   <div class="main-content">
     <div class="card-container">
-      <div class="card">
+      <div class="routes-card" id="routesCard"> 
+        
         <div class="section">
-          <h2 class="section-title">Ida:</h2>
+          <h2 class="section-title">Ida</h2>
           <div class="route-list">
-            <div class="route-item" onclick="selectRoute('UEFS', 'ida')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="UEFS" data-direction="ida">
               <span class="route-name">UEFS</span>
+              <div class="route-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
             </div>
-            <div class="route-item" onclick="selectRoute('PASSARELA', 'ida')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="PASSARELA" data-direction="ida">
               <span class="route-name">PASSARELA</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('SENAI', 'ida')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="SENAI" data-direction="ida">
               <span class="route-name">SENAI</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('FAN', 'ida')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-              <span class="route-name">FAN</span>
+            <div class="route-item" data-route="FAN" data-direction="ida">
+              <span class="route-name">UNIFAN</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
           </div>
         </div>
 
-        
         <div class="section">
-          <h2 class="section-title">Volta:</h2>
+          <h2 class="section-title">Volta</h2>
           <div class="route-list">
-            <div class="route-item" onclick="selectRoute('FAN', 'volta')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-              <span class="route-name">FAN</span>
+            <div class="route-item" data-route="FAN" data-direction="volta">
+              <span class="route-name">UNIFAN</span>
+              <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('SENAI', 'volta')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="SENAI" data-direction="volta">
               <span class="route-name">SENAI</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('PASSARELA', 'volta')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="PASSARELA" data-direction="volta">
               <span class="route-name">PASSARELA</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('UEFS', 'volta')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="UEFS" data-direction="volta">
               <span class="route-name">UEFS</span>
+              <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   </div>
 
-  <script src="assets/js/rotas.js"></script>
+  <script>
+    // ===== FUNÇÃO DE ALERTA GLOBAL (UNIFICADA) =====
+    function mostrarAlerta(mensagem, tipo = 'info') {
+      let containerAlertas = document.getElementById('container-alertas');
+      if (!containerAlertas) {
+        containerAlertas = document.createElement('div');
+        containerAlertas.id = 'container-alertas';
+        document.body.appendChild(containerAlertas);
+      }
+      
+      let tipoClasse = 'alerta-info';
+      switch(tipo) {
+        case 'sucesso': tipoClasse = 'alerta-sucesso'; break;
+        case 'erro': tipoClasse = 'alerta-erro'; break;
+        case 'aviso': tipoClasse = 'alerta-aviso'; break;
+      }
+      const alerta = document.createElement('div');
+      alerta.className = `alerta ${tipoClasse}`;
+      alerta.innerHTML = mensagem;
+      containerAlertas.appendChild(alerta);
+      
+      setTimeout(() => {
+        alerta.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => {
+          alerta.remove();
+          if (containerAlertas.children.length === 0) {
+            containerAlertas.remove();
+          }
+        }, 300);
+      }, 4000); 
+    }
+  
+    // ===== LÓGICA DA PÁGINA DE ROTAS =====
+    document.addEventListener("DOMContentLoaded", () => {
+      const backButton = document.getElementById("backButton");
+      const routesCard = document.getElementById("routesCard"); 
+
+      if (backButton) {
+        backButton.addEventListener("click", () => {
+          window.history.back();
+        });
+      }
+      
+      if (routesCard) {
+          routesCard.addEventListener("click", (event) => {
+              const routeItem = event.target.closest(".route-item"); 
+              
+              if (routeItem) {
+                  const routeName = routeItem.dataset.route;
+                  const direction = routeItem.dataset.direction;
+                  
+                  if (routeName && direction) {
+                      selectRoute(routeItem, routeName, direction); // Passa o elemento clicado
+                  }
+              }
+          });
+      }
+      
+      function selectRoute(element, routeName, direction) {
+        console.log(`Rota selecionada: ${routeName} (${direction})`);
+        
+        // Feedback visual: Adiciona classe para animação
+        element.classList.add('selected-flash');
+        // Remove a classe após a animação para poder ser usada de novo
+        setTimeout(() => {
+            element.classList.remove('selected-flash');
+        }, 400); // Duração da animação
+
+        const direcaoTexto = direction === 'ida' ? 'Ida' : 'Volta';
+        const mensagem = `<strong>Parada selecionada:</strong> ${routeName}<br><strong>Direção:</strong> ${direcaoTexto}`;
+        
+        mostrarAlerta(mensagem, 'info'); 
+      }
+    });
+  </script>
 </body>
 </html>
