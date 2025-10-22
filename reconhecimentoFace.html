@@ -4,20 +4,293 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reconhecimento Facial - EduPass</title>
-  <link rel="stylesheet" href="assets/css/reconhecimentoFace.css">
+  <style>
+    /* 1. Reset e Variáveis de Estilo (PADRÃO GLOBAL) */
+    :root {
+      --primary-color: #007BFF;
+      --primary-dark: #0069D9;
+      --primary-tint: rgba(0, 123, 255, 0.08); 
+      --primary-tint-border: rgba(0, 123, 255, 0.2);
+      
+      --bg-color: #F3F4F6;
+      --card-color: #FFFFFF;
+      
+      --primary-text: #111827;
+      --secondary-text: #6B7280;
+      
+      --border-color: #D1D5DB;
+      --input-bg: #F9FAFB;
+      --list-border: #E5E7EB;
+      
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+
+      --overlay-color: rgba(0, 0, 0, 0.6); /* Overlay para popups */
+
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --card-radius: 24px;
+      --button-radius: 12px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--primary-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden; /* Evita scroll horizontal */
+    }
+
+    /* 2. Header (Padrão) */
+    .header {
+      background-color: var(--card-color);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      flex-shrink: 0; /* Impede que o header encolha */
+    }
+    .back-button {
+      position: absolute;
+      left: 12px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-color);
+      background-color: var(--card-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--primary-color);
+    }
+    .back-button:hover { background-color: var(--bg-color); transform: scale(1.05); }
+    .back-button svg { width: 24px; height: 24px; }
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary-color);
+      /* Ajuste para centralizar corretamente com botão absoluto */
+      padding-left: 56px; /* Largura do botão + margem */
+      padding-right: 56px;
+      text-align: center;
+      flex: 1;
+    }
+
+    /* 3. Popups (Estilo Modal) */
+    .popup-overlay {
+      position: fixed;
+      inset: 0; /* top, right, bottom, left = 0 */
+      background-color: var(--overlay-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px; /* Espaçamento das bordas da tela */
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+    .popup-overlay.hidden {
+      opacity: 0;
+      pointer-events: none; /* Impede interação quando oculto */
+    }
+
+    .popup-content {
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 440px; /* Largura máxima do popup */
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transform: scale(1);
+      transition: transform 0.3s ease;
+    }
+    .popup-overlay.hidden .popup-content {
+        transform: scale(0.95); /* Efeito de encolher ao sair */
+    }
+
+
+    .popup-title {
+      color: var(--primary-text);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .popup-description {
+      color: var(--secondary-text);
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .popup-info-box {
+      background: var(--primary-tint);
+      border-radius: var(--button-radius);
+      padding: 16px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-color); /* Texto azul no fundo azul claro */
+      border: 1px solid var(--primary-tint-border);
+    }
+    .popup-info-box svg {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    /* Botão Primário Padrão */
+    .popup-button {
+      width: 100%; /* Ocupa toda a largura no popup */
+      background-color: var(--primary-color);
+      color: var(--card-color);
+      border: none;
+      border-radius: var(--button-radius);
+      padding: 16px; /* Padding vertical maior */
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .popup-button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    }
+    .popup-button:active {
+      transform: translateY(0);
+    }
+
+    /* 4. Conteúdo Principal (Câmera) */
+    .main-content {
+      padding: 24px 16px;
+      display: flex;
+      align-items: center; /* Centraliza o card verticalmente */
+      justify-content: center;
+      flex: 1; /* Ocupa o espaço restante */
+    }
+    .camera-card {
+      background: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 32px 24px; /* Padding interno */
+      width: 100%;
+      max-width: 440px; /* Largura similar ao popup */
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Contêiner do Vídeo (Oval) */
+    #videoContainer {
+      position: relative;
+      width: 100%;
+      /* Aspect ratio oval (ex: 3:4 ou 2:3) */
+      /* Ajustaremos a altura dinamicamente ou com aspect-ratio */
+       max-width: 300px; /* Largura máxima do oval */
+       aspect-ratio: 3 / 4; /* Proporção 3:4 */
+       margin: 0 auto 24px auto; /* Espaço abaixo */
+       overflow: hidden; /* Garante que o vídeo fique dentro do oval */
+       border-radius: 50% / 50%; /* Faz o container ser um círculo/oval */
+       border: 4px solid var(--primary-tint-border); /* Borda sutil */
+       background-color: var(--input-bg); /* Cor de fundo enquanto carrega */
+    }
+    #video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Cobre todo o espaço, pode cortar um pouco */
+      transform: scaleX(-1); /* Espelha o vídeo (comum em selfies) */
+      opacity: 0; /* Começa invisível */
+      transition: opacity 0.6s ease-out; /* Transição suave */
+    }
+    #video.loaded {
+        opacity: 1; /* Fica visível após carregar */
+    }
+
+    /* Mensagem sobre o vídeo */
+    #message {
+      position: absolute;
+      inset: 0; /* Cobre todo o container */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--secondary-text);
+      font-size: 15px;
+      padding: 20px;
+      line-height: 1.5;
+      background: transparent; /* Fundo transparente sobre o bg do container */
+    }
+    #message.error-message {
+      color: var(--error) !important;
+      font-weight: 500;
+    }
+    /* Oculta a mensagem quando o vídeo carrega */
+    #video.loaded + #message {
+        display: none;
+    }
+
+
+    /* Sistema de Alerta (Necessário para JS) */
+    #container-alertas {
+      position: fixed; top: 20px; right: 20px; z-index: 1000;
+      display: flex; flex-direction: column; gap: 10px; max-width: 350px;
+    }
+    .alerta {
+      padding: 15px 20px; color: white; border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: 500;
+      animation: slideIn 0.3s ease-out; word-wrap: break-word; line-height: 1.5;
+    }
+    .alerta-sucesso { background-color: var(--success); }
+    .alerta-erro    { background-color: var(--error); }
+    .alerta-aviso   { background-color: var(--warning); }
+    .alerta-info    { background-color: var(--info); }
+    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+
+    /* Media Queries */
+    @media (min-width: 640px) {
+      .header { padding: 16px 24px; }
+      .back-button { left: 24px; width: 48px; height: 48px; }
+      .header-title { font-size: 24px; padding-left: 72px; padding-right: 72px;}
+      .main-content { padding: 32px 24px; }
+      .camera-card { padding: 40px; border-radius: 32px; }
+      #videoContainer { max-width: 340px; }
+      .popup-content { padding: 40px; }
+      .popup-title { font-size: 28px; }
+    }
+     @media (min-width: 1024px) {
+       .header-title { font-size: 28px; }
+     }
+
+  </style>
 </head>
 <body>
-  <!-- Header structure matching horarios.html exactly -->
-  <div class="header">
+  
+  <header class="header">
     <button class="back-button" id="backButton">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M19 12H5M12 19l-7-7 7-7"/>
       </svg>
     </button>
     <h1 class="header-title">Reconhecimento facial</h1>
-  </div>
+  </header>
 
-  <!-- Added first popup -->
   <div id="popup1" class="popup-overlay">
     <div class="popup-content">
       <h2 class="popup-title">Iniciar a verificação</h2>
@@ -25,17 +298,16 @@
         Este processo foi criado para confirmar sua identidade e proteger você contra roubo de identidade.
       </p>
       <div class="popup-info-box">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="2">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           <path d="M9 12l2 2 4-4"/>
         </svg>
-        <span>PREPARA-SE PARA TIRAR A SELFIE</span>
+        <span>PREPARE-SE PARA TIRAR A SELFIE</span>
       </div>
       <button class="popup-button" onclick="showPopup2()">Iniciar</button>
     </div>
   </div>
 
-  <!-- Added second popup -->
   <div id="popup2" class="popup-overlay hidden">
     <div class="popup-content">
       <h2 class="popup-title">Instruções</h2>
@@ -43,7 +315,7 @@
         Posicione seu rosto no centro do círculo. Certifique-se de estar em um local bem iluminado e remova óculos ou acessórios.
       </p>
       <div class="popup-info-box">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="2">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10"/>
           <path d="M12 16v-4M12 8h.01"/>
         </svg>
@@ -53,16 +325,144 @@
     </div>
   </div>
 
-  <!-- Main content with card structure matching horarios.html -->
   <div class="main-content">
     <div class="camera-card">
       <div id="videoContainer">
         <video id="video" autoplay playsinline></video>
-        <div id="message">Iniciando câmera...</div>
+        <div id="message">Aguardando permissão da câmera...</div>
       </div>
-    </div>
+       </div>
   </div>
 
-  <script src="assets/js/reconhecimentoFace.js"></script>
+  <script>
+    // ===== FUNÇÃO DE ALERTA GLOBAL (UNIFICADA) =====
+    function mostrarAlerta(mensagem, tipo = 'info') {
+      let containerAlertas = document.getElementById('container-alertas');
+      if (!containerAlertas) {
+        containerAlertas = document.createElement('div');
+        containerAlertas.id = 'container-alertas';
+        document.body.appendChild(containerAlertas);
+      }
+      
+      let tipoClasse = 'alerta-info';
+      switch(tipo) {
+        case 'sucesso': tipoClasse = 'alerta-sucesso'; break;
+        case 'erro': tipoClasse = 'alerta-erro'; break;
+        case 'aviso': tipoClasse = 'alerta-aviso'; break;
+      }
+      const alerta = document.createElement('div');
+      alerta.className = `alerta ${tipoClasse}`;
+      alerta.innerHTML = mensagem;
+      containerAlertas.appendChild(alerta);
+      
+      setTimeout(() => {
+        alerta.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => {
+          alerta.remove();
+          if (containerAlertas.children.length === 0) {
+            containerAlertas.remove();
+          }
+        }, 300);
+      }, 4000);
+    }
+
+    // ===== LÓGICA DA PÁGINA DE RECONHECIMENTO FACIAL =====
+    const video = document.getElementById("video");
+    const message = document.getElementById("message");
+    const popup1 = document.getElementById("popup1");
+    const popup2 = document.getElementById("popup2");
+    const backButton = document.getElementById("backButton");
+
+    if (backButton) {
+      backButton.addEventListener("click", () => {
+        // Parar a câmera antes de voltar, se estiver ativa
+        if (video.srcObject) {
+            const tracks = video.srcObject.getTracks();
+            tracks.forEach((track) => track.stop());
+            console.log("[v0] Stream da câmera encerrado ao voltar");
+        }
+        window.history.back();
+      });
+    }
+
+    function showPopup2() {
+      popup1.classList.add("hidden");
+      popup2.classList.remove("hidden");
+    }
+
+    function startVerification() {
+      popup2.classList.add("hidden");
+      startCamera();
+    }
+
+    async function startCamera() {
+      try {
+        message.textContent = "Solicitando permissão da câmera...";
+        message.classList.remove("error-message");
+        console.log("[v0] Solicitando permissão da câmera...");
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: "user", // Prioriza câmera frontal
+            width: { ideal: 1280 }, // Tenta alta resolução
+            height: { ideal: 720 },
+            // Frame rate opcional:
+            // frameRate: { ideal: 30 } 
+          },
+          audio: false,
+        });
+
+        console.log("[v0] Permissão concedida, iniciando stream...");
+        message.textContent = "Iniciando câmera..."; // Mensagem de carregando
+
+        video.srcObject = stream;
+
+        video.onloadedmetadata = () => {
+          console.log("[v0] Vídeo carregado");
+          video.classList.add("loaded"); 
+          // A mensagem será ocultada pelo CSS quando 'loaded' for adicionado
+        };
+        
+        video.onerror = (e) => {
+            console.error("[v0] Erro no elemento de vídeo:", e);
+            message.textContent = "Erro ao carregar o vídeo da câmera.";
+            message.classList.add("error-message");
+            mostrarAlerta("Erro ao carregar o vídeo da câmera.", "erro");
+        }
+
+      } catch (error) {
+        console.error("[v0] Erro ao acessar a câmera:", error);
+        message.classList.add("error-message"); // Adiciona classe de erro à mensagem
+
+        if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+          message.textContent = "Permissão da câmera negada.";
+          mostrarAlerta("Permissão da câmera negada. Por favor, permita o acesso nas configurações do seu navegador ou dispositivo.", "erro");
+        } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
+          message.textContent = "Nenhuma câmera encontrada.";
+           mostrarAlerta("Nenhuma câmera foi encontrada no seu dispositivo.", "erro");
+        } else if (error.name === "NotReadableError" || error.name === "TrackStartError") {
+             message.textContent = "Câmera já em uso ou com problema.";
+             mostrarAlerta("Não foi possível acessar a câmera. Ela pode já estar em uso por outro aplicativo ou ter apresentado um problema.", "erro");
+        } else {
+          message.textContent = "Erro desconhecido ao acessar a câmera.";
+          mostrarAlerta(`Erro ao acessar a câmera: ${error.message}`, "erro");
+        }
+      }
+    }
+
+    // Limpeza ao sair da página
+    window.addEventListener("beforeunload", () => {
+      if (video.srcObject) {
+        const tracks = video.srcObject.getTracks();
+        tracks.forEach((track) => track.stop());
+        console.log("[v0] Stream da câmera encerrado ao sair da página");
+      }
+    });
+
+    // Iniciar mostrando o primeiro popup por padrão (se não precisar, remova esta linha)
+    // Se quiser que a câmera comece direto sem popups, chame startCamera() aqui
+    // document.addEventListener('DOMContentLoaded', startCamera); 
+    // Por enquanto, os popups controlam o início.
+  </script>
 </body>
 </html>
