@@ -3,122 +3,549 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perfil - EduPass</title>
-    <link rel="stylesheet" href="assets/css/telaInicioEstu.css">
+  <title>Dashboard - EduPass</title>
+  <style>
+    /* 1. Reset e Variáveis de Estilo (PADRÃO GLOBAL) */
+    :root {
+      --primary-color: #007BFF;
+      --primary-dark: #0069D9;
+      --primary-tint: rgba(0, 123, 255, 0.08); 
+      --primary-tint-border: rgba(0, 123, 255, 0.2);
+      
+      --bg-color: #F3F4F6;       /* Fundo geral (cinza claro) */
+      --card-color: #FFFFFF;     /* Cor dos cards (branco) */
+      --header-bg: var(--primary-color); /* Fundo do header estudante (azul) */
+      --header-text: var(--card-color);   /* Texto/ícones no header (branco) */
+      --nav-bg: var(--primary-color);    /* Fundo da nav inferior (azul) */
+      --nav-text: var(--card-color);      /* Texto/ícones na nav (branco) */
+      --nav-inactive: rgba(255, 255, 255, 0.6); /* Cor inativa na nav */
+
+      --primary-text: #111827;
+      --secondary-text: #6B7280;
+      
+      --border-color: #D1D5DB;
+      --input-bg: #F9FAFB;
+      --list-border: #E5E7EB; 
+      
+      --success: #10b981;  /* Verde para status cadastrado */
+      --error: #ef4444;    /* Vermelho para status pendente/erro */
+      --warning: #f59e0b;  /* Laranja para status aviso */
+      --info: #3b82f6;
+
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --card-radius: 24px;
+      --button-radius: 12px;
+      --item-radius: 16px; 
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--bg-color); /* Fundo cinza */
+      color: var(--primary-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 100px; /* Espaço para a bottom-nav fixa */
+    }
+
+    /* 2. Header Estudante (Fundo Azul) */
+    .header {
+      background-color: var(--header-bg);
+      padding: 12px 16px; 
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--header-text); 
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      width: 44px; 
+      height: 44px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2); 
+      border: 2px solid var(--header-text);
+      background-size: cover;
+      background-position: center;
+    }
+    .header-title {
+      font-size: 20px; 
+      font-weight: 700;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px; 
+    }
+    .icon-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      padding: 8px;
+      color: var(--header-text); 
+      border-radius: 50%;
+      transition: background-color 0.2s ease;
+    }
+    .icon-button:hover {
+       background-color: rgba(255, 255, 255, 0.1); 
+    }
+    .icon-button svg {
+        width: 24px;
+        height: 24px;
+        display: block; 
+    }
+    .badge {
+      position: absolute;
+      top: 4px; 
+      right: 4px; 
+      width: 16px; 
+      height: 16px;
+      border-radius: 50%;
+      background-color: var(--card-color); 
+      color: var(--primary-color); 
+      font-size: 10px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--primary-color); 
+    }
+
+    /* 3. Conteúdo Principal */
+    .main-content {
+      flex: 1;
+      padding: 24px 16px; 
+      display: flex;
+      flex-direction: column; /* Empilha os cards */
+      align-items: center; /* Centraliza os cards */
+      gap: 24px; /* Espaço entre os cards */
+      overflow-y: auto; 
+    }
+    
+    /* Card de Informações */
+    .info-card {
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 24px; 
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column; /* Foto em cima no mobile */
+      align-items: center;
+      gap: 24px; 
+      width: 100%;
+      max-width: 600px; /* Limita largura */
+    }
+    .photo-container {
+      flex-shrink: 0;
+    }
+    .photo {
+      width: 120px; /* Tamanho da foto */
+      height: 120px;
+      border-radius: 50%;
+      background-color: var(--bg-color); /* Fundo cinza placeholder */
+      border: 3px solid var(--primary-tint-border); /* Borda sutil */
+      background-size: cover;
+      background-position: center;
+    }
+    .info-section {
+      flex: 1;
+      width: 100%; /* Ocupa largura no mobile */
+      text-align: center; /* Centraliza texto no mobile */
+    }
+    .student-name {
+      font-size: 18px; /* Ajustado */
+      font-weight: 600; /* Menos pesado */
+      color: var(--primary-text);
+      margin-bottom: 16px;
+    }
+    .info-row {
+      margin-bottom: 10px; /* Espaço entre linhas */
+      font-size: 15px; /* Tamanho do texto */
+      color: var(--secondary-text); /* Cor secundária */
+      line-height: 1.5;
+    }
+    .info-label {
+      font-weight: 600; /* Label em negrito */
+      color: var(--primary-text); /* Cor primária */
+      margin-right: 6px; /* Espaço depois do label */
+    }
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Centraliza no mobile */
+      gap: 8px; /* Espaço entre label e badge */
+      margin-top: 16px;
+    }
+    .status-badge {
+      padding: 4px 12px; /* Padding ajustado */
+      border-radius: 12px; /* Raio padrão */
+      font-size: 13px; /* Menor */
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    /* Classes de Status */
+    .status-cadastrado { background-color: var(--success); color: white; }
+    .status-pendente { background-color: var(--warning); color: white; }
+    .status-bloqueado { background-color: var(--error); color: white; }
+    /* Estilo padrão caso não haja classe */
+    .status-badge:not([class*="status-"]) {
+        background-color: var(--bg-color);
+        color: var(--secondary-text);
+    }
+
+
+    /* Card do QR Code */
+    .qr-card {
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 32px; /* Padding interno */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--card-shadow);
+      width: 100%;
+      max-width: 600px; /* Mesma largura do info-card */
+    }
+    .qr-code {
+      width: 200px; /* Tamanho do QR */
+      height: 200px;
+      /* O SVG será gerado dinamicamente ou use uma lib */
+      background-color: var(--bg-color); /* Placeholder */
+      border: 1px dashed var(--border-color);
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       color: var(--secondary-text);
+       font-size: 14px;
+    }
+    .qr-code svg { /* Estilo do SVG placeholder */
+       width: 80%;
+       height: 80%;
+       opacity: 0.5;
+    }
+
+
+    /* 4. Navegação Inferior */
+    .bottom-nav {
+      position: fixed;
+      bottom: 16px; 
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--nav-bg);
+      border-radius: 28px; 
+      padding: 12px 24px; 
+      display: flex;
+      gap: 24px; 
+      box-shadow: 0 8px 24px rgba(0, 123, 255, 0.4);
+      z-index: 1000;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      color: var(--nav-text);
+      cursor: pointer;
+      opacity: 1; 
+      transition: opacity 0.2s ease;
+    }
+    .nav-item.inactive {
+      opacity: 0.6; 
+    }
+     .nav-item:hover:not(.inactive) { 
+        opacity: 0.8; 
+     }
+
+    .nav-icon svg { /* Usa SVGs agora */
+      width: 24px; 
+      height: 24px;
+    }
+    .nav-label {
+      font-size: 11px; 
+      font-weight: 500; 
+    }
+
+     /* Sistema de Alerta (Necessário para JS) */
+    #container-alertas {
+      position: fixed; top: 20px; right: 20px; z-index: 1001; /* Acima da nav */
+      display: flex; flex-direction: column; gap: 10px; max-width: 350px;
+    }
+    .alerta {
+      padding: 15px 20px; color: white; border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: 500;
+      animation: slideIn 0.3s ease-out; word-wrap: break-word; line-height: 1.5;
+    }
+    .alerta-sucesso { background-color: var(--success); }
+    .alerta-erro    { background-color: var(--error); }
+    .alerta-aviso   { background-color: var(--warning); }
+    .alerta-info    { background-color: var(--info); }
+    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+     .alerta strong { display: block; margin-bottom: 4px; }
+
+    /* Media Queries */
+    @media (min-width: 640px) {
+        .header { padding: 16px 24px; }
+        .avatar { width: 48px; height: 48px; }
+        .header-title { font-size: 22px; }
+        .main-content { padding: 32px 24px; gap: 32px; }
+        .info-card { 
+            flex-direction: row; /* Foto ao lado no tablet+ */
+            align-items: flex-start; /* Alinha no topo */
+            text-align: left; /* Texto alinhado à esquerda */
+            padding: 32px;
+        }
+        .info-section { text-align: left; }
+        .status-row { justify-content: flex-start; }
+        .photo { width: 144px; height: 144px; }
+        .student-name { font-size: 20px; }
+        .qr-card { padding: 40px; }
+        .qr-code { width: 220px; height: 220px; }
+        .bottom-nav { gap: 32px; padding: 14px 28px; }
+        .nav-icon svg { width: 26px; height: 26px; }
+        .nav-label { font-size: 12px; }
+    }
+
+    @media (min-width: 1024px) {
+        .header-title { font-size: 24px; }
+        .main-content { 
+            /* Layout lado a lado em desktop */
+            flex-direction: row; 
+            align-items: flex-start; 
+            justify-content: center;
+            gap: 40px;
+        }
+        .info-card, .qr-card {
+            max-width: 500px; /* Largura máxima individual */
+            margin-bottom: 0; /* Remove margem inferior */
+        }
+        .qr-card { padding: 48px; }
+        .qr-code { width: 250px; height: 250px; }
+        .bottom-nav { gap: 48px; padding: 16px 32px; }
+    }
+  </style>
 </head>
 <body>
   <div class="header">
     <div class="header-left">
-      <div class="avatar"></div>
+      <div class="avatar" id="userAvatar"></div>
       <h1 class="header-title">EduPass</h1>
     </div>
     <div class="header-right">
-      <div class="icon-button">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      <button class="icon-button" id="notificationsButton" title="Notificações">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
         </svg>
-      </div>
-      <div class="icon-button" onclick="window.location.assign('index.html')">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </button>
+      <button class="icon-button" id="logoutButton" title="Sair / Fazer Logout">
+         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+           <polyline points="16 17 21 12 16 7"></polyline>
+           <line x1="21" y1="12" x2="9" y2="12"></line>
         </svg>
-        <div class="badge">2</div>
-      </div>
+      </button>
     </div>
   </div>
 
   <div class="main-content">
     <div class="info-card">
       <div class="photo-container">
-        <div class="photo"></div>
+        <div class="photo" id="userPhoto"></div>
       </div>
       <div class="info-section">
-        <div class="student-name">NOME: </div>
-        <div class="info-row">
-          <span class="info-label">INSTITUIÇÃO:</span> SENAI
-        </div>
-        <div class="info-row">
-          <span class="info-label">CURSO:</span> 
-        </div>
-        <div class="info-row">
-          <span class="info-label">TURNO:</span> 
-        </div>
-        <div class="info-row">
-          <span class="info-label">CPF:</span> 
-        </div>
-        <div class="info-row">
-          <span class="info-label">DIAS DA SEMANA:</span> Segunda, Terça, Quarta, Quinta, Sexta
-        </div>
+        <div class="student-name" id="studentName">Carregando...</div>
+        <div class="info-row" id="studentInstitution"><span class="info-label">INSTITUIÇÃO:</span> --</div>
+        <div class="info-row" id="studentCourse"><span class="info-label">CURSO:</span> --</div>
+        <div class="info-row" id="studentShift"><span class="info-label">TURNO:</span> --</div>
+        <div class="info-row" id="studentCPF"><span class="info-label">CPF:</span> --</div>
+        <div class="info-row"><span class="info-label">DIAS DA SEMANA:</span> Segunda a Sexta</div> 
         <div class="status-row">
           <span class="info-label">SITUAÇÃO:</span>
-          <span class="status-badge">Cadastrado</span>
+          <span class="status-badge" id="studentStatus">--</span>
         </div>
       </div>
     </div>
 
     <div class="qr-card">
-      <svg class="qr-code" viewBox="0 0 100 100">
-        <rect fill="#0000FF" x="0" y="0" width="10" height="10"/>
-        <rect fill="#0000FF" x="10" y="0" width="10" height="10"/>
-        <rect fill="#0000FF" x="20" y="0" width="10" height="10"/>
-        <rect fill="#0000FF" x="30" y="0" width="10" height="10"/>
-        <rect fill="#0000FF" x="40" y="0" width="10" height="10"/>
-        <rect fill="#0000FF" x="60" y="0" width="10" height="10"/>
-        <rect fill="#0000FF" x="70" y="0" width="10" height="10"/>
-        <rect fill="#0000FF" x="80" y="0" width="10" height="10"/>
-        <rect fill="#0000FF" x="90" y="0" width="10" height="10"/>
-        
-        <rect fill="#0000FF" x="0" y="10" width="10" height="10"/>
-        <rect fill="#0000FF" x="40" y="10" width="10" height="10"/>
-        <rect fill="#0000FF" x="60" y="10" width="10" height="10"/>
-        <rect fill="#0000FF" x="90" y="10" width="10" height="10"/>
-        
-        <rect fill="#0000FF" x="0" y="20" width="10" height="10"/>
-        <rect fill="#0000FF" x="20" y="20" width="10" height="10"/>
-        <rect fill="#0000FF" x="30" y="20" width="10" height="10"/>
-        <rect fill="#0000FF" x="40" y="20" width="10" height="10"/>
-        <rect fill="#0000FF" x="60" y="20" width="10" height="10"/>
-        <rect fill="#0000FF" x="70" y="20" width="10" height="10"/>
-        <rect fill="#0000FF" x="80" y="20" width="10" height="10"/>
-        <rect fill="#0000FF" x="90" y="20" width="10" height="10"/>
-        
-         Mais quadrados do QR code 
-        <rect fill="#0000FF" x="10" y="30" width="10" height="10"/>
-        <rect fill="#0000FF" x="30" y="30" width="10" height="10"/>
-        <rect fill="#0000FF" x="50" y="30" width="10" height="10"/>
-        <rect fill="#0000FF" x="70" y="30" width="10" height="10"/>
-        
-         Padrão simplificado de QR code 
-        <rect fill="#0000FF" x="0" y="40" width="40" height="40"/>
-        <rect fill="#FFFFFF" x="10" y="50" width="20" height="20"/>
-        
-        <rect fill="#0000FF" x="60" y="40" width="40" height="40"/>
-        <rect fill="#FFFFFF" x="70" y="50" width="20" height="20"/>
-        
-        <rect fill="#0000FF" x="0" y="60" width="40" height="40"/>
-        <rect fill="#FFFFFF" x="10" y="70" width="20" height="20"/>
-      </svg>
+      <div class="qr-code" id="qrCodePlaceholder"> 
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> 
+          </div>
     </div>
   </div>
 
   <div class="bottom-nav">
-    <div class="nav-item" onclick="window.location.href='perfilEstu.html'">
-      <div class="nav-icon">👤</div>
+    <a href="perfilEstu.html" class="nav-item" id="navPerfil" aria-current="page"> 
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
       <div class="nav-label">Perfil</div>
-    </div>
-    <div class="nav-item" style="opacity: 0.6;" onclick="window.location.href='horarios.html'">
-      <div class="nav-icon">📅</div>
+    </a>
+    <a href="horarios.html" class="nav-item inactive" id="navHorarios">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
       <div class="nav-label">Horários</div>
-    </div>
-    <div class="nav-item" style="opacity: 0.6;" onclick="window.location.href='reconhecimentoFace.html'">
-      <div class="nav-icon">🚌</div>
-      <div class="nav-label">Rotas</div>
-    </div>
+    </a>
+    <a href="reconhecimentoFace.html" class="nav-item inactive" id="navReconhecimento">
+      <div class="nav-icon">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+           <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M1 10l4.52-3.88a9 9 0 0 1 12.96 0L23 10"/><path d="M8 21v-2.14a4 4 0 0 1 1.48-3.08l4.04-3.58a4 4 0 0 1 5.48.16l.01-.01L23 14"/> {/* Ícone de Scan Facial */}
+         </svg>
+      </div>
+      <div class="nav-label">Verificar</div> </a>
   </div>
-  <script src="/assets/js/telaInicioEstu.js"></script>
+  
+  <script>
+    // ===== FUNÇÃO DE ALERTA GLOBAL (UNIFICADA) =====
+    function mostrarAlerta(mensagem, tipo = 'info') {
+      let containerAlertas = document.getElementById('container-alertas');
+      if (!containerAlertas) {
+        containerAlertas = document.createElement('div');
+        containerAlertas.id = 'container-alertas';
+        document.body.appendChild(containerAlertas);
+      }
+      let tipoClasse = 'alerta-info';
+      switch(tipo) {
+        case 'sucesso': tipoClasse = 'alerta-sucesso'; break;
+        case 'erro': tipoClasse = 'alerta-erro'; break;
+        case 'aviso': tipoClasse = 'alerta-aviso'; break;
+      }
+      const alerta = document.createElement('div');
+      alerta.className = `alerta ${tipoClasse}`;
+      alerta.innerHTML = mensagem;
+      containerAlertas.appendChild(alerta);
+      setTimeout(() => {
+        alerta.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => {
+          alerta.remove();
+          if (containerAlertas.children.length === 0) {
+            containerAlertas.remove();
+          }
+        }, 300);
+      }, 4000); 
+    }
+
+    // ===== LÓGICA DO DASHBOARD ESTUDANTE =====
+    document.addEventListener('DOMContentLoaded', () => {
+      const emailLogado = sessionStorage.getItem('usuarioLogado');
+      const estudantes = JSON.parse(localStorage.getItem('estudantes')) || [];
+      const usuario = estudantes.find(u => u.email === emailLogado);
+
+      // Elementos da UI
+      const studentNameEl = document.getElementById('studentName');
+      const studentInstitutionEl = document.getElementById('studentInstitution');
+      const studentCourseEl = document.getElementById('studentCourse');
+      const studentShiftEl = document.getElementById('studentShift');
+      const studentCPFEl = document.getElementById('studentCPF'); // Usaremos CPF aqui
+      const studentStatusEl = document.getElementById('studentStatus');
+      const userPhotoEl = document.getElementById('userPhoto');
+      const userAvatarEl = document.getElementById('userAvatar'); // Avatar no header
+      const qrCodePlaceholderEl = document.getElementById('qrCodePlaceholder'); 
+      
+      const notificationsButton = document.getElementById('notificationsButton');
+      const logoutButton = document.getElementById('logoutButton');
+      const navPerfil = document.getElementById('navPerfil');
+      const navHorarios = document.getElementById('navHorarios');
+      const navReconhecimento = document.getElementById('navReconhecimento');
+
+
+      if (!usuario) {
+          mostrarAlerta('Usuário não encontrado. Faça login novamente.', 'erro');
+          if(studentNameEl) studentNameEl.textContent = "Erro: Usuário não logado";
+          // Opcional: Redirecionar para login
+           // setTimeout(() => window.location.href = 'index.html', 2000); 
+          return; // Interrompe a execução se não houver usuário
+      }
+
+      // Preencher informações
+      if(studentNameEl) studentNameEl.textContent = `NOME: ${usuario.nome || 'Não informado'}`;
+      // Assumindo que 'instituicao' está no objeto usuario, se não, ajuste
+      if(studentInstitutionEl) studentInstitutionEl.innerHTML = `<span class="info-label">INSTITUIÇÃO:</span> ${usuario.instituicao || 'Não informada'}`; 
+      if(studentCourseEl) studentCourseEl.innerHTML = `<span class="info-label">CURSO:</span> ${usuario.curso || 'Não informado'}`;
+      if(studentShiftEl) studentShiftEl.innerHTML = `<span class="info-label">TURNO:</span> ${usuario.turno || 'Não informado'}`;
+      if(studentCPFEl) studentCPFEl.innerHTML = `<span class="info-label">CPF:</span> ${usuario.cpf || usuario.documento || 'Não informado'}`; // Prioriza CPF
+      
+      // Atualizar Status Badge (Exemplo)
+      const status = usuario.status || 'cadastrado'; // Assume 'cadastrado' como padrão
+      if (studentStatusEl) {
+          studentStatusEl.textContent = status.charAt(0).toUpperCase() + status.slice(1); // Capitaliza
+          studentStatusEl.className = 'status-badge'; // Reseta classes
+          if (status === 'cadastrado') {
+              studentStatusEl.classList.add('status-cadastrado');
+          } else if (status === 'pendente') {
+              studentStatusEl.classList.add('status-pendente');
+          } else if (status === 'bloqueado') {
+              studentStatusEl.classList.add('status-bloqueado');
+          }
+      }
+
+      // Foto de Perfil (no card e no header)
+      if (usuario.foto) {
+        if(userPhotoEl) {
+            userPhotoEl.style.backgroundImage = `url(${usuario.foto})`;
+        }
+        if(userAvatarEl) {
+            userAvatarEl.style.backgroundImage = `url(${usuario.foto})`;
+        }
+      } else {
+          // Manter placeholders se não houver foto
+          if(userPhotoEl) userPhotoEl.style.backgroundColor = 'var(--bg-color)'; 
+          if(userAvatarEl) userAvatarEl.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+      }
+      
+      // Placeholder para QR Code (Idealmente, gerar dinamicamente)
+      if (qrCodePlaceholderEl) {
+          // Aqui você usaria uma biblioteca para gerar o QR code com base em dados do usuário (ex: ID ou CPF)
+          // Exemplo: new QRCode(qrCodePlaceholderEl, usuario.id || usuario.cpf);
+          // Por enquanto, mantemos o placeholder SVG
+          qrCodePlaceholderEl.innerHTML = `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> 
+              <span style="font-size: 12px; margin-top: 8px;">QR Code</span>`;
+      }
+
+      // --- Event Listeners ---
+
+      // Header Buttons
+      if (notificationsButton) {
+        notificationsButton.addEventListener('click', () => {
+          mostrarAlerta('Nenhuma notificação nova.', 'info');
+        });
+      }
+      if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+          if (confirm('Tem certeza que deseja sair?')) {
+            mostrarAlerta('Saindo...', 'info');
+            sessionStorage.removeItem('usuarioLogado');
+            setTimeout(() => { window.location.assign('index.html'); }, 1000); 
+          }
+        });
+      }
+
+      // Bottom Navigation
+      if (navPerfil) navPerfil.addEventListener('click', () => window.location.href = 'perfilEstu.html');
+      if (navHorarios) navHorarios.addEventListener('click', () => window.location.href = 'horarios.html');
+      if (navReconhecimento) navReconhecimento.addEventListener('click', () => window.location.href = 'reconhecimentoFace.html');
+
+    });
+  </script>
 </body>
 </html>
