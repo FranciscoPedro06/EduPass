@@ -1,16 +1,275 @@
-.custom-blue {
-  background-color: #0000ff;
-}
+:root {
+      --primary-color: #007BFF;
+      --primary-dark: #0069D9;
+      --primary-tint: rgba(0, 123, 255, 0.08);
+      --primary-tint-border: rgba(0, 123, 255, 0.2);
+      
+      --bg-color: #F3F4F6;
+      --card-color: #FFFFFF;
+      
+      --primary-text: #111827;
+      --secondary-text: #6B7280;
+      
+      --border-color: #D1D5DB;
+      --list-border: #E5E7EB;
+      
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --card-radius: 16px; /* Padronizado */
+    }
 
-.custom-blue-text {
-  color: #0000ff;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.custom-blue-border {
-  border-color: #0000ff;
-}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--primary-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-button:hover svg {
-  transform: scale(1.1);
-  transition: transform 0.2s ease-in-out;
-}
+    /* 2. Header (Padrão) */
+    .header {
+      background-color: var(--card-color);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .back-button {
+      position: absolute;
+      left: 12px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-color);
+      background-color: var(--card-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--primary-color);
+    }
+
+    .back-button:hover {
+      background-color: var(--bg-color);
+      transform: scale(1.05);
+    }
+    
+    /* Botão de voltar padronizado */
+    .back-button svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .header-title {
+      color: var(--primary-color);
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* 3. Conteúdo Principal */
+    .main-content {
+      flex: 1;
+      padding: 24px 16px;
+      overflow-y: auto;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    #studentsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* 4. VARIAÇÃO: "Empty State" com Ilustração */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 16px;
+      text-align: center;
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      color: var(--primary-color);
+      opacity: 0.8;
+    }
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-text);
+      margin-top: 24px;
+    }
+    .empty-description {
+      font-size: 14px;
+      color: var(--secondary-text);
+      margin-top: 8px;
+      max-width: 300px;
+    }
+
+
+    /* 5. Card de Estudante (Mobile First) */
+    .student-card {
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .student-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--card-shadow);
+    }
+
+    .student-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .student-avatar.default {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--primary-tint);
+      color: var(--primary-color);
+    }
+
+    .student-avatar.default svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .student-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .student-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .student-detail {
+      font-size: 14px;
+      color: var(--secondary-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+
+    .student-detail strong {
+      color: var(--primary-text);
+      font-weight: 500;
+    }
+
+    /* 6. Media Queries (Responsivo) */
+    @media (min-width: 768px) {
+      .header-title {
+        font-size: 24px;
+      }
+      .main-content {
+        padding: 32px 24px;
+      }
+      
+      #studentsContainer {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+      
+      /* Se for "empty state", ocupa as duas colunas */
+      .empty-state {
+        grid-column: 1 / -1;
+      }
+
+      .student-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 24px;
+      }
+      .student-avatar {
+        width: 80px;
+        height: 80px;
+      }
+      .student-avatar.default svg {
+        width: 40px;
+        height: 40px;
+      }
+      .student-name {
+        font-size: 18px;
+        margin-top: 8px;
+      }
+      .student-info {
+        align-items: center;
+        width: 100%;
+      }
+      .student-detail {
+        text-align: left;
+        white-space: normal;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .header-title {
+        font-size: 28px;
+      }
+      .main-content {
+        padding: 40px;
+      }
+      #studentsContainer {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 32px;
+      }
+      .student-card {
+        padding: 32px;
+      }
+      .student-avatar {
+        width: 100px;
+        height: 100px;
+      }
+      .student-avatar.default svg {
+        width: 48px;
+        height: 48px;
+      }
+      .student-name {
+        font-size: 20px;
+      }
+      .student-detail {
+        font-size: 15px;
+      }
+    }
