@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checklist de Presença - EduPass</title>
+  <style>
+    /* 1. Reset e Variáveis de Estilo (PADRÃO GLOBAL) */
+    :root {
+      --primary-color: #007BFF;
+      --primary-dark: #0069D9;
+      --primary-tint: rgba(0, 123, 255, 0.08); 
+      --primary-tint-border: rgba(0, 123, 255, 0.2);
+      
+      --bg-color: #F3F4F6;
+      --card-color: #FFFFFF;
+      
+      --primary-text: #111827;
+      --secondary-text: #6B7280;
+      
+      --border-color: #D1D5DB;
+      --input-bg: #F9FAFB;
+      --list-border: #E5E7EB; 
+      
+      --success: #10b981;
+      --success-dark: #059669;
+      --success-light: rgba(16, 185, 129, 0.1);
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --card-radius: 24px;
+      --button-radius: 12px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg-color) 0%, #E8ECFC 100%);
+      color: var(--primary-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 2. Header (Padrão) */
+    .header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      padding: 12px 16px; 
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+      position: relative;
+      box-shadow: 0 4px 16px rgba(0, 123, 255, 0.2);
+      flex-shrink: 0;
+    }
+
+    .back-button {
+      position: absolute;
+      left: 12px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background-color: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+
+    .back-button:hover { 
+      background-color: rgba(255, 255, 255, 0.25);
+      transform: scale(1.08);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .back-button svg { width: 24px; height: 24px; }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      padding-left: 56px; 
+      padding-right: 56px;
+      text-align: center;
+      flex: 1;
+      letter-spacing: -0.3px;
+    }
+    
+    /* 3. Conteúdo Específico da Página */
+    .main-content {
+      flex: 1;
+      padding: 24px 16px; 
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-y: auto;
+    }
+
+    .card { 
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 24px; 
+      box-shadow: var(--card-shadow);
+      width: 100%;
+      max-width: 420px; 
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 120px);
+    }
+
+    /* Checklist */
+    .checklist-scroll {
+      flex: 1;
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 8px;
+      margin-bottom: 24px;
+      scrollbar-gutter: stable;
+    }
+
+    .checklist-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .checklist-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .checklist-scroll::-webkit-scrollbar-thumb {
+      background-color: var(--primary-tint-border);
+      border-radius: 3px;
+    }
+    
+    /* Improved day section styling with better visual hierarchy */
+    .day-section {
+      border-bottom: 1px solid var(--list-border);
+      padding: 16px 0;
+      margin-bottom: 0;
+    }
+    .day-section:last-child {
+      border-bottom: none;
+    }
+
+    .day-title {
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 14px;
+      color: var(--primary-color);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 20px;
+      padding-left: 4px;
+    }
+
+    /* Enhanced checkbox label styling with better hover states */
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--primary-text);
+      font-weight: 500;
+      transition: all 0.2s ease;
+      padding: 8px 12px;
+      border-radius: 8px;
+      user-select: none;
+    }
+
+    .checkbox-label:hover {
+      background-color: var(--primary-tint);
+      color: var(--primary-color);
+    }
+
+    /* Custom checkbox styling */
+    .checkbox-input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--primary-color);
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-input:checked {
+      background-color: var(--success);
+      border-color: var(--success);
+    }
+
+    /* Enhanced confirm button with gradient and improved states */
+    .confirm-button {
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: var(--button-radius);
+      border: none;
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+      letter-spacing: 0.5px;
+    }
+
+    .confirm-button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+    }
+
+    .confirm-button:active {
+      transform: translateY(-1px);
+    }
+
+    /* Sistema de Alerta */
+    #container-alertas {
+      position: fixed; top: 20px; right: 20px; z-index: 1000;
+      display: flex; flex-direction: column; gap: 10px; max-width: 350px;
+    }
+    .alerta {
+      padding: 15px 20px; color: white; border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15); font-weight: 500;
+      animation: slideIn 0.3s ease-out; word-wrap: break-word; line-height: 1.5;
+    }
+    .alerta-sucesso { background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%); }
+    .alerta-erro { background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%); }
+    .alerta-aviso { background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%); }
+    .alerta-info { background: linear-gradient(135deg, var(--info) 0%, #2563eb 100%); }
+    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+    .alerta strong { display: block; margin-bottom: 4px; }
+
+    /* Media Queries */
+    @media (min-width: 640px) {
+      .header { padding: 16px 24px; }
+      .back-button { left: 24px; width: 48px; height: 48px; }
+      .header-title { font-size: 24px; padding-left: 72px; padding-right: 72px; }
+      .main-content { padding: 32px 24px; align-items: center; }
+      .card { padding: 32px; border-radius: 32px; }
+      .checkbox-label { font-size: 15px; padding: 10px 14px; }
+    }
+
+    @media (min-width: 1024px) {
+      .header-title { font-size: 28px; }
+      .card { max-width: 500px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <button class="back-button" id="backButton" title="Voltar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <h1 class="header-title" id="checklistTitle">Checklist Presença</h1>
+  </header>
+
+  <main class="main-content">
+    <div class="card">
+      <div class="checklist-scroll">
+        
+        <div class="day-section">
+          <div class="day-title">Segunda-Feira</div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Segunda" data-trip="Ida">
+              <span>Ida</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Segunda" data-trip="Volta">
+              <span>Volta</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="day-section">
+          <div class="day-title">Terça-Feira</div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Terça" data-trip="Ida">
+              <span>Ida</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Terça" data-trip="Volta">
+              <span>Volta</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="day-section">
+          <div class="day-title">Quarta-Feira</div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Quarta" data-trip="Ida">
+              <span>Ida</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Quarta" data-trip="Volta">
+              <span>Volta</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="day-section">
+          <div class="day-title">Quinta-Feira</div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Quinta" data-trip="Ida">
+              <span>Ida</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Quinta" data-trip="Volta">
+              <span>Volta</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="day-section">
+          <div class="day-title">Sexta-Feira</div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Sexta" data-trip="Ida">
+              <span>Ida</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Sexta" data-trip="Volta">
+              <span>Volta</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="day-section">
+          <div class="day-title">Sábado</div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Sábado" data-trip="Ida">
+              <span>Ida</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" data-day="Sábado" data-trip="Volta">
+              <span>Volta</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button id="confirmButton" class="confirm-button">Confirmar Presença</button>
+    </div>
+  </main>
+
+  <script>
+    function mostrarAlerta(mensagem, tipo = 'info') {
+      let containerAlertas = document.getElementById('container-alertas');
+      if (!containerAlertas) {
+        containerAlertas = document.createElement('div');
+        containerAlertas.id = 'container-alertas';
+        document.body.appendChild(containerAlertas);
+      }
+      let tipoClasse = 'alerta-info';
+      switch(tipo) {
+        case 'sucesso': tipoClasse = 'alerta-sucesso'; break;
+        case 'erro': tipoClasse = 'alerta-erro'; break;
+        case 'aviso': tipoClasse = 'alerta-aviso'; break;
+      }
+      const alerta = document.createElement('div');
+      alerta.className = `alerta ${tipoClasse}`;
+      alerta.innerHTML = mensagem;
+      containerAlertas.appendChild(alerta);
+      setTimeout(() => {
+        alerta.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => {
+          alerta.remove();
+          if (containerAlertas.children.length === 0) {
+            containerAlertas.remove();
+          }
+        }, 300);
+      }, 4000); 
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const backButton = document.getElementById("backButton");
+        const confirmButton = document.getElementById("confirmButton");
+        const title = document.getElementById("checklistTitle");
+        
+        const shift = sessionStorage.getItem("selectedShift");
+
+        if (title && shift) {
+            title.textContent = `Checklist - ${shift}`;
+        }
+
+        if (backButton) {
+            backButton.addEventListener("click", () => {
+                window.history.back();
+            });
+        }
+        
+        if (confirmButton) {
+            confirmButton.addEventListener("click", confirmPresence);
+        }
+
+        function confirmPresence() {
+          const checkboxes = document.querySelectorAll('.checkbox-input:checked');
+
+          if (checkboxes.length === 0) {
+            mostrarAlerta("Por favor, selecione pelo menos um dia!", 'aviso'); 
+            return;
+          }
+
+          const attendanceData = {
+            shift: shift || "Não especificado",
+            days: Array.from(checkboxes).map(cb => ({
+              day: cb.dataset.day,
+              route: cb.dataset.trip,
+            })),
+          };
+          
+          console.log("Dados de presença:", attendanceData);
+
+          mostrarAlerta("Presença confirmada com sucesso!", 'sucesso');
+          
+          setTimeout(() => {
+             history.back();
+          }, 1500);
+        }
+    });
+    
+    function updateAttendance() {
+      // const checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length
+      // console.log(checkedCount);
+    }
+  </script>
+</body>
+</html>
