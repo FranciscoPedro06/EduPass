@@ -1,198 +1,327 @@
-* {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+:root {
+      --primary-color: #007BFF;
+      --primary-dark: #0069D9;
+      --primary-tint: rgba(0, 123, 255, 0.08); 
+      --primary-tint-border: rgba(0, 123, 255, 0.2);
+      
+      --bg-color: #F3F4F6;       /* Fundo geral (cinza claro) */
+      --card-color: #FFFFFF;     /* Cor dos cards (branco) */
+      --header-bg: var(--primary-color); /* Fundo do header estudante (azul) */
+      --header-text: var(--card-color);   /* Texto/ícones no header (branco) */
+      --nav-bg: var(--primary-color);    /* Fundo da nav inferior (azul) */
+      --nav-text: var(--card-color);      /* Texto/ícones na nav (branco) */
+      --nav-inactive: rgba(255, 255, 255, 0.6); /* Cor inativa na nav */
+
+      --primary-text: #111827;
+      --secondary-text: #6B7280;
+      
+      --border-color: #D1D5DB;
+      --input-bg: #F9FAFB;
+      --list-border: #E5E7EB; 
+      
+      --success: #10b981;  /* Verde para status cadastrado */
+      --error: #ef4444;    /* Vermelho para status pendente/erro */
+      --warning: #f59e0b;  /* Laranja para status aviso */
+      --info: #3b82f6;
+
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --card-radius: 24px;
+      --button-radius: 12px;
+      --item-radius: 16px; 
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background-color: #F9FAFB;
+      background-color: var(--bg-color); /* Fundo cinza */
+      color: var(--primary-text);
       min-height: 100vh;
-      padding-bottom: 120px;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 100px; /* Espaço para a bottom-nav fixa */
     }
 
+    /* 2. Header Estudante (Fundo Azul) */
     .header {
-      background-color: #0000FF;
-      padding: 16px 24px;
+      background-color: var(--header-bg);
+      padding: 12px 16px; 
       display: flex;
       align-items: center;
       justify-content: space-between;
+      color: var(--header-text); 
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-
     .header-left {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-
     .avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 28px;
-      background-color: #D1D5DB;
-      border: 2px solid #FFFFFF;
+      width: 44px; 
+      height: 44px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2); 
+      border: 2px solid var(--header-text);
+      background-size: cover;
+      background-position: center;
     }
-
     .header-title {
-      font-size: 24px;
-      font-weight: bold;
-      color: #FFFFFF;
+      font-size: 20px; 
+      font-weight: 700;
     }
-
     .header-right {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 8px; 
     }
-
     .icon-button {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: none;
+      border: none;
       cursor: pointer;
+      position: relative;
+      padding: 8px;
+      color: var(--header-text); 
+      border-radius: 50%;
+      transition: background-color 0.2s ease;
     }
-
+    .icon-button:hover {
+       background-color: rgba(255, 255, 255, 0.1); 
+    }
+    .icon-button svg {
+        width: 24px;
+        height: 24px;
+        display: block; 
+    }
     .badge {
       position: absolute;
-      top: -4px;
-      right: -4px;
-      width: 20px;
-      height: 20px;
-      border-radius: 10px;
-      background-color: #FFFFFF;
-      color: #0000FF;
+      top: 4px; 
+      right: 4px; 
+      width: 16px; 
+      height: 16px;
+      border-radius: 50%;
+      background-color: var(--card-color); 
+      color: var(--primary-color); 
       font-size: 10px;
       font-weight: bold;
       display: flex;
       align-items: center;
       justify-content: center;
+      border: 1px solid var(--primary-color); 
     }
 
+    /* 3. Conteúdo Principal */
     .main-content {
-      padding: 24px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .info-card {
-      background-color: #FFFFFF;
-      border: 4px solid #0000FF;
-      border-radius: 48px;
-      padding: 32px;
-      margin-bottom: 32px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      padding: 24px 16px; 
       display: flex;
-      gap: 32px;
+      flex-direction: column; /* Empilha os cards */
+      align-items: center; /* Centraliza os cards */
+      gap: 24px; /* Espaço entre os cards */
+      overflow-y: auto; 
     }
-
+    
+    /* Card de Informações */
+    .info-card {
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 24px; 
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column; /* Foto em cima no mobile */
+      align-items: center;
+      gap: 24px; 
+      width: 100%;
+      max-width: 600px; /* Limita largura */
+    }
     .photo-container {
       flex-shrink: 0;
     }
-
     .photo {
-      width: 144px;
-      height: 144px;
-      border-radius: 72px;
-      background-color: #D1D5DB;
-      border: 4px solid #0000FF;
+      width: 120px; /* Tamanho da foto */
+      height: 120px;
+      border-radius: 50%;
+      background-color: var(--bg-color); /* Fundo cinza placeholder */
+      border: 3px solid var(--primary-tint-border); /* Borda sutil */
+      background-size: cover;
+      background-position: center;
     }
-
     .info-section {
       flex: 1;
+      width: 100%; /* Ocupa largura no mobile */
+      text-align: center; /* Centraliza texto no mobile */
     }
-
     .student-name {
-      font-size: 20px;
-      font-weight: bold;
-      color: #111827;
+      font-size: 18px; /* Ajustado */
+      font-weight: 600; /* Menos pesado */
+      color: var(--primary-text);
       margin-bottom: 16px;
     }
-
     .info-row {
-      margin-bottom: 12px;
-      font-size: 16px;
-      color: #111827;
+      margin-bottom: 10px; /* Espaço entre linhas */
+      font-size: 15px; /* Tamanho do texto */
+      color: var(--secondary-text); /* Cor secundária */
+      line-height: 1.5;
     }
-
     .info-label {
-      font-weight: bold;
+      font-weight: 600; /* Label em negrito */
+      color: var(--primary-text); /* Cor primária */
+      margin-right: 6px; /* Espaço depois do label */
     }
-
     .status-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center; /* Centraliza no mobile */
+      gap: 8px; /* Espaço entre label e badge */
       margin-top: 16px;
     }
-
     .status-badge {
-      background-color: #DBEAFE;
-      color: #1E3A8A;
-      padding: 4px 16px;
-      border-radius: 20px;
-      font-size: 14px;
+      padding: 4px 12px; /* Padding ajustado */
+      border-radius: 12px; /* Raio padrão */
+      font-size: 13px; /* Menor */
       font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    /* Classes de Status */
+    .status-cadastrado { background-color: var(--success); color: white; }
+    .status-pendente { background-color: var(--warning); color: white; }
+    .status-bloqueado { background-color: var(--error); color: white; }
+    /* Estilo padrão caso não haja classe */
+    .status-badge:not([class*="status-"]) {
+        background-color: var(--bg-color);
+        color: var(--secondary-text);
     }
 
+
+    /* Card do QR Code */
     .qr-card {
-      background-color: #FFFFFF;
-      border: 4px solid #0000FF;
-      border-radius: 48px;
-      padding: 48px;
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 32px; /* Padding interno */
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--card-shadow);
+      width: 100%;
+      max-width: 600px; /* Mesma largura do info-card */
     }
-
     .qr-code {
-      width: 250px;
-      height: 250px;
+      width: 200px; /* Tamanho do QR */
+      height: 200px;
+      /* O SVG será gerado dinamicamente ou use uma lib */
+      background-color: var(--bg-color); /* Placeholder */
+      border: 1px dashed var(--border-color);
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       color: var(--secondary-text);
+       font-size: 14px;
+    }
+    .qr-code svg { /* Estilo do SVG placeholder */
+       width: 80%;
+       height: 80%;
+       opacity: 0.5;
     }
 
+
+    /* 4. Navegação Inferior */
     .bottom-nav {
       position: fixed;
-      bottom: 24px;
+      bottom: 16px; 
       left: 50%;
       transform: translateX(-50%);
-      background-color: #0000FF;
-      border-radius: 32px;
-      padding: 16px 32px;
+      background-color: var(--nav-bg);
+      border-radius: 28px; 
+      padding: 12px 24px; 
       display: flex;
-      gap: 48px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      gap: 24px; 
+      box-shadow: 0 8px 24px rgba(0, 123, 255, 0.4);
+      z-index: 1000;
     }
-
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 4px;
+      text-decoration: none;
+      color: var(--nav-text);
       cursor: pointer;
-      transition: all 0.3s;
+      opacity: 1; 
+      transition: opacity 0.2s ease;
     }
-
-    .nav-item:hover {
-      transform: translateY(-2px);
+    .nav-item.inactive {
+      opacity: 0.6; 
     }
+     .nav-item:hover:not(.inactive) { 
+        opacity: 0.8; 
+     }
 
-    .nav-icon {
-      font-size: 24px;
+    .nav-icon svg { /* Usa SVGs agora */
+      width: 24px; 
+      height: 24px;
     }
-
     .nav-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #FFFFFF;
+      font-size: 11px; 
+      font-weight: 500; 
     }
 
-    @media (max-width: 768px) {
-      .info-card {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
+     /* Sistema de Alerta (Necessário para JS) */
+    #container-alertas {
+      position: fixed; top: 20px; right: 20px; z-index: 1001; /* Acima da nav */
+      display: flex; flex-direction: column; gap: 10px; max-width: 350px;
+    }
+    .alerta {
+      padding: 15px 20px; color: white; border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: 500;
+      animation: slideIn 0.3s ease-out; word-wrap: break-word; line-height: 1.5;
+    }
+    .alerta-sucesso { background-color: var(--success); }
+    .alerta-erro    { background-color: var(--error); }
+    .alerta-aviso   { background-color: var(--warning); }
+    .alerta-info    { background-color: var(--info); }
+    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+     .alerta strong { display: block; margin-bottom: 4px; }
+
+    /* Media Queries */
+    @media (min-width: 640px) {
+        .header { padding: 16px 24px; }
+        .avatar { width: 48px; height: 48px; }
+        .header-title { font-size: 22px; }
+        .main-content { padding: 32px 24px; gap: 32px; }
+        .info-card { 
+            flex-direction: row; /* Foto ao lado no tablet+ */
+            align-items: flex-start; /* Alinha no topo */
+            text-align: left; /* Texto alinhado à esquerda */
+            padding: 32px;
+        }
+        .info-section { text-align: left; }
+        .status-row { justify-content: flex-start; }
+        .photo { width: 144px; height: 144px; }
+        .student-name { font-size: 20px; }
+        .qr-card { padding: 40px; }
+        .qr-code { width: 220px; height: 220px; }
+        .bottom-nav { gap: 32px; padding: 14px 28px; }
+        .nav-icon svg { width: 26px; height: 26px; }
+        .nav-label { font-size: 12px; }
+    }
+
+    @media (min-width: 1024px) {
+        .header-title { font-size: 24px; }
+        .main-content { 
+            /* Layout lado a lado em desktop */
+            flex-direction: row; 
+            align-items: flex-start; 
+            justify-content: center;
+            gap: 40px;
+        }
+        .info-card, .qr-card {
+            max-width: 500px; /* Largura máxima individual */
+            margin-bottom: 0; /* Remove margem inferior */
+        }
+        .qr-card { padding: 48px; }
+        .qr-code { width: 250px; height: 250px; }
+        .bottom-nav { gap: 48px; padding: 16px 32px; }
     }

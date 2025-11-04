@@ -4,263 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro Estudante - EduPass</title>
-  <style>
-    /* 1. Reset e Variáveis de Estilo (PADRÃO GLOBAL) */
-    :root {
-      --primary-color: #007BFF;
-      --primary-dark: #0069D9;
-      --primary-tint: rgba(0, 123, 255, 0.08); 
-      --primary-tint-border: rgba(0, 123, 255, 0.2);
-      
-      --bg-color: #F3F4F6;       
-      --card-color: #FFFFFF;     
-      
-      --primary-text: #111827;
-      --secondary-text: #6B7280;
-      
-      --border-color: #D1D5DB;
-      --input-bg: #F9FAFB;
-      --list-border: #E5E7EB; 
-      
-      --success: #10b981;
-      --error: #ef4444;
-      --warning: #f59e0b;
-      --info: #3b82f6;
-
-      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-      --card-radius: 24px;
-      --button-radius: 12px;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background-color: var(--bg-color); /* Fundo cinza */
-      color: var(--primary-text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* 2. Header (Padrão) */
-    .header {
-      background-color: var(--card-color);
-      padding: 12px 16px; 
-      display: flex;
-      align-items: center;
-      justify-content: center; 
-      position: relative;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      flex-shrink: 0;
-    }
-    .back-button {
-      position: absolute;
-      left: 12px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 2px solid var(--primary-color);
-      background-color: var(--card-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: var(--primary-color);
-    }
-    .back-button:hover { background-color: var(--bg-color); transform: scale(1.05); }
-    .back-button svg { width: 24px; height: 24px; }
-    .header-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--primary-color);
-      padding-left: 56px; 
-      padding-right: 56px;
-      text-align: center;
-      flex: 1;
-    }
-    
-    /* 3. Conteúdo Específico da Página */
-    .main-content {
-      flex: 1;
-      padding: 24px 16px; 
-      display: flex;
-      justify-content: center;
-      align-items: flex-start; /* Alinha card no topo */
-      overflow-y: auto; 
-    }
-    .form-card { 
-      background-color: var(--card-color);
-      border-radius: var(--card-radius);
-      padding: 24px; 
-      box-shadow: var(--card-shadow);
-      width: 100%;
-      max-width: 600px; /* Largura padrão */
-    }
-    .form-title {
-      font-size: 22px; /* Ajustado */
-      font-weight: 600;
-      color: var(--primary-text);
-      text-align: center;
-      margin-bottom: 32px; /* Mais espaço abaixo */
-    }
-
-    /* Estilos de Formulário Padrão */
-    .form-group {
-      margin-bottom: 20px; /* Espaçamento entre campos */
-    }
-    .form-label {
-      display: block;
-      font-size: 14px; /* Rótulo um pouco menor */
-      font-weight: 600;
-      color: var(--primary-text);
-      margin-bottom: 8px; /* Espaço entre label e input */
-    }
-    .form-input { /* Estilo para inputs de TEXTO */
-      width: 100%;
-      padding: 14px 16px; /* Padding ajustado */
-      font-size: 16px;
-      border: 1px solid var(--border-color); /* Borda padrão */
-      border-radius: var(--button-radius);
-      background: var(--input-bg);
-      color: var(--primary-text);
-      transition: all 0.2s ease;
-    }
-    .form-input:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
-      background: var(--card-color);
-    }
-    .form-input::placeholder {
-      color: var(--secondary-text);
-      font-size: 15px; /* Placeholder um pouco menor */
-    }
-
-    /* Estilo para Inputs de ARQUIVO */
-    .file-input {
-      display: none; /* Esconde o input real */
-    }
-    .file-label {
-      display: flex; /* Alinha ícone e texto */
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      padding: 14px 16px; 
-      font-size: 15px; /* Mesmo tamanho do placeholder */
-      border: 1px dashed var(--border-color); /* Borda tracejada */
-      border-radius: var(--button-radius);
-      text-align: left; /* Alinha texto à esquerda */
-      color: var(--secondary-text); /* Cor de placeholder */
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background-color: var(--input-bg);
-    }
-    .file-label:hover {
-      border-color: var(--primary-color);
-      background-color: var(--primary-tint);
-      color: var(--primary-color);
-    }
-    .file-label svg { /* Ícone dentro do label */
-       width: 20px;
-       height: 20px;
-       flex-shrink: 0;
-       color: currentColor; /* Usa a cor do texto do label */
-    }
-    .file-name { /* Span para mostrar nome do arquivo */
-        margin-left: auto; /* Empurra para a direita */
-        font-size: 13px;
-        font-style: italic;
-        color: var(--primary-text);
-        max-width: 50%; /* Evita que o nome seja muito longo */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    /* Estilo quando arquivo é selecionado */
-    .file-label.selected {
-        border-style: solid; /* Borda sólida */
-        border-color: var(--success); /* Borda verde */
-        background-color: rgba(16, 185, 129, 0.05); /* Fundo verde claro */
-        color: var(--success); /* Texto verde */
-    }
-    .file-label.selected .file-label-text {
-        color: var(--primary-text); /* Texto original volta a ser escuro */
-    }
-
-
-    /* Botão Primário (Padrão) */
-    .btn-primary {
-      width: 100%;
-      background-color: var(--primary-color);
-      color: var(--card-color);
-      border: none;
-      border-radius: var(--button-radius);
-      padding: 16px; 
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 16px; /* Espaço acima do botão */
-    }
-    .btn-primary:hover:not(:disabled) { 
-      background-color: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
-    }
-    .btn-primary:active:not(:disabled) {
-      transform: translateY(0);
-    }
-    .btn-primary:disabled { /* Estilo desabilitado (se necessário) */
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-
-    /* Estilo de Erro (para JS) */
-     .form-input.erro, .file-label.erro {
-      border-color: var(--error) !important;
-      border-style: solid !important; /* Garante borda sólida no erro */
-      animation: shake 0.3s;
-    }
-     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-
-    /* Sistema de Alerta (Necessário para JS) */
-    #container-alertas {
-      position: fixed; top: 20px; right: 20px; z-index: 1000;
-      display: flex; flex-direction: column; gap: 10px; max-width: 350px;
-    }
-    .alerta {
-      padding: 15px 20px; color: white; border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: 500;
-      animation: slideIn 0.3s ease-out; word-wrap: break-word; line-height: 1.5;
-    }
-    .alerta-sucesso { background-color: var(--success); }
-    .alerta-erro    { background-color: var(--error); }
-    .alerta-aviso   { background-color: var(--warning); }
-    .alerta-info    { background-color: var(--info); }
-    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
-     .alerta strong { display: block; margin-bottom: 4px; }
-
-    /* Media Queries */
-    @media (min-width: 640px) {
-      .header { padding: 16px 24px; }
-      .back-button { left: 24px; width: 48px; height: 48px; }
-      .header-title { font-size: 24px; padding-left: 72px; padding-right: 72px;}
-      .main-content { padding: 32px 24px; }
-      .form-card { padding: 32px; border-radius: 32px; }
-      .form-title { font-size: 28px; }
-    }
-     @media (min-width: 1024px) {
-       .header-title { font-size: 28px; }
-       .form-card { padding: 48px; }
-     }
-  </style>
+  <link rel="stylesheet" href="/assets/css/cadastroEstu.css">
 </head>
 <body>
   <div class="header">
@@ -276,241 +20,77 @@
     <div class="form-card">
       <h2 class="form-title">Informações e Documentos</h2>
       <form id="cadastroForm">
-        
+
         <div class="form-group">
-          <label for="docEstudante" class="form-label">RG / CPF do Estudante</label>
-          <input type="text" id="docEstudante" class="form-input" placeholder="Digite o documento" required>
+          <label for="nome" class="form-label">Nome</label>
+          <input type="text" id="nome" class="form-input" placeholder="Digite o seu nome" required>
         </div>
-        
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" class="form-input" placeholder="Digite o email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="senha" class="form-label">Senha</label>
+          <input type="password" id="senha" class="form-input" placeholder="Digite a senha" required>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmarSenha" class="form-label">Confirmação de Senha</label>
+          <input type="password" id="confirmarSenha" class="form-input" placeholder="Digite a senha novamente" required>
+        </div>
+
+        <!-- Documentos -->
         <div class="form-group">
            <label for="residencia" class="form-label">Comprovante de Residência</label>
            <input type="file" id="residencia" class="file-input" accept=".pdf,.jpg,.png" required>
            <label for="residencia" class="file-label">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
               <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
-              <span class="file-name"></span> </label>
+              <span class="file-name"></span>
+           </label>
         </div>
-        
+
         <div class="form-group">
            <label for="titulo" class="form-label">Título de Eleitor</label>
            <input type="file" id="titulo" class="file-input" accept=".pdf,.jpg,.png" required>
            <label for="titulo" class="file-label">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-              <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
-              <span class="file-name"></span>
+             <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+             <span class="file-name"></span>
            </label>
         </div>
-        
+
         <div class="form-group">
            <label for="matricula" class="form-label">Comprovante de Matrícula</label>
            <input type="file" id="matricula" class="file-input" accept=".pdf,.jpg,.png" required>
            <label for="matricula" class="file-label">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
               <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
               <span class="file-name"></span>
            </label>
         </div>
-        
+
         <div class="form-group">
            <label for="foto" class="form-label">Foto 3x4</label>
            <input type="file" id="foto" class="file-input" accept=".jpg,.png" required>
            <label for="foto" class="file-label">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
               <span class="file-label-text">Anexar arquivo (.jpg, .png)</span>
               <span class="file-name"></span>
            </label>
         </div>
-        
-        <div class="form-group">
-           <label for="docResponsavel" class="form-label">RG / CPF do Responsável</label>
-           <input type="text" id="docResponsavel" class="form-input" placeholder="Digite o documento" required>
-        </div>
-        
+
         <div class="form-group">
            <label for="vacina" class="form-label">Cartão de Vacina</label>
            <input type="file" id="vacina" class="file-input" accept=".pdf,.jpg,.png" required>
            <label for="vacina" class="file-label">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-              <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
-              <span class="file-name"></span>
+             <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+             <span class="file-name"></span>
            </label>
         </div>
-        
         <button type="submit" class="btn-primary">Concluído</button>
       </form>
     </div>
   </div>
 
-  <script>
-    // ===== FUNÇÃO DE ALERTA GLOBAL (UNIFICADA) =====
-    function mostrarAlerta(mensagem, tipo = 'info') {
-      let containerAlertas = document.getElementById('container-alertas');
-      if (!containerAlertas) {
-        containerAlertas = document.createElement('div');
-        containerAlertas.id = 'container-alertas';
-        document.body.appendChild(containerAlertas);
-      }
-      let tipoClasse = 'alerta-info';
-      switch(tipo) {
-        case 'sucesso': tipoClasse = 'alerta-sucesso'; break;
-        case 'erro': tipoClasse = 'alerta-erro'; break;
-        case 'aviso': tipoClasse = 'alerta-aviso'; break;
-      }
-      const alerta = document.createElement('div');
-      alerta.className = `alerta ${tipoClasse}`;
-      alerta.innerHTML = mensagem;
-      containerAlertas.appendChild(alerta);
-      setTimeout(() => {
-        alerta.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => {
-          alerta.remove();
-          if (containerAlertas.children.length === 0) {
-            containerAlertas.remove();
-          }
-        }, 300);
-      }, 4000); 
-    }
-  
-    // ===== LÓGICA DA PÁGINA DE CADASTRO =====
-    document.addEventListener("DOMContentLoaded", () => {
-      const cadastroForm = document.getElementById("cadastroForm");
-      const backButton = document.getElementById("backButton");
-
-      // Botão Voltar
-      if (backButton) {
-          backButton.addEventListener("click", () => {
-              window.history.back();
-          });
-      }
-
-      // Validação
-      function validarCamposObrigatorios() {
-        // Seleciona todos os inputs com 'required' DENTRO do formulário
-        const inputs = cadastroForm.querySelectorAll('input[required]'); 
-        let erros = [];
-
-        inputs.forEach(input => {
-          // Remove erro anterior
-          input.classList.remove('erro'); 
-          const label = cadastroForm.querySelector(`label[for="${input.id}"]`);
-           if (label && label.classList.contains('file-label')) {
-              label.classList.remove('erro');
-           }
-
-          if (input.type === 'file') {
-            if (!input.files || input.files.length === 0) {
-              if (label) { 
-                // Associa o erro ao LABEL do input file
-                erros.push({ elemento: label, mensagem: `Arquivo "${label.querySelector('.file-label-text').textContent}" é obrigatório!` });
-              }
-            }
-          } else { // Inputs de texto
-            if (!input.value.trim()) {
-              const correspondingLabel = cadastroForm.querySelector(`label[for="${input.id}"]`);
-              const fieldName = correspondingLabel ? correspondingLabel.textContent : (input.placeholder || 'Campo');
-              // Associa o erro ao INPUT de texto
-              erros.push({ elemento: input, mensagem: `${fieldName} é obrigatório!` });
-            }
-          }
-        });
-        return erros;
-      }
-
-      // Submit do Formulário
-      if (cadastroForm) {
-          cadastroForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            console.log("[v1] Validando cadastro...");
-
-            const erros = validarCamposObrigatorios();
-
-            if (erros.length > 0) {
-              console.log("[v1] Erros encontrados:", erros.length);
-              erros.forEach((erro, index) => {
-                erro.elemento.classList.add('erro'); // Adiciona erro ao elemento (input ou label)
-                // Mostra alerta com um pequeno delay entre eles
-                setTimeout(() => {
-                  mostrarAlerta(erro.mensagem, 'erro');
-                }, index * 100); // Delay menor para alertas
-              });
-              // Foca no primeiro campo com erro
-              if (erros[0] && erros[0].elemento) {
-                  // Se for um label de arquivo, foca no input escondido associado
-                  if(erros[0].elemento.tagName === 'LABEL' && erros[0].elemento.htmlFor) {
-                      document.getElementById(erros[0].elemento.htmlFor)?.focus();
-                  } else {
-                      erros[0].elemento.focus();
-                  }
-              }
-              return; // Interrompe o envio
-            }
-
-            // Se passou nas validações:
-            console.log("[v1] Cadastro concluído (simulação)");
-            mostrarAlerta("Cadastro realizado com sucesso!", 'sucesso');
-            
-            // Simula envio e redireciona (ajuste o destino se necessário)
-            // Aqui você adicionaria a lógica real de envio (FormData, fetch, etc.)
-            
-            // Limpa o formulário após sucesso (opcional)
-            // cadastroForm.reset(); 
-            // document.querySelectorAll('.file-label').forEach(label => {
-            //     label.classList.remove('selected');
-            //     label.querySelector('.file-label-text').textContent = 'Anexar arquivo (...)';
-            //     label.querySelector('.file-name').textContent = '';
-            // });
-
-            setTimeout(() => {
-              // Redirecionar para onde for apropriado após cadastro
-              // window.location.href = "./dashboard.html"; // Exemplo
-              window.history.back(); // Volta para a tela anterior como exemplo
-            }, 2000); 
-          });
-      }
-
-      // Atualizar texto dos labels de arquivo
-      document.querySelectorAll(".file-input").forEach((input) => {
-        input.addEventListener("change", function () {
-          const label = cadastroForm.querySelector(`label[for="${this.id}"]`);
-          const fileNameSpan = label ? label.querySelector('.file-name') : null;
-          const labelTextSpan = label ? label.querySelector('.file-label-text') : null;
-
-          if (label && fileNameSpan && labelTextSpan) {
-              if (this.files.length > 0) {
-                  fileNameSpan.textContent = this.files[0].name; // Mostra nome do arquivo
-                  label.classList.add('selected'); // Adiciona classe 'selected'
-                  label.classList.remove('erro'); // Remove erro ao selecionar
-                  labelTextSpan.textContent = 'Arquivo selecionado:'; // Muda texto principal
-              } else {
-                  // Caso o usuário cancele a seleção
-                  fileNameSpan.textContent = '';
-                  label.classList.remove('selected');
-                   labelTextSpan.textContent = label.dataset.defaultText || 'Anexar arquivo (...)'; // Volta ao texto original
-              }
-          }
-        });
-        // Guarda o texto original do label para restaurar depois
-         const label = cadastroForm.querySelector(`label[for="${input.id}"]`);
-         const labelTextSpan = label ? label.querySelector('.file-label-text') : null;
-         if(labelTextSpan) {
-             label.dataset.defaultText = labelTextSpan.textContent;
-         }
-      });
-
-      // Remover erro ao começar a digitar/mudar
-      cadastroForm.querySelectorAll('.form-input').forEach(input => {
-        input.addEventListener('input', function () {
-          this.classList.remove('erro');
-        });
-      });
-      cadastroForm.querySelectorAll('.file-input').forEach(input => {
-        input.addEventListener('change', function () {
-           const label = cadastroForm.querySelector(`label[for="${this.id}"]`);
-           if(label) label.classList.remove('erro');
-        });
-      });
-
-    });
-  </script>
+  <script type="module" src="/assets/js/cadastroEstu.js"></script>
 </body>
 </html>
