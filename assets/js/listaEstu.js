@@ -1,55 +1,41 @@
-// Exemplo de estudantes no localStorage
-// localStorage.setItem('estudantes', JSON.stringify([
-//   { id: '2280473926', nome: 'Ludmila Vitória Santos Ribeiro Carvalho', curso: 'DESENVOLVIMENTO DE SISTEMAS', turno: 'NOTURNO', ativo: true },
-//   { id: '2547856635', nome: 'Evelyn da Cruz Estrela', curso: 'DESENVOLVIMENTO DE SISTEMAS', turno: 'NOTURNO', ativo: true }
-// ]));
+  function loadStudents() {
+      const container = document.getElementById('studentsContainer');
+      const students = JSON.parse(localStorage.getItem('students')) || [];
 
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('studentsContainer');
+      // ATUALIZAÇÃO: Aplicando a Variação de "Empty State"
+      if (students.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            <h3 class="empty-title">Nenhum estudante cadastrado</h3>
+            <p class="empty-description">Quando novos estudantes forem adicionados, eles aparecerão aqui.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // O restante do seu script original é mantido
+      container.innerHTML = students.map(student => `
+        <div class="student-card">
+          ${student.photo ?
+            `<div class="student-avatar" style="background-image: url('${student.photo}')" aria-label="Foto de ${student.name}"></div>` :
+            `<div class="student-avatar default">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+               </svg>
+             </div>`
+          }
+          <div class="student-info">
+            <div class="student-name">${student.name || 'Nome não informado'}</div>
+            <div class="student-detail"><strong>Curso:</strong> ${student.course || 'Não informado'}</div>
+            <div class="student-detail"><strong>Turno:</strong> ${student.shift || 'Não informado'}</div>
+            <div class="student-detail"><strong>CPF:</strong> ${student.cpf || 'Não informado'}</div>
+            <div class="student-detail"><strong>Email:</strong> ${student.email || 'Não informado'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
 
-  const estudantes = JSON.parse(localStorage.getItem('estudantes')) || [];
-
-  if (estudantes.length === 0) {
-    container.innerHTML = '<p class="text-white text-center">Nenhum estudante cadastrado.</p>';
-    return;
-  }
-
-  estudantes.forEach(est => {
-  const card = document.createElement('div');
-  card.className = 'bg-white rounded-3xl p-8 shadow-lg';
-
-  // Se houver foto, usar como background; senão, usar ícone
-  const fotoHtml = est.foto
-    ? `<div class="w-32 h-32 rounded-full flex items-center justify-center bg-cover bg-center" style="background-image: url('${est.foto}');"></div>`
-    : `<div class="w-32 h-32 custom-blue rounded-full flex items-center justify-center">
-        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-        </svg>
-      </div>`;
-
-  card.innerHTML = `
-    <div class="flex justify-center mb-6">
-      ${fotoHtml}
-    </div>
-
-    <h2 class="text-xl font-bold text-center mb-8">${est.nome}</h2>
-
-    <div class="space-y-4">
-      <div class="flex items-center gap-4">
-        <span class="font-bold">CURSO:</span> ${est.curso}
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="font-bold">TURNO:</span> ${est.turno}
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="font-bold">CPF:</span> ${est.documento || '---'}
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="font-bold">EMAIL:</span> ${est.email || '---'}
-      </div>
-    </div>
-  `;
-
-  container.appendChild(card);
-});
-});
+    document.addEventListener('DOMContentLoaded', loadStudents);

@@ -4,87 +4,87 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rotas - EduPass</title>
-  <link rel="stylesheet" href="assets/css/rotas.css">
+  <link rel="stylesheet" href="/assets/css/rotas.css">
 </head>
 <body>
-   
+    
   <div class="header">
     <button class="back-button" id="backButton">
-      <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M19 12H5M12 19l-7-7 7-7"/>
       </svg>
     </button>
     <h1 class="header-title">Rotas</h1>
   </div>
 
-
   <div class="main-content">
     <div class="card-container">
-      <div class="card">
+      <div class="routes-card" id="routesCard"> 
+        
         <div class="section">
-          <h2 class="section-title">Ida:</h2>
+          <h2 class="section-title">Ida</h2>
           <div class="route-list">
-            <div class="route-item" onclick="selectRoute('UEFS', 'ida')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="UEFS" data-direction="ida">
               <span class="route-name">UEFS</span>
+              <div class="route-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
             </div>
-            <div class="route-item" onclick="selectRoute('PASSARELA', 'ida')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="PASSARELA" data-direction="ida">
               <span class="route-name">PASSARELA</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('SENAI', 'ida')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="SENAI" data-direction="ida">
               <span class="route-name">SENAI</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('FAN', 'ida')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-              <span class="route-name">FAN</span>
+            <div class="route-item" data-route="FAN" data-direction="ida">
+              <span class="route-name">UNIFAN</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
           </div>
         </div>
 
-        
         <div class="section">
-          <h2 class="section-title">Volta:</h2>
+          <h2 class="section-title">Volta</h2>
           <div class="route-list">
-            <div class="route-item" onclick="selectRoute('FAN', 'volta')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-              <span class="route-name">FAN</span>
+            <div class="route-item" data-route="FAN" data-direction="volta">
+              <span class="route-name">UNIFAN</span>
+              <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('SENAI', 'volta')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="SENAI" data-direction="volta">
               <span class="route-name">SENAI</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('PASSARELA', 'volta')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="PASSARELA" data-direction="volta">
               <span class="route-name">PASSARELA</span>
+               <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
-            <div class="route-item" onclick="selectRoute('UEFS', 'volta')">
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="#0000FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
+            <div class="route-item" data-route="UEFS" data-direction="volta">
               <span class="route-name">UEFS</span>
+              <div class="route-icon">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+               </div>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   </div>
 
-  <script src="assets/js/rotas.js"></script>
+  <script src="/assets/js/rotas.js"></script>
 </body>
 </html>

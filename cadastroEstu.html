@@ -3,60 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro - EduPass</title>
-  <link rel="stylesheet" href="assets/css/cadastroEstu.css">
+  <title>Cadastro Estudante - EduPass</title>
+  <link rel="stylesheet" href="/assets/css/cadastroEstu.css">
 </head>
 <body>
   <div class="header">
     <button class="back-button" id="backButton">
-      <div class="back-arrow"></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
     </button>
-    <h1 class="header-title">Cadastro</h1>
+    <h1 class="header-title">Cadastro de Estudante</h1>
   </div>
 
   <div class="main-content">
     <div class="form-card">
-      <h2 class="form-title">Estudante</h2>
+      <h2 class="form-title">Informações e Documentos</h2>
       <form id="cadastroForm">
+
         <div class="form-group">
-          <input type="text" class="input" placeholder="RG / CPF DO ESTUDANTE" required>
+          <label for="nome" class="form-label">Nome</label>
+          <input type="text" id="nome" class="form-input" placeholder="Digite o seu nome" required>
         </div>
-        
+
         <div class="form-group">
-          <input type="file" id="residencia" class="file-input" accept=".pdf,.jpg,.png">
-          <label for="residencia" class="file-label">COMPROVANTE DE RESIDÊNCIA</label>
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" class="form-input" placeholder="Digite o email" required>
         </div>
-        
+
         <div class="form-group">
-          <input type="file" id="titulo" class="file-input" accept=".pdf,.jpg,.png">
-          <label for="titulo" class="file-label">TÍTULO DE ELEITOR</label>
+          <label for="senha" class="form-label">Senha</label>
+          <input type="password" id="senha" class="form-input" placeholder="Digite a senha" required>
         </div>
-        
+
         <div class="form-group">
-          <input type="file" id="matricula" class="file-input" accept=".pdf,.jpg,.png">
-          <label for="matricula" class="file-label">COMPROVANTE DE MATRÍCULA</label>
+          <label for="confirmarSenha" class="form-label">Confirmação de Senha</label>
+          <input type="password" id="confirmarSenha" class="form-input" placeholder="Digite a senha novamente" required>
         </div>
-        
+
+        <!-- Documentos -->
         <div class="form-group">
-          <input type="file" id="foto" class="file-input" accept=".jpg,.png">
-          <label for="foto" class="file-label">FOTO 3X4</label>
+           <label for="residencia" class="form-label">Comprovante de Residência</label>
+           <input type="file" id="residencia" class="file-input" accept=".pdf,.jpg,.png" required>
+           <label for="residencia" class="file-label">
+              <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+              <span class="file-name"></span>
+           </label>
         </div>
-        
+
         <div class="form-group">
-          <input type="text" class="input" placeholder="RG / CPF DO RESPONSÁVEL" required>
+           <label for="titulo" class="form-label">Título de Eleitor</label>
+           <input type="file" id="titulo" class="file-input" accept=".pdf,.jpg,.png" required>
+           <label for="titulo" class="file-label">
+             <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+             <span class="file-name"></span>
+           </label>
         </div>
-        
+
         <div class="form-group">
-          <input type="file" id="vacina" class="file-input" accept=".pdf,.jpg,.png">
-          <label for="vacina" class="file-label">CARTÃO DE VACINA</label>
+           <label for="matricula" class="form-label">Comprovante de Matrícula</label>
+           <input type="file" id="matricula" class="file-input" accept=".pdf,.jpg,.png" required>
+           <label for="matricula" class="file-label">
+              <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+              <span class="file-name"></span>
+           </label>
         </div>
-        
-        <button type="submit" class="button">Concluído</button>
+
+        <div class="form-group">
+           <label for="foto" class="form-label">Foto 3x4</label>
+           <input type="file" id="foto" class="file-input" accept=".jpg,.png" required>
+           <label for="foto" class="file-label">
+              <span class="file-label-text">Anexar arquivo (.jpg, .png)</span>
+              <span class="file-name"></span>
+           </label>
+        </div>
+
+        <div class="form-group">
+           <label for="vacina" class="form-label">Cartão de Vacina</label>
+           <input type="file" id="vacina" class="file-input" accept=".pdf,.jpg,.png" required>
+           <label for="vacina" class="file-label">
+             <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+             <span class="file-name"></span>
+           </label>
+        </div>
+        <button type="submit" class="btn-primary">Concluído</button>
       </form>
     </div>
   </div>
 
-  <!-- Arquivo JS externo -->
-  <script src="assets/js/cadastroEstu.js"></script>
+  <script type="module" src="/assets/js/cadastroEstu.js"></script>
 </body>
 </html>

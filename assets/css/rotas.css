@@ -1,150 +1,210 @@
-* {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+:root {
+      --primary-color: #007BFF;
+      --primary-dark: #0069D9;
+      --primary-tint: rgba(0, 123, 255, 0.08); 
+      --primary-tint-border: rgba(0, 123, 255, 0.2);
+      
+      --bg-color: #F3F4F6;
+      --card-color: #FFFFFF;
+      
+      --primary-text: #111827;
+      --secondary-text: #6B7280;
+      
+      --border-color: #D1D5DB;
+      --input-bg: #F9FAFB;
+      --list-border: #E5E7EB; 
+      
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --card-radius: 24px;
+      --button-radius: 12px;
+      --item-radius: 16px; 
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background-color: #0000FF;
+      background-color: var(--bg-color);
+      color: var(--primary-text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
+    /* 2. Header (Padrão) */
     .header {
-      background-color: #FFFFFF;
-      border-bottom: 1px solid #E5E7EB;
-      padding: 16px 24px;
+      background-color: var(--card-color);
+      padding: 12px 16px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center; 
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
     }
-
     .back-button {
-      width: 56px;
-      height: 56px;
+      position: absolute;
+      left: 12px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      border: 4px solid #0000FF;
-      background-color: #FFFFFF;
+      border: 2px solid var(--primary-color);
+      background-color: var(--card-color);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      color: var(--primary-color);
     }
-
-    .back-button:hover {
-      background-color: #F3F4F6;
-      transform: scale(1.05);
-    }
-
-    .back-button:active {
-      transform: scale(0.95);
-    }
-
+    .back-button:hover { background-color: var(--bg-color); transform: scale(1.05); }
+    .back-button svg { width: 24px; height: 24px; }
     .header-title {
-      font-size: 28px;
-      font-weight: bold;
-      color: #0000FF;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary-color);
+      padding-left: 56px; 
+      padding-right: 56px;
+      text-align: center;
+      flex: 1;
     }
-
+    
+    /* 3. Conteúdo Específico da Página */
     .main-content {
       flex: 1;
-      padding: 32px 24px;
+      padding: 24px 16px;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start; 
+      overflow-y: auto; 
     }
-
-    .card-container {
+    .card-container { 
       width: 100%;
-      max-width: 600px;
+      max-width: 600px; 
     }
-
-    .card {
-      background-color: rgba(255, 255, 255, 0.95);
-      border-radius: 48px;
-      padding: 48px 40px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    .routes-card { 
+      background-color: var(--card-color);
+      border-radius: var(--card-radius);
+      padding: 24px; 
+      box-shadow: var(--card-shadow);
     }
 
     .section {
-      margin-bottom: 48px;
+      margin-bottom: 32px; 
     }
-
     .section:last-child {
       margin-bottom: 0;
     }
-
+    /* Título da Seção Melhorado */
     .section-title {
-      font-size: 32px;
-      font-weight: bold;
-      color: #111827;
-      margin-bottom: 24px;
-      text-align: center;
+      font-size: 14px; /* Menor */
+      font-weight: 600;
+      color: var(--secondary-text); /* Cinza */
+      margin-bottom: 12px; /* Menos espaço */
+      text-transform: uppercase; /* Caixa alta */
+      letter-spacing: 0.05em; /* Leve espaçamento */
+      padding-left: 4px; /* Alinhamento sutil */
     }
 
+    /* Lista de Rotas Melhorada */
     .route-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px; 
     }
-
     .route-item {
       display: flex;
       align-items: center;
-      gap: 16px;
-      background-color: #FFFFFF;
-      border: 3px solid #0000FF;
-      border-radius: 32px;
-      padding: 20px 32px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #111827;
+      gap: 12px; /* Reduzido */
+      background-color: var(--card-color); 
+      border: 1px solid var(--list-border); 
+      border-radius: var(--item-radius); 
+      padding: 14px 16px; /* Ajustado */
+      font-size: 16px;
+      font-weight: 500; 
+      color: var(--primary-text);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s ease-out; /* Mais rápido */
     }
-
+    /* Hover State Melhorado */
     .route-item:hover {
-      background-color: #F3F4F6;
-      transform: translateX(4px);
+      background-color: var(--primary-tint); 
+      border-color: var(--primary-tint-border);
+      /* Leve sombra azul */
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1); 
+      transform: none; /* Remove scale no hover, deixa para o active */
     }
-
+    /* Active State (Clique) */
     .route-item:active {
-      transform: scale(0.98);
+      transform: scale(0.98); /* Efeito de pressionar */
+      background-color: rgba(0, 123, 255, 0.15); /* Um pouco mais escuro */
     }
-
-    .arrow-icon {
-      width: 24px;
-      height: 24px;
+    /* Ícone Melhorado (Chevron) */
+    .route-icon svg { 
+      width: 20px; /* Menor */
+      height: 20px;
+      color: var(--secondary-text); /* Cinza por padrão */
       flex-shrink: 0;
+      transition: color 0.15s ease-out;
     }
-
+    .route-item:hover .route-icon svg {
+        color: var(--primary-color); /* Azul no hover */
+    }
+    
     .route-name {
       flex: 1;
-      text-align: center;
+      text-align: left; 
+    }
+    
+    /* Classe para feedback visual ao clicar */
+    .route-item.selected-flash {
+        animation: selectFlash 0.4s ease-out;
+    }
+    @keyframes selectFlash {
+        0% { background-color: var(--card-color); }
+        50% { background-color: var(--primary-tint); border-color: var(--primary-tint-border); }
+        100% { background-color: var(--card-color); }
     }
 
-    @media (max-width: 640px) {
-      .header-title {
-        font-size: 24px;
-      }
 
-      .card {
-        padding: 32px 24px;
-        border-radius: 32px;
-      }
-
-      .section-title {
-        font-size: 28px;
-      }
-
-      .route-item {
-        padding: 16px 24px;
-        font-size: 16px;
-      }
+    /* Sistema de Alerta (Necessário para JS) */
+    #container-alertas {
+      position: fixed; top: 20px; right: 20px; z-index: 1000;
+      display: flex; flex-direction: column; gap: 10px; max-width: 350px;
     }
+    .alerta {
+      padding: 15px 20px; color: white; border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: 500;
+      animation: slideIn 0.3s ease-out; word-wrap: break-word; line-height: 1.5;
+    }
+    .alerta-sucesso { background-color: var(--success); }
+    .alerta-erro    { background-color: var(--error); }
+    .alerta-aviso   { background-color: var(--warning); }
+    .alerta-info    { background-color: var(--info); }
+    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+     .alerta strong {
+      display: block; 
+      margin-bottom: 4px; 
+    }
+
+    /* Media Queries */
+    @media (min-width: 640px) {
+      .header { padding: 16px 24px; }
+      .back-button { left: 24px; width: 48px; height: 48px; }
+      .header-title { font-size: 24px; padding-left: 72px; padding-right: 72px;}
+      .main-content { padding: 32px 24px; }
+      .routes-card { padding: 32px; border-radius: 32px; }
+      .section-title { font-size: 15px; margin-bottom: 16px; }
+      .route-item { padding: 18px 24px; font-size: 17px; }
+    }
+     @media (min-width: 1024px) {
+       .header-title { font-size: 28px; }
+       .routes-card { padding: 40px; }
+       .section-title { font-size: 16px; }
+     }
