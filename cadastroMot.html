@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Motorista - EduPass</title>
+    <style>
+        :root { 
+         --primary-color: #007BFF; 
+         --primary-dark: #0069D9; 
+         --primary-tint: rgba(0, 123, 255, 0.08); 
+         --primary-tint-border: rgba(0, 123, 255, 0.2); 
+         
+         --bg-color: #F3F4F6; 
+         --card-color: #FFFFFF; 
+         
+         --primary-text: #111827; 
+         --secondary-text: #6B7280; 
+         
+         --border-color: #D1D5DB; 
+         --input-bg: #F9FAFB; 
+         --list-border: #E5E7EB; 
+         
+         --success: #10b981; 
+         --error: #ef4444; 
+         --warning: #f59e0b; 
+         --info: #3b82f6; 
+         
+         --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); 
+         --card-radius: 24px; 
+         --button-radius: 12px; 
+        } 
+         
+        * { margin: 0; padding: 0; box-sizing: border-box; } 
+         
+        body { 
+         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+         background-color: var(--bg-color); 
+         color: var(--primary-text); 
+         min-height: 100vh; 
+         display: flex; 
+         flex-direction: column; 
+        } 
+         
+        /* Header */
+        .header { 
+         background-color: var(--card-color); 
+         padding: 12px 16px; 
+         display: flex; 
+         align-items: center; 
+         justify-content: center; 
+         position: relative; 
+         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); 
+         flex-shrink: 0; 
+        } 
+        
+        .back-button { 
+         position: absolute; 
+         left: 12px; 
+         width: 44px; 
+         height: 44px; 
+         border-radius: 50%; 
+         border: 2px solid var(--primary-color); 
+         background-color: var(--card-color); 
+         display: flex; 
+         align-items: center; 
+         justify-content: center; 
+         cursor: pointer; 
+         transition: all 0.2s ease; 
+         color: var(--primary-color); 
+        } 
+        
+        .back-button:hover { background-color: var(--bg-color); transform: scale(1.05); } 
+        .back-button svg { width: 24px; height: 24px; } 
+        
+        .header-title { 
+         font-size: 20px; 
+         font-weight: 700; 
+         color: var(--primary-color); 
+         padding-left: 56px; 
+         padding-right: 56px; 
+         text-align: center; 
+         flex: 1; 
+        } 
+         
+        /* Main Content */
+        .main-content { 
+         flex: 1; 
+         padding: 24px 16px; 
+         display: flex; 
+         justify-content: center; 
+         align-items: flex-start; 
+         overflow-y: auto; 
+        } 
+        
+        .form-card { 
+         background-color: var(--card-color); 
+         border-radius: var(--card-radius); 
+         padding: 24px; 
+         box-shadow: var(--card-shadow); 
+         width: 100%; 
+         max-width: 600px; 
+        } 
+        
+        .form-title { 
+         font-size: 22px; 
+         font-weight: 600; 
+         color: var(--primary-text); 
+         text-align: center; 
+         margin-bottom: 32px; 
+        } 
+         
+        /* Form Styles */
+        .form-group { 
+         margin-bottom: 20px; 
+        } 
+        
+        .form-label { 
+         display: block; 
+         font-size: 14px; 
+         font-weight: 600; 
+         color: var(--primary-text); 
+         margin-bottom: 8px; 
+        } 
+        
+        .form-input { 
+         width: 100%; 
+         padding: 14px 16px; 
+         font-size: 16px; 
+         border: 1px solid var(--border-color); 
+         border-radius: var(--button-radius); 
+         background: var(--input-bg); 
+         color: var(--primary-text); 
+         transition: all 0.2s ease; 
+        } 
+        
+        .form-input:focus { 
+         outline: none; 
+         border-color: var(--primary-color); 
+         box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); 
+         background: var(--card-color); 
+        } 
+        
+        .form-input::placeholder { 
+         color: var(--secondary-text); 
+         font-size: 15px; 
+        } 
+         
+        /* File Input Styles */
+        .file-input { 
+         display: none; 
+        } 
+        
+        .file-label { 
+         display: flex; 
+         align-items: center; 
+         gap: 10px; 
+         width: 100%; 
+         padding: 14px 16px; 
+         font-size: 15px; 
+         border: 1px dashed var(--border-color); 
+         border-radius: var(--button-radius); 
+         text-align: left; 
+         color: var(--secondary-text); 
+         cursor: pointer; 
+         transition: all 0.2s ease; 
+         background-color: var(--input-bg); 
+        } 
+        
+        .file-label:hover { 
+         border-color: var(--primary-color); 
+         background-color: var(--primary-tint); 
+         color: var(--primary-color); 
+        } 
+        
+        .file-label svg { 
+         width: 20px; 
+         height: 20px; 
+         flex-shrink: 0; 
+         color: currentColor; 
+        } 
+        
+        .file-name { 
+         margin-left: auto; 
+         font-size: 13px; 
+         font-style: italic; 
+         color: var(--primary-text); 
+         max-width: 50%; 
+         overflow: hidden; 
+         text-overflow: ellipsis; 
+         white-space: nowrap; 
+        } 
+        
+        .file-label.selected { 
+         border-style: solid; 
+         border-color: var(--success); 
+         background-color: rgba(16, 185, 129, 0.05); 
+         color: var(--success); 
+        } 
+        
+        .file-label.selected .file-label-text { 
+         color: var(--primary-text); 
+        } 
+         
+        /* Buttons */
+        .btn-primary { 
+         width: 100%; 
+         background-color: var(--primary-color); 
+         color: var(--card-color); 
+         border: none; 
+         padding: 16px 24px; 
+         font-size: 16px; 
+         font-weight: 600; 
+         border-radius: var(--button-radius); 
+         cursor: pointer; 
+         transition: all 0.2s ease; 
+         margin-top: 20px; 
+        } 
+         
+        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3); } 
+         
+        .btn-primary:active { transform: translateY(0); } 
+         
+        /* Alert Styles */
+        .alert { 
+         padding: 16px; 
+         border-radius: var(--button-radius); 
+         margin-bottom: 16px; 
+         font-size: 14px; 
+         display: none; 
+         animation: slideIn 0.3s ease; 
+        } 
+         
+        @keyframes slideIn { 
+         from { opacity: 0; transform: translateY(-10px); } 
+         to { opacity: 1; transform: translateY(0); } 
+        } 
+         
+        .alert.success { 
+         background-color: rgba(16, 185, 129, 0.1); 
+         color: var(--success); 
+         border: 1px solid rgba(16, 185, 129, 0.3); 
+         display: block; 
+        } 
+         
+        .alert.error { 
+         background-color: rgba(239, 68, 68, 0.1); 
+         color: var(--error); 
+         border: 1px solid rgba(239, 68, 68, 0.3); 
+         display: block; 
+        } 
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <button class="back-button" onclick="history.back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </button>
+        <h1 class="header-title">Cadastro Motorista</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="form-card">
+            <h2 class="form-title">Informações e Documentos</h2>
+            
+            <div id="alertContainer"></div>
+
+            <form id="motoristForm">
+                <!-- Informações Pessoais -->
+                <div class="form-group">
+                    <label class="form-label" for="name">Nome</label>
+                    <input type="text" id="name" class="form-input" placeholder="Digite seu nome completo" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" class="form-input" placeholder="seu.email@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Senha</label>
+                    <input type="password" id="password" class="form-input" placeholder="Digite uma senha segura" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">Confirmação de Senha</label>
+                    <input type="password" id="confirmPassword" class="form-input" placeholder="Confirme sua senha" required>
+                </div>
+
+                <!-- Documentos -->
+                <div class="form-group">
+                    <label class="form-label">CNH (Carteira Nacional de Habilitação)</label>
+                    <label class="file-label" for="cnh">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+                        <span class="file-name" id="cnhName"></span>
+                    </label>
+                    <input type="file" id="cnh" class="file-input" accept=".pdf,.jpg,.png" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">RG/CPF</label>
+                    <label class="file-label" for="rgcpf">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+                        <span class="file-name" id="rgcpfName"></span>
+                    </label>
+                    <input type="file" id="rgcpf" class="file-input" accept=".pdf,.jpg,.png" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Comprovante de Residência</label>
+                    <label class="file-label" for="residence">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+                        <span class="file-name" id="residenceName"></span>
+                    </label>
+                    <input type="file" id="residence" class="file-input" accept=".pdf,.jpg,.png" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Foto 3x4</label>
+                    <label class="file-label" for="photo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span class="file-label-text">Anexar arquivo (.jpg, .png)</span>
+                        <span class="file-name" id="photoName"></span>
+                    </label>
+                    <input type="file" id="photo" class="file-input" accept=".jpg,.png" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Documentação do Veículo (CRLV)</label>
+                    <label class="file-label" for="vehicle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+                        <span class="file-name" id="vehicleName"></span>
+                    </label>
+                    <input type="file" id="vehicle" class="file-input" accept=".pdf,.jpg,.png" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Concluído</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Sistema de Alertas
+        function mostrarAlerta(mensagem, tipo = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert ${tipo}`;
+            alert.textContent = mensagem;
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Configurar File Inputs
+        const fileInputs = ['cnh', 'rgcpf', 'residence', 'photo', 'vehicle'];
+        
+        fileInputs.forEach(inputId => {
+            const fileInput = document.getElementById(inputId);
+            const fileLabel = fileInput.previousElementSibling;
+            const fileName = fileLabel.querySelector('.file-name');
+
+            fileInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    fileName.textContent = this.files[0].name;
+                    fileLabel.classList.add('selected');
+                } else {
+                    fileName.textContent = '';
+                    fileLabel.classList.remove('selected');
+                }
+            });
+
+            fileLabel.addEventListener('click', function() {
+                fileInput.click();
+            });
+        });
+
+        // Validar Formulário
+        document.getElementById('motoristForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                mostrarAlerta('As senhas não coincidem!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                mostrarAlerta('A senha deve ter pelo menos 6 caracteres!', 'error');
+                return;
+            }
+
+            // Verificar se todos os arquivos foram anexados
+            const allFilesSelected = fileInputs.every(inputId => 
+                document.getElementById(inputId).files.length > 0
+            );
+
+            if (!allFilesSelected) {
+                mostrarAlerta('Por favor, anexe todos os documentos obrigatórios!', 'error');
+                return;
+            }
+
+            mostrarAlerta('Cadastro realizado com sucesso!', 'success');
+            
+            // Aqui você poderia enviar os dados para o servidor
+            // this.submit();
+        });
+    </script>
+</body>
+</html>
