@@ -1,13 +1,8 @@
-// ===== IMPORT FIREBASE AUTH =====
-import { auth } from "./firebase-config.js";
+import { auth, db } from "./firebase-config.js";
 import { signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// ===== FUNÇÕES =====
-function togglePassword() {
-  const input = document.getElementById('password');
-  input.type = input.type === 'password' ? 'text' : 'password';
-}
-
+// ===== Sistema de Alertas =====
 function mostrarAlerta(mensagem, tipo = 'error') {
   let container = document.getElementById('alert-container');
   if (!container) {
@@ -26,7 +21,7 @@ function mostrarAlerta(mensagem, tipo = 'error') {
   }, 3500);
 }
 
-// ===== VALIDAÇÃO =====
+// ===== Validações =====
 function validarEmail(email) {
   if (!email.trim()) return { valido: false, mensagem: "E-mail é obrigatório!" };
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -54,14 +49,30 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   if (!validPass.valido) return mostrarAlerta(validPass.mensagem);
 
   try {
-    await signInWithEmailAndPassword(auth, email, senha);
+    const credenciais = await signInWithEmailAndPassword(auth, email, senha);
+    const uid = credenciais.user.uid;
 
     mostrarAlerta("Login realizado com sucesso!", "success");
-    sessionStorage.setItem("usuarioLogado", email);
 
-    setTimeout(() => {
-      window.location.href = "telaInicioAdm.html";
-    }, 1000);
+    // ===== Verifica tipo de usuário =====
+    const role = await identificarTipoUsuario(uid, email);
+
+    // ===== Redireciona conforme o tipo =====
+    if (role === "motorista") {
+      sessionStorage.setItem("usuarioLogado", email);
+      setTimeout(() => window.location.href = "telaInicioMot.html", 1000);
+    } else if (role === "estudante") {
+      sessionStorage.setItem("usuarioLogado", email);
+      setTimeout(() => window.location.href = "telaInicioEstu.html", 1000);
+    } else{
+      sessionStorage.setItem("usuarioLogado", email);
+      setTimeout(() => window.location.href = "telaInicioAdm.html", 1000);
+    }
+    
+    if (!role) {
+      mostrarAlerta("Sua conta ainda está em análise. Aguarde aprovação do administrador.", "error");
+      return;
+    }
 
   } catch (error) {
     console.error(error);
@@ -69,12 +80,30 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   }
 });
 
+// ===== Função para identificar tipo de usuário =====
+async function identificarTipoUsuario(uid, email) {
+  const colecoes = [
+    { nome: "pending_motorists", tipo: "motorista" },
+    { nome: "students", tipo: "estudante" },
+    { nome: "admins", tipo: "admin" }
+  ];
+
+  for (const col of colecoes) {
+    const q = query(collection(db, col.nome), where("email", "==", email));
+    const snap = await getDocs(q);
+    if (!snap.empty) return col.tipo;
+  }
+
+  return null; // caso não encontre
+}
+
 // ===== LOGOUT =====
 if (document.getElementById("logoutBtn")) {
   document.getElementById("logoutBtn").addEventListener("click", () => {
     signOut(auth).then(() => {
       sessionStorage.clear();
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     });
   });
 }
+

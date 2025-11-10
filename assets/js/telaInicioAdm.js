@@ -1,80 +1,98 @@
- // ===== FUNÇÃO DE ALERTA GLOBAL (UNIFICADA) =====
-    function mostrarAlerta(mensagem, tipo = 'info') {
-      let containerAlertas = document.getElementById('container-alertas');
-      if (!containerAlertas) {
-        containerAlertas = document.createElement('div');
-        containerAlertas.id = 'container-alertas';
-        document.body.appendChild(containerAlertas);
-      }
-      
-      let tipoClasse = 'alerta-info';
-      switch(tipo) {
-        case 'sucesso': tipoClasse = 'alerta-sucesso'; break;
-        case 'erro': tipoClasse = 'alerta-erro'; break;
-        case 'aviso': tipoClasse = 'alerta-aviso'; break;
-      }
-      const alerta = document.createElement('div');
-      alerta.className = `alerta ${tipoClasse}`;
-      alerta.innerHTML = mensagem;
-      containerAlertas.appendChild(alerta);
-      
-      setTimeout(() => {
-        alerta.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => {
-          alerta.remove();
-          if (containerAlertas.children.length === 0) {
-            containerAlertas.remove();
-          }
-        }, 300);
-      }, 4000); 
-    }
-  
-    // ===== LÓGICA DO DASHBOARD ADMIN =====
-    document.addEventListener("DOMContentLoaded", () => {
-      const notificationsButton = document.getElementById('notificationsButton');
-      const logoutButton = document.getElementById('logoutButton');
-      const excluirEstudanteLink = document.getElementById('excluirEstudanteLink');
-      
-      // Botão de Notificações (Exemplo)
-      if (notificationsButton) {
-          notificationsButton.addEventListener('click', () => {
-              mostrarAlerta('Nenhuma notificação nova.', 'info');
-              // Aqui você pode adicionar lógica para abrir um modal de notificações
-          });
-      }
-      
-      // Botão de Logout (Exemplo)
-      if (logoutButton) {
-          logoutButton.addEventListener('click', () => {
-              // Adicionar confirmação antes de sair
-              if (confirm('Tem certeza que deseja sair?')) {
-                  mostrarAlerta('Saindo...', 'info');
-                  sessionStorage.removeItem('usuarioLogado'); // Limpa a sessão
-                  // Redireciona para a tela de login após um pequeno atraso
-                  setTimeout(() => {
-                     window.location.assign('index.html'); // Ou o nome correto da sua tela de login
-                  }, 1000); 
-              }
-          });
-      }
-      
-      // Link Excluir Estudante (Placeholder)
-      if (excluirEstudanteLink) {
-          excluirEstudanteLink.addEventListener('click', (event) => {
-              event.preventDefault(); // Impede a navegação padrão do link '#'
-              mostrarAlerta('Funcionalidade "Excluir Estudante" em desenvolvimento.', 'aviso');
-              // Futuramente, poderia abrir um modal para buscar o estudante a ser excluído
-          });
-      }
+function mostrarAlerta(mensagem, tipo = "info") {
+  let container = document.getElementById("container-alertas");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "container-alertas";
+    document.body.appendChild(container);
+  }
 
-      // Adicionar aqui listeners para outros botões do menu, se necessário
-      // Exemplo:
-      // const gerarIdButton = document.getElementById('gerarIdEstudante');
-      // if (gerarIdButton) {
-      //     gerarIdButton.addEventListener('click', (e) => {
-      //         e.preventDefault();
-      //         mostrarAlerta('Função "Gerar ID" em desenvolvimento.', 'aviso');
-      //     });
-      // }
-      
+  const alerta = document.createElement("div");
+  alerta.className = `alerta alerta-${tipo}`;
+  alerta.textContent = mensagem;
+  container.appendChild(alerta);
+  setTimeout(() => {
+    alerta.style.animation = "slideOut 0.3s ease-out";
+    setTimeout(() => alerta.remove(), 300);
+  }, 4000);
+}
+
+// Ao carregar a página
+document.addEventListener("DOMContentLoaded", async () => {
+  const lista = document.getElementById("listaPendentes");
+
+  try {
+    const snapshot = await getDocs(collection(db, "pending_students"));
+
+    if (snapshot.empty) {
+      lista.innerHTML = "<p>Nenhum estudante pendente.</p>";
+      return;
+    }
+
+    snapshot.forEach((docSnap) => {
+      const dados = docSnap.data();
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>${dados.nome}</strong> (${dados.email})<br>
+        <button class="btn-aceitar" data-id="${docSnap.id}">✅ Aceitar</button>
+        <button class="btn-recusar" data-id="${docSnap.id}">❌ Recusar</button>
+      `;
+      lista.appendChild(li);
     });
+
+    // Eventos dos botões
+    document.querySelectorAll(".btn-aceitar").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        await aprovarCadastro(btn.dataset.id);
+      });
+    });
+
+    document.querySelectorAll(".btn-recusar").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        await recusarCadastro(btn.dataset.id);
+      });
+    });
+  } catch (err) {
+    console.error(err);
+    mostrarAlerta("Erro ao carregar cadastros!", "erro");
+  }
+});
+
+async function aprovarCadastro(id) {
+  try {
+    const docRef = doc(db, "pending_students", id);
+    const snap = await (await import("https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js")).getDoc(docRef);
+
+    if (!snap.exists()) return mostrarAlerta("Cadastro não encontrado!", "erro");
+
+    const dados = snap.data();
+
+    // move para a coleção "students"
+    await addDoc(collection(db, "students"), {
+      nome: dados.nome,
+      email: dados.email,
+      senha: dados.senha,
+      status: "aprovado",
+      estudante: true
+    });
+
+    // remove da pendente
+    await deleteDoc(docRef);
+
+    mostrarAlerta("Estudante aprovado com sucesso!", "sucesso");
+    location.reload();
+  } catch (err) {
+    console.error(err);
+    mostrarAlerta("Erro ao aprovar cadastro!", "erro");
+  }
+}
+
+async function recusarCadastro(id) {
+  try {
+    await deleteDoc(doc(db, "pending_students", id));
+    mostrarAlerta("Cadastro recusado e removido!", "aviso");
+    location.reload();
+  } catch (err) {
+    console.error(err);
+    mostrarAlerta("Erro ao recusar cadastro!", "erro");
+  }
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificação Estudantes</title>
+  <link rel="stylesheet" href="/assets/css/telaInicioAdm.css">
+  <link rel="stylesheet" href="/assets/css/aceitarEstu.css">
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <div class="avatar" title="Admin"></div> 
+      <h1 class="header-title">Verificação Estudantes</h1> 
+    </div>
+    <div class="header-right">
+      <button class="icon-button" id="notificationsButton" title="Notificações">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+      </button>
+      <button class="icon-button" id="logoutButton" title="Sair / Fazer Logout">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="dashboard-card">
+      <div class="menu-grid">
+        <!-- seus botões de menu... -->
+        
+        <section class="pendentes">
+          <h3>Solicitações de Estudantes</h3>
+          <ul id="listaPendentes" class="lista-pendentes"></ul>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <!-- navegação inferior -->
+  </div>
+
+  <!-- Script Firebase e principal -->
+  <script type="module" src="/assets/js/aceitarEstu.js"></script>
+</body>
+</html>

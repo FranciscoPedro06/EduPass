@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
         nome,
         email,
         senha, // futuramente criptografar
-        status: "aguardando"
+        status: "aguardando",
+        estudante: true
       });
 
       mostrarAlerta("✅ Cadastro enviado para análise!");

@@ -1,0 +1,30 @@
+.lista-pendentes {
+  list-style: none;
+  padding: 0;
+}
+
+.lista-pendentes li {
+  background: #f7f7f7;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+
+.btn-aceitar, .btn-recusar {
+  margin-right: 8px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-aceitar {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.btn-recusar {
+  background-color: #f44336;
+  color: white;
+}
