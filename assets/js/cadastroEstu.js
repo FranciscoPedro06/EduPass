@@ -9,27 +9,43 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // ✅ Pegando os valores corretamente
+    // === PEGAR VALORES DO FORM ===
     const nome = document.getElementById("nome").value.trim();
     const email = document.getElementById("email").value.trim();
     const senha = document.getElementById("senha").value.trim();
     const confirmarSenha = document.getElementById("confirmarSenha").value.trim();
+    const cpf = document.getElementById("cpf").value.trim();
+    const instituicao = document.getElementById("instituicao").value.trim();
+    const curso = document.getElementById("curso").value.trim();
+    const turno = document.getElementById("turno").value.trim();
 
     if (senha !== confirmarSenha) {
       return mostrarAlerta("As senhas não coincidem!");
     }
 
+    if (!nome || !email || !cpf || !instituicao || !curso || !turno) {
+      return mostrarAlerta("Preencha todos os campos obrigatórios!");
+    }
+
     try {
-      // ✅ Adiciona novo documento à collection "pending_students"
+      // === SALVAR NO FIRESTORE ===
       await addDoc(collection(db, "pending_students"), {
         nome,
         email,
         senha, // futuramente criptografar
+        cpf,
+        instituicao,
+        curso,
+        turno,
         status: "aguardando",
-        estudante: true
+        estudante: true,
+        foto: "" // campo reservado para futura integração com upload
       });
 
-      mostrarAlerta("✅ Cadastro enviado para análise!");
+      // === SALVAR E-MAIL NA SESSÃO ===
+      sessionStorage.setItem("usuarioLogado", email);
+
+      mostrarAlerta("✅ Cadastro enviado com sucesso!");
       setTimeout(() => window.location.href = "/index.html", 1500);
 
     } catch (err) {

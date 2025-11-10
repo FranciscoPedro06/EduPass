@@ -64,42 +64,52 @@ import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com
       }
     });
 
+  
     async function aprovarCadastro(id) {
-    try {
-        const docRef = doc(db, "pending_students", id);
-        const snap = await getDoc(docRef);
+  try {
+    const docRef = doc(db, "pending_students", id);
+    const snap = await getDoc(docRef);
 
-        if (!snap.exists()) return mostrarAlerta("Cadastro não encontrado!", "erro");
-
-        const dados = snap.data();
-        const auth = getAuth();
-
-        // 🔹 Cria o usuário no Authentication
-        await createUserWithEmailAndPassword(auth, dados.email, dados.senha);
-
-        // 🔹 Move para a coleção de estudantes aprovados
-        await addDoc(collection(db, "students"), {
-        nome: dados.nome,
-        email: dados.email,
-        senha: dados.senha,
-        status: "aprovado",
-        estudante: true
-        });
-
-        // 🔹 Remove da lista de pendentes
-        await deleteDoc(docRef);
-
-        mostrarAlerta("Estudante aprovado com sucesso!", "sucesso");
-        location.reload();
-    } catch (err) {
-        console.error(err);
-        if (err.code === "auth/email-already-in-use") {
-        mostrarAlerta("Esse e-mail já está cadastrado no sistema!", "erro");
-        } else {
-        mostrarAlerta("Erro ao aprovar cadastro!", "erro");
-        }
+    if (!snap.exists()) {
+      mostrarAlerta("Cadastro não encontrado!", "erro");
+      return;
     }
+
+    const dados = snap.data();
+    const auth = getAuth();
+
+    // 🔹 Cria o usuário no Authentication
+    await createUserWithEmailAndPassword(auth, dados.email, dados.senha);
+
+    // 🔹 Move o estudante para a coleção de aprovados
+    await addDoc(collection(db, "students"), {
+      nome: dados.nome,
+      email: dados.email,
+      senha: dados.senha, // (idealmente criptografar depois)
+      cpf: dados.cpf || "",
+      instituicao: dados.instituicao || "",
+      curso: dados.curso || "",
+      turno: dados.turno || "",
+      status: "aprovado",
+      estudante: true,
+      foto: dados.foto || ""
+    });
+
+    // 🔹 Remove da lista de pendentes
+    await deleteDoc(docRef);
+
+    mostrarAlerta("Estudante aprovado com sucesso!", "sucesso");
+    location.reload();
+  } catch (err) {
+    console.error("Erro ao aprovar cadastro:", err);
+    if (err.code === "auth/email-already-in-use") {
+      mostrarAlerta("Esse e-mail já está cadastrado no sistema!", "erro");
+    } else {
+      mostrarAlerta("Erro ao aprovar cadastro!", "erro");
     }
+  }
+}
+
 
 
     async function recusarCadastro(id) {
