@@ -2,6 +2,7 @@ import { app, auth, db, storage } from "./firebase-config.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 function mostrarAlerta(msg, tipo="info") { alert(msg); }
+backButton.addEventListener("click", () => window.history.back());
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("cadastroForm");
