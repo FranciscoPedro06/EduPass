@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <label>Curso: <input type="text" id="editCurso" value="${usuario.curso || ""}" /></label>
       <label>Turno: <input type="text" id="editTurno" value="${usuario.turno || ""}" /></label>
       <button id="saveChangesBtn" class="save-button">Salvar alterações</button>
+      <button id="cancelChangesBtn" class="save-button">Cancelar alterações</button>
     `;
 
     const saveBtn = document.getElementById("saveChangesBtn");
@@ -140,6 +141,11 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(error);
         mostrarAlerta("Erro ao enviar solicitação!", "erro");
       }
+    });
+
+      const cancelBtn = document.getElementById("cancelChangesBtn");
+    cancelBtn.addEventListener("click", async () => {
+      window.location.reload();
     });
   });
 });
