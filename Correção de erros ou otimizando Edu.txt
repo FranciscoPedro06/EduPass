@@ -1,4 +1,4 @@
-Correção de erros ou otimizando Edupass.
+##Correção de erros ou otimizando Edupass.
 
 Excluir tela de Horários.
 
@@ -14,22 +14,30 @@ Atualizar a tela de inicio e tela de perfil de ambos os usuários.
 
 Botão de fazer logout funcional finalizado.
 
-Tela de Editar perfil funcional.
+Tela de Editar perfil funcional. *
 
 Mensagem de aguardando aprovação do admin após realizar cadastro.
+
+
+
+
+
+
+
 
 "Ver Estudantes" conectando com o firebase.
 
 "Excluir Estudantes" conectando com o firebase e funcional.
 
-Tela de Verificar Cadastros mais detalhada com a visualização dos dados do aluno e padronizada com ambas as telas(Sugestão: botão de ver detalhes).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-Tela de Minhas Viagens funcional.
+Tela de Verificar Cadastros mais detalhada com a visualização dos dados do aluno e padronizada com ambas as telas(Sugestão: botão de ver detalhes).     *                                                                                                                                                                                                                                                                                                     
 
-Tela de Verificação de Embarque funcional e diferente da tela de verificar do estudante.
+Tela de Minhas Viagens funcional.  *
+
+Tela de Verificação de Embarque funcional e diferente da tela de verificar do estudante. *
 
 Mensagem de erro ao logar, mesmo quando o login foi bem sucedido.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
-Mudar a conta do Firebase par uma com o Storage funcionando.
+Mudar a conta do Firebase par uma com o Storage funcionando. **
 
 Excluir botão de notificação.
 
