@@ -18,6 +18,8 @@ import {
 const auth = getAuth();
 let estudanteSelecionado = null;
 
+backButton.addEventListener("click", () => window.history.back());
+
 // === Alerta visual ===
 function mostrarAlerta(mensagem, tipo = "info") {
   let container = document.getElementById("container-alertas");
