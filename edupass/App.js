@@ -7,7 +7,7 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <WebView 
-        source={{ uri: 'https://edupass-wine.vercel.app/' }} 
+        source={{ uri: 'https://franciscopedro06.github.io/EduPass/' }} 
         style={styles.webview}
       />
       <StatusBar style="auto" />

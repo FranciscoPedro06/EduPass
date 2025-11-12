@@ -267,3 +267,77 @@
 .botao-anexo:hover {
   background-color: #ccc;
 }
+
+.modal-termo {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+.modal-termo.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease;
+}
+
+.termo-scroll {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+  padding-right: 5px;
+  text-align: justify;
+  font-size: 0.95rem;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-primario {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-primario:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secundario {
+  background-color: #ccc;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

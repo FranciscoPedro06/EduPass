@@ -304,3 +304,118 @@
   from { opacity: 1; transform: translateX(0); }
   to { opacity: 0; transform: translateX(50px); }
 }
+/* ===== ESTILO DO CARD DE VERIFICAÇÃO ===== */
+    .verification-card {
+      background-color: #FFD84D;
+      border-radius: 16px;
+      padding: 1.8rem;
+      margin: 2rem auto;
+      max-width: 700px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .verification-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    }
+
+    .verification-card h2 {
+      color: #000;
+      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .verification-card p {
+      color: #333;
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+
+    .verification-card a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: #000;
+      color: #FFD84D;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.8rem 1.4rem;
+      border-radius: 10px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .verification-card a:hover {
+      background-color: #333;
+      transform: scale(1.05);
+    }
+
+    .verification-card svg {
+      width: 22px;
+      height: 22px;
+      stroke: #FFD84D;
+    }
+
+    .verification-card {
+  background-color: #FFD54F; /* amarelo chamativo */
+  color: #333;
+  padding: 1.8rem;
+  border-radius: 16px;
+  margin: 1.5rem auto;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.verification-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.verification-card h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.verification-card p {
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.verify-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fff;
+  color: #333;
+  padding: 0.7rem 1.3rem;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.verify-button:hover {
+  background-color: #333;
+  color: #FFD54F;
+}
+
+.verify-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  padding-bottom: 80px;
+}
