@@ -6,6 +6,8 @@ function mostrarAlerta(msg, tipo = "info") {
   alert(msg); // pode trocar depois pelo seu alerta estilizado
 }
 
+backButton.addEventListener("click", () => window.history.back());
+
 // === LÓGICA PRINCIPAL ===
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("cadastroForm");
