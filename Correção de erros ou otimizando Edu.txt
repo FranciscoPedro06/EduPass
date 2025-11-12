@@ -2,7 +2,7 @@
 
 
 Alterar a rodapé das telas. ***** IMPORTANTE *****
-
+Padronizar as barras de navegações das telas. (cores)  ***** IMPORTANTE *****
 
 
 Tela de reconhecimento pelo menos abrindo a câmera. *
@@ -13,6 +13,7 @@ Tela de Verificação de Embarque funcional e diferente da tela de verificar do 
 
 
 ** Mudar a conta do Firebase par uma com o Storage funcionando. **
+
 
 
 
