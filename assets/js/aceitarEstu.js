@@ -8,6 +8,7 @@ import {
   doc,
   query,
   where,
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import {
   getAuth,
@@ -58,6 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="dados-estudante">
           <strong>${dados.nome}</strong>
           <span>${dados.email}</span>
+          <small>${dados.ref_original ? "(Alteração)" : "(Novo cadastro)"}</small>
         </div>
         <button class="btn-detalhes" data-id="${docSnap.id}">Ver detalhes</button>
       `;
@@ -84,6 +86,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           <p><strong>Curso:</strong> ${dados.curso}</p>
           <p><strong>Turno:</strong> ${dados.turno}</p>
           <p><strong>Status:</strong> ${dados.status || "Pendente"}</p>
+          ${
+            dados.ref_original
+              ? `<p><em>Solicitação de alteração de cadastro existente.</em></p>`
+              : `<p><em>Novo cadastro aguardando aprovação.</em></p>`
+          }
         `;
         modal.style.display = "flex";
       });
@@ -92,7 +99,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Aprovar
     btnAprovar.addEventListener("click", async () => {
       if (!estudanteSelecionado) return;
-      await aprovarCadastro(estudanteSelecionado.id);
+      const { id, dados } = estudanteSelecionado;
+
+      if (dados.ref_original) {
+        // 🔄 Atualização de perfil existente
+        await aprovarAlteracao(id, dados);
+      } else {
+        // 🆕 Novo cadastro
+        await aprovarNovoCadastro(id, dados);
+      }
+
       modal.style.display = "none";
     });
 
@@ -108,63 +124,77 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// === Função de aprovação (corrigida) ===
-async function aprovarCadastro(id) {
+
+// === 🆕 Aprovação de novo cadastro ===
+async function aprovarNovoCadastro(id, dados) {
   try {
-    const ref = doc(db, "pending_students", id);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return;
-
-    const dados = snap.data();
-
     // Verifica se já existe estudante com o mesmo email
-    const userQuery = query(
-      collection(db, "students"),
-      where("email", "==", dados.email)
-    );
+    const userQuery = query(collection(db, "students"), where("email", "==", dados.email));
     const existingUser = await getDocs(userQuery);
 
-    // Se não existir, cria novo registro no Firestore e no Auth (se necessário)
+    // Cria conta no Auth (opcional)
     if (existingUser.empty) {
       try {
-        // Tenta criar usuário no Auth (caso seja realmente novo)
         if (dados.senha) {
           await createUserWithEmailAndPassword(auth, dados.email, dados.senha);
         } else {
-          console.warn("Usuário não tem senha registrada, criando apenas no Firestore.");
+          console.warn("Usuário sem senha — criado apenas no Firestore.");
         }
       } catch (authErr) {
-        if (authErr.code === "auth/email-already-in-use") {
-          console.warn("Email já cadastrado no Auth, apenas atualizando Firestore.");
-        } else {
-          throw authErr;
-        }
+        if (authErr.code !== "auth/email-already-in-use") throw authErr;
       }
     }
 
-    // Adiciona o estudante aprovado ao Firestore
+    // Adiciona no Firestore
     await addDoc(collection(db, "students"), {
       ...dados,
       status: "aprovado",
       aprovadoEm: new Date().toISOString(),
     });
 
-    // Remove da lista pendente
-    await deleteDoc(ref);
+    // Remove da coleção de pendentes
+    await deleteDoc(doc(db, "pending_students", id));
 
-    mostrarAlerta(`Estudante ${dados.nome} aprovado!`, "sucesso");
+    mostrarAlerta(`Estudante ${dados.nome} aprovado com sucesso!`, "sucesso");
     setTimeout(() => location.reload(), 1500);
   } catch (err) {
-    console.error("Erro ao aprovar cadastro:", err);
+    console.error("Erro ao aprovar novo cadastro:", err);
     mostrarAlerta("Erro ao aprovar cadastro!", "erro");
   }
 }
 
-// === Função de recusa ===
+
+// === 🔄 Aprovação de alteração de dados existente ===
+async function aprovarAlteracao(pendingId, dados) {
+  try {
+    const studentRef = doc(db, "students", dados.ref_original);
+
+    await updateDoc(studentRef, {
+      nome: dados.nome,
+      cpf: dados.cpf,
+      instituicao: dados.instituicao,
+      curso: dados.curso,
+      turno: dados.turno,
+      status: "aprovado",
+      aprovadoEm: new Date().toISOString(),
+    });
+
+    await deleteDoc(doc(db, "pending_students", pendingId));
+
+    mostrarAlerta("Alteração de cadastro aprovada!", "sucesso");
+    setTimeout(() => location.reload(), 1500);
+  } catch (err) {
+    console.error("Erro ao aprovar alteração:", err);
+    mostrarAlerta("Erro ao aprovar alteração!", "erro");
+  }
+}
+
+
+// === ❌ Recusar solicitação ===
 async function recusarCadastro(id) {
   try {
     await deleteDoc(doc(db, "pending_students", id));
-    mostrarAlerta("Cadastro recusado e removido!", "aviso");
+    mostrarAlerta("Solicitação recusada e removida!", "aviso");
     setTimeout(() => location.reload(), 1500);
   } catch (err) {
     console.error(err);

@@ -1,7 +1,14 @@
 import { db, auth } from "./firebase-config.js";
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  doc,
+  updateDoc,
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 // ====== Função global de alerta ======
 function mostrarAlerta(mensagem, tipo = "info") {
@@ -17,9 +24,7 @@ function mostrarAlerta(mensagem, tipo = "info") {
   alerta.textContent = mensagem;
   container.appendChild(alerta);
 
-  setTimeout(() => {
-    alerta.remove();
-  }, 4000);
+  setTimeout(() => alerta.remove(), 4000);
 }
 
 // ====== Lógica principal ======
@@ -31,17 +36,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const backBtn = document.getElementById("backButton");
 
   let usuario = null;
-  let userId = null;
+  let userDocId = null;
 
   // === Detecta usuário autenticado ===
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       mostrarAlerta("Você precisa estar logado.", "erro");
-      setTimeout(() => (window.location.href = "login.html"), 2000);
+      setTimeout(() => (window.location.href = "index.html"), 2000);
       return;
     }
-
-    userId = user.uid;
 
     try {
       const q = query(collection(db, "students"), where("email", "==", user.email));
@@ -52,10 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Pega o primeiro resultado encontrado
-      usuario = querySnapshot.docs[0].data();
-      preencherPerfil(usuario);
+      const docRef = querySnapshot.docs[0];
+      userDocId = docRef.id;
+      usuario = docRef.data();
 
+      preencherPerfil(usuario);
     } catch (err) {
       console.error(err);
       mostrarAlerta("Erro ao carregar dados do perfil.", "erro");
@@ -120,20 +124,21 @@ document.addEventListener("DOMContentLoaded", () => {
         curso: document.getElementById("editCurso").value.trim(),
         turno: document.getElementById("editTurno").value.trim(),
         email: usuario.email,
-        status: "aguardando_aprovacao",
         estudante: true,
+        status: "aguardando_aprovacao",
         alteracaoSolicitadaEm: new Date().toISOString(),
+        ref_original: userDocId, // 🔗 referência ao documento original
       };
 
       try {
         await addDoc(collection(db, "pending_students"), novosDados);
-        mostrarAlerta("Solicitação enviada ao administrador para aprovação.", "sucesso");
+        mostrarAlerta("Solicitação de alteração enviada ao administrador.", "sucesso");
 
-        // Volta ao modo visual após 2 segundos
-        setTimeout(() => preencherPerfil(novosDados), 2000);
+        // volta ao modo de visualização
+        setTimeout(() => preencherPerfil(usuario), 2000);
       } catch (error) {
         console.error(error);
-        mostrarAlerta("Erro ao enviar alterações.", "erro");
+        mostrarAlerta("Erro ao enviar solicitação!", "erro");
       }
     });
   });
