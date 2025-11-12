@@ -1,6 +1,16 @@
 import { auth, db } from "./firebase-config.js";
-import { signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { 
+  signInWithEmailAndPassword, 
+  signOut, 
+  sendPasswordResetEmail 
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+import { 
+  getDocs, 
+  collection, 
+  query, 
+  where 
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 // ===== Sistema de Alertas =====
 function mostrarAlerta(mensagem, tipo = 'error') {
@@ -36,66 +46,105 @@ function validarSenha(senha) {
 }
 
 // ===== LOGIN =====
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("loginForm");
+  const forgotBtn = document.querySelector(".forgot-password"); // <--- corrige o seletor
 
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("password").value;
+  // === LOGIN ===
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const validEmail = validarEmail(email);
-  const validPass = validarSenha(senha);
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("password").value;
 
-  if (!validEmail.valido) return mostrarAlerta(validEmail.mensagem);
-  if (!validPass.valido) return mostrarAlerta(validPass.mensagem);
+    const validEmail = validarEmail(email);
+    const validPass = validarSenha(senha);
 
-  try {
-    const credenciais = await signInWithEmailAndPassword(auth, email, senha);
-    const uid = credenciais.user.uid;
+    if (!validEmail.valido) return mostrarAlerta(validEmail.mensagem);
+    if (!validPass.valido) return mostrarAlerta(validPass.mensagem);
 
-    mostrarAlerta("Login realizado com sucesso!", "success");
+    try {
+  const credenciais = await signInWithEmailAndPassword(auth, email, senha);
+  const uid = credenciais.user.uid;
 
-    // ===== Verifica tipo de usuário =====
-    const role = await identificarTipoUsuario(uid, email);
+  const role = await identificarTipoUsuario(uid, email);
 
-    // ===== Redireciona conforme o tipo =====
-    if (role === "motorista") {
-      sessionStorage.setItem("usuarioLogado", email);
-      setTimeout(() => window.location.href = "telaInicioMot.html", 1000);
-    } else if (role === "estudante") {
-      sessionStorage.setItem("usuarioLogado", email);
-      setTimeout(() => window.location.href = "telaInicioEstu.html", 1000);
-    } else{
-      sessionStorage.setItem("usuarioLogado", email);
-      setTimeout(() => window.location.href = "telaInicioAdm.html", 1000);
-    }
-    
-    if (!role) {
-      mostrarAlerta("Sua conta ainda está em análise. Aguarde aprovação do administrador.", "error");
-      return;
-    }
-
-  } catch (error) {
-    console.error(error);
-    mostrarAlerta("E-mail ou senha inválidos!", "error");
+  if (!role) {
+    mostrarAlerta("Sua conta ainda está em análise. Aguarde aprovação do administrador.", "error");
+    return;
   }
+
+  mostrarAlerta("✅ Login realizado com sucesso!", "success");
+  sessionStorage.setItem("usuarioLogado", email);
+
+  if (role === "motorista") {
+    setTimeout(() => window.location.href = "telaInicioMot.html", 1000);
+  } else if (role === "estudante") {
+    setTimeout(() => window.location.href = "telaInicioEstu.html", 1000);
+  } else {
+    setTimeout(() => window.location.href = "telaInicioAdm.html", 1000);
+  }
+
+} catch (error) {
+  console.error(error);
+  if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
+    mostrarAlerta("❌ E-mail ou senha inválidos!", "error");
+  } else if (error.code === "auth/user-not-found") {
+    mostrarAlerta("❌ Usuário não encontrado!", "error");
+  } else {
+    mostrarAlerta("Erro inesperado ao fazer login.", "error");
+  }
+}
+
+  });
+
+  // === ESQUECEU A SENHA ===
+  forgotBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+
+    if (!email) {
+      return mostrarAlerta("Digite seu e-mail para redefinir a senha!");
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      mostrarAlerta(`📧 Um e-mail de redefinição foi enviado para ${email}`, "success");
+    } catch (error) {
+      console.error(error);
+      if (error.code === "auth/user-not-found") {
+        mostrarAlerta("❌ Nenhum usuário encontrado com este e-mail!");
+      } else if (error.code === "auth/invalid-email") {
+        mostrarAlerta("❌ E-mail inválido!");
+      } else {
+        mostrarAlerta("Erro ao enviar e-mail de redefinição.");
+      }
+    }
+  });
 });
 
 // ===== Função para identificar tipo de usuário =====
 async function identificarTipoUsuario(uid, email) {
-  const colecoes = [
-    { nome: "pending_motorists", tipo: "motorista" },
-    { nome: "students", tipo: "estudante" },
-    { nome: "admins", tipo: "admin" }
-  ];
+  try {
+    const colecoes = [
+      { nome: "pending_motorists", tipo: "motorista" },
+      { nome: "students", tipo: "estudante" },
+      { nome: "admins", tipo: "admin" }
+    ];
 
-  for (const col of colecoes) {
-    const q = query(collection(db, col.nome), where("email", "==", email));
-    const snap = await getDocs(q);
-    if (!snap.empty) return col.tipo;
+    for (const col of colecoes) {
+      const q = query(collection(db, col.nome), where("email", "==", email));
+      const snap = await getDocs(q);
+      if (!snap.empty) return col.tipo;
+    }
+
+    return null; // não encontrado
+  } catch (error) {
+    console.error("Erro ao identificar tipo de usuário:", error);
+    return null; // em caso de erro, retorna null ao invés de lançar exceção
   }
-
-  return null; // caso não encontre
 }
+
 
 // ===== LOGOUT =====
 if (document.getElementById("logoutBtn")) {
@@ -107,3 +156,16 @@ if (document.getElementById("logoutBtn")) {
   });
 }
 
+// ===== Mostrar / ocultar senha =====
+window.togglePassword = function () {
+  const input = document.getElementById("password");
+  const btn = document.querySelector(".password-toggle svg");
+
+  if (input.type === "password") {
+    input.type = "text";
+    btn.style.opacity = "0.6";
+  } else {
+    input.type = "password";
+    btn.style.opacity = "1";
+  }
+};

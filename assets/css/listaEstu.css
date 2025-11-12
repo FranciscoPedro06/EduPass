@@ -273,3 +273,25 @@
         font-size: 15px;
       }
     }
+    .student-card.pending {
+  background-color: #fff7d6;
+  border-left: 6px solid #f1c232;
+}
+
+.status.aprovado {
+  background-color: #d1f7c4;
+  color: #1a7a1a;
+}
+
+.status.pendente,
+.status.pending {
+  background-color: #ffe9b3;
+  color: #a67c00;
+}
+
+.status.reprovado {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+

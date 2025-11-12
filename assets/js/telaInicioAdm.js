@@ -1,3 +1,9 @@
+import { db } from "./firebase-config.js";
+import { collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { auth } from "./firebase-config.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+
 function mostrarAlerta(mensagem, tipo = "info") {
   let container = document.getElementById("container-alertas");
   if (!container) {
@@ -10,17 +16,67 @@ function mostrarAlerta(mensagem, tipo = "info") {
   alerta.className = `alerta alerta-${tipo}`;
   alerta.textContent = mensagem;
   container.appendChild(alerta);
+
   setTimeout(() => {
     alerta.style.animation = "slideOut 0.3s ease-out";
     setTimeout(() => alerta.remove(), 300);
   }, 4000);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const linkExcluir = document.getElementById("excluirEstudanteLink");
+  if (!linkExcluir) return;
+
+  linkExcluir.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const cpfParaExcluir = prompt("Digite o CPF do estudante a ser excluído (apenas números):");
+    if (!cpfParaExcluir) return;
+
+    const cpfLimpo = cpfParaExcluir.replace(/\D/g, '');
+
+    try {
+      const colecoes = ["students", "pending_students"];
+      let encontrado = false;
+
+      for (const nomeColecao of colecoes) {
+        const snapshot = await getDocs(collection(db, nomeColecao));
+
+        for (const docSnap of snapshot.docs) {
+          const data = docSnap.data();
+          const cpfEstudante = (data.cpf || "").replace(/\D/g, "");
+
+          if (cpfEstudante === cpfLimpo) {
+            const confirmacao = confirm(
+              `Tem certeza que deseja excluir o estudante "${data.nome}" (${data.email}) da coleção "${nomeColecao}"?`
+            );
+            if (!confirmacao) return;
+
+            await deleteDoc(doc(db, nomeColecao, docSnap.id));
+            mostrarAlerta(`Estudante "${data.nome}" removido com sucesso!`, "sucesso");
+            encontrado = true;
+            break;
+          }
+        }
+
+        if (encontrado) break;
+      }
+
+      if (!encontrado) {
+        mostrarAlerta("Nenhum estudante encontrado com esse CPF!", "erro");
+      }
+    } catch (error) {
+      console.error("Erro ao excluir estudante:", error);
+      mostrarAlerta("Erro ao excluir estudante. Tente novamente.", "erro");
+    }
+  });
+});
+
 // Ao carregar a página
 document.addEventListener("DOMContentLoaded", async () => {
   const lista = document.getElementById("listaPendentes");
 
-  try {
+
     const snapshot = await getDocs(collection(db, "pending_students"));
 
     if (snapshot.empty) {
@@ -51,10 +107,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         await recusarCadastro(btn.dataset.id);
       });
     });
-  } catch (err) {
-    console.error(err);
-    mostrarAlerta("Erro ao carregar cadastros!", "erro");
-  }
 });
 
 async function aprovarCadastro(id) {
@@ -96,3 +148,47 @@ async function recusarCadastro(id) {
     mostrarAlerta("Erro ao recusar cadastro!", "erro");
   }
 }
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const badge = document.getElementById("notificationBadge");
+
+  try {
+    const snapshot = await getDocs(collection(db, "pending_students"));
+
+    // Se houver estudantes pendentes, mostra o badge
+    if (!snapshot.empty) {
+      badge.hidden = false;
+    } else {
+      badge.hidden = true;
+    }
+  } catch (err) {
+    console.error("Erro ao verificar notificações:", err);
+  }
+});
+
+document.getElementById("notificationsButton").addEventListener("click", async () => {
+  const snapshot = await getDocs(collection(db, "pending_students"));
+  if (snapshot.empty) {
+    alert("Nenhum estudante aguardando verificação.");
+  } else {
+    alert(`Há ${snapshot.size} estudante(s) aguardando verificação.`);
+  }
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutButton = document.getElementById("logoutButton");
+  if (logoutButton) {
+      logoutButton.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          sessionStorage.clear();
+          mostrarAlerta("Logout realizado com sucesso!", "sucesso");
+          setTimeout(() => (window.location.href = "index.html"), 1500);
+        } catch (erro) {
+          console.error("Erro ao fazer logout:", erro);
+          mostrarAlerta("Erro ao fazer logout. Tente novamente.", "erro");
+        }
+      });
+    }
+});

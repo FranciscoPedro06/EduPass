@@ -274,3 +274,33 @@
         .menu-button svg { width: 48px; height: 48px; }
         .bottom-nav { gap: 48px; padding: 16px 32px; }
     }
+
+    #container-alertas {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.alerta {
+  padding: 12px 18px;
+  border-radius: 6px;
+  margin-top: 8px;
+  font-weight: 600;
+  color: #fff;
+  animation: slideIn 0.3s ease-out;
+}
+
+.alerta-info { background-color: #3498db; }
+.alerta-sucesso { background-color: #2ecc71; }
+.alerta-erro { background-color: #e74c3c; }
+.alerta-aviso { background-color: #f1c40f; color: #000; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(50px); }
+}

@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // === SALVAR E-MAIL NA SESSÃO ===
       sessionStorage.setItem("usuarioLogado", email);
 
-      mostrarAlerta("✅ Cadastro enviado com sucesso!");
+      mostrarAlerta("✅ Cadastro enviado com sucesso! Aguarde a aprovação do administrador.");
       setTimeout(() => window.location.href = "/index.html", 1500);
 
     } catch (err) {
@@ -54,4 +54,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// === ATUALIZAÇÃO VISUAL DOS ANEXOS ===
+document.addEventListener("DOMContentLoaded", () => {
+  const fileInputs = document.querySelectorAll(".file-input");
+
+  fileInputs.forEach(input => {
+    const label = input.nextElementSibling;
+    const fileNameSpan = label.querySelector(".file-name");
+    const labelText = label.querySelector(".file-label-text");
+
+    input.addEventListener("change", () => {
+      if (input.files && input.files.length > 0) {
+        // Nome do arquivo selecionado
+        const nomeArquivo = input.files[0].name;
+
+        // Atualiza texto e aparência
+        fileNameSpan.textContent = nomeArquivo;
+        label.classList.add("selected");
+        labelText.textContent = "✅ Arquivo anexado";
+      } else {
+        // Caso o usuário remova o arquivo
+        fileNameSpan.textContent = "";
+        label.classList.remove("selected");
+        labelText.textContent = "Anexar arquivo (.pdf, .jpg, .png)";
+      }
+    });
+  });
+});
+
 

@@ -252,3 +252,18 @@
        .header-title { font-size: 28px; }
        .form-card { padding: 48px; }
      }
+
+     .botao-anexo {
+  display: inline-block;
+  padding: 10px 14px;
+  background-color: #ddd;
+  border: 2px solid #bbb;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.botao-anexo:hover {
+  background-color: #ccc;
+}

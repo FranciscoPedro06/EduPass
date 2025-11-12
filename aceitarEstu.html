@@ -1,27 +1,138 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verificação Estudantes</title>
-  <link rel="stylesheet" href="./assets/css/telaInicioAdm.css">
-  <link rel="stylesheet" href="./assets/css/aceitarEstu.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificação de Estudantes</title>
+  <link rel="stylesheet" href="./assets/css/telaInicioAdm.css" />
+  <link rel="stylesheet" href="./assets/css/aceitarEstu.css" />
+  <style>
+    .lista-pendentes {
+      list-style: none;
+      padding: 0;
+    }
+
+    .lista-pendentes li {
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      padding: 14px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dados-estudante {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dados-estudante strong {
+      font-size: 1.1rem;
+      color: #222;
+    }
+
+    .dados-estudante span {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .btn-detalhes {
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .btn-detalhes:hover {
+      background-color: #0d47a1;
+    }
+
+    /* === Modal === */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-conteudo {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+      text-align: left;
+    }
+
+    .modal-conteudo h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #333;
+      text-align: center;
+    }
+
+    .modal-conteudo p {
+      margin: 6px 0;
+      color: #444;
+    }
+
+    .modal-botoes {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .btn-aceitar {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-recusar {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-fechar {
+      background-color: #999;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
   <div class="header">
     <div class="header-left">
       <div class="avatar" title="Admin"></div>
-      <h1 class="header-title">Verificação Estudantes</h1>
+      <h1 class="header-title">Verificação de Estudantes</h1>
     </div>
     <div class="header-right">
-      <button class="icon-button" id="notificationsButton" title="Notificações">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-        </svg>
-      </button>
-      <button class="icon-button" id="logoutButton" title="Sair / Fazer Logout">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button class="icon-button" id="logoutButton" title="Sair">
+        <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" fill="none">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
           <polyline points="16 17 21 12 16 7"></polyline>
           <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -32,22 +143,26 @@
 
   <div class="main-content">
     <div class="dashboard-card">
-      <div class="menu-grid">
-        <!-- seus botões de menu... -->
-        
-        <section class="pendentes">
-          <h3>Solicitações de Estudantes</h3>
-          <ul id="listaPendentes" class="lista-pendentes"></ul>
-        </section>
+      <section class="pendentes">
+        <h3>Solicitações de Estudantes</h3>
+        <ul id="listaPendentes" class="lista-pendentes"></ul>
+      </section>
+    </div>
+  </div>
+
+  <!-- Modal Detalhes -->
+  <div id="modalDetalhes" class="modal">
+    <div class="modal-conteudo">
+      <h3>Detalhes do Estudante</h3>
+      <div id="infoEstudante"></div>
+      <div class="modal-botoes">
+        <button id="btnAprovar" class="btn-aceitar">✅ Aprovar</button>
+        <button id="btnRecusar" class="btn-recusar">❌ Recusar</button>
+        <button id="btnFechar" class="btn-fechar">Fechar</button>
       </div>
     </div>
   </div>
 
-  <div class="bottom-nav">
-    <!-- navegação inferior -->
-  </div>
-
-  <!-- Script Firebase e principal -->
   <script type="module" src="./assets/js/aceitarEstu.js"></script>
 </body>
 </html>

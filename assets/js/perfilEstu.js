@@ -1,118 +1,140 @@
- // ===== FUNÇÃO DE ALERTA GLOBAL (UNIFICADA) =====
-    function mostrarAlerta(mensagem, tipo = 'info') {
-      let containerAlertas = document.getElementById('container-alertas');
-      if (!containerAlertas) {
-        containerAlertas = document.createElement('div');
-        containerAlertas.id = 'container-alertas';
-        document.body.appendChild(containerAlertas);
-      }
-      
-      let tipoClasse = 'alerta-info';
-      switch(tipo) {
-        case 'sucesso': tipoClasse = 'alerta-sucesso'; break;
-        case 'erro': tipoClasse = 'alerta-erro'; break;
-        case 'aviso': tipoClasse = 'alerta-aviso'; break;
-      }
-      const alerta = document.createElement('div');
-      alerta.className = `alerta ${tipoClasse}`;
-      alerta.innerHTML = mensagem;
-      containerAlertas.appendChild(alerta);
-      
-      setTimeout(() => {
-        alerta.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => {
-          alerta.remove();
-          if (containerAlertas.children.length === 0) {
-            containerAlertas.remove();
-          }
-        }, 300);
-      }, 4000);
+import { db, auth } from "./firebase-config.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+// ====== Função global de alerta ======
+function mostrarAlerta(mensagem, tipo = "info") {
+  let container = document.getElementById("container-alertas");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "container-alertas";
+    document.body.appendChild(container);
+  }
+
+  const alerta = document.createElement("div");
+  alerta.className = `alerta alerta-${tipo}`;
+  alerta.textContent = mensagem;
+  container.appendChild(alerta);
+
+  setTimeout(() => {
+    alerta.remove();
+  }, 4000);
+}
+
+// ====== Lógica principal ======
+document.addEventListener("DOMContentLoaded", () => {
+  const studentNameEl = document.getElementById("studentName");
+  const infoListEl = document.getElementById("infoList");
+  const profileAvatarEl = document.getElementById("profileAvatar");
+  const editBtn = document.getElementById("editProfileBtn");
+  const backBtn = document.getElementById("backButton");
+
+  let usuario = null;
+  let userId = null;
+
+  // === Detecta usuário autenticado ===
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      mostrarAlerta("Você precisa estar logado.", "erro");
+      setTimeout(() => (window.location.href = "login.html"), 2000);
+      return;
     }
-    
-    // ===== LÓGICA DA PÁGINA DE PERFIL =====
-    document.addEventListener("DOMContentLoaded", () => {
-      const emailLogado = sessionStorage.getItem('usuarioLogado');
-      const estudantes = JSON.parse(localStorage.getItem('estudantes')) || [];
-      const usuario = estudantes.find(u => u.email === emailLogado);
 
-      const studentNameEl = document.getElementById('studentName');
-      const infoListEl = document.getElementById('infoList');
-      const profileAvatarEl = document.getElementById('profileAvatar');
-      const backButton = document.getElementById('backButton');
-      const editBtn = document.getElementById('editProfileBtn');
+    userId = user.uid;
 
-      if (!usuario) {
-        mostrarAlerta('Erro: Usuário não encontrado. Faça login novamente.', 'erro');
-        studentNameEl.textContent = "Usuário não encontrado";
-        // Opcional: Redirecionar para login após um tempo
-        // setTimeout(() => window.location.href = 'login.html', 3000);
+    try {
+      const q = query(collection(db, "students"), where("email", "==", user.email));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        mostrarAlerta("Usuário não encontrado no banco de dados.", "erro");
         return;
       }
 
-      // Preencher Nome
-      studentNameEl.textContent = usuario.nome || "Nome não disponível";
+      // Pega o primeiro resultado encontrado
+      usuario = querySnapshot.docs[0].data();
+      preencherPerfil(usuario);
 
-      // Preencher Avatar (Foto ou Ícone)
-      if (usuario.foto) {
-          profileAvatarEl.innerHTML = ''; // Limpa o SVG padrão
-          const img = document.createElement('img');
-          img.src = usuario.foto;
-          img.alt = `Foto de ${usuario.nome}`;
-          profileAvatarEl.appendChild(img);
-      } // Se não houver foto, o SVG padrão já está no HTML
+    } catch (err) {
+      console.error(err);
+      mostrarAlerta("Erro ao carregar dados do perfil.", "erro");
+    }
+  });
 
-      // Mapeamento de Chaves para Labels e Ícones
-      const infoMap = {
-        curso: { label: 'Curso', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>' },
-        turno: { label: 'Turno', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
-        nascimento: { label: 'Nascimento', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' },
-        cpf: { label: 'CPF', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>' },
-        email: { label: 'Email', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>' }
+  // === Função para preencher o perfil ===
+  function preencherPerfil(user) {
+    studentNameEl.textContent = user.nome || "Nome não disponível";
+
+    if (user.foto) {
+      profileAvatarEl.innerHTML = `<img src="${user.foto}" alt="Foto do aluno" />`;
+    } else {
+      profileAvatarEl.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>`;
+    }
+
+    const campos = [
+      { label: "Email", valor: user.email },
+      { label: "CPF", valor: user.cpf },
+      { label: "Instituição", valor: user.instituicao },
+      { label: "Curso", valor: user.curso },
+      { label: "Turno", valor: user.turno },
+    ];
+
+    infoListEl.innerHTML = campos
+      .map(
+        (c) => `
+        <div class="info-item">
+          <strong>${c.label}:</strong> <span>${c.valor || "Não informado"}</span>
+        </div>`
+      )
+      .join("");
+  }
+
+  // === Botão Voltar ===
+  backBtn.addEventListener("click", () => window.history.back());
+
+  // === Botão Editar Perfil ===
+  editBtn.addEventListener("click", async () => {
+    if (!usuario) return mostrarAlerta("Usuário não carregado.", "erro");
+
+    // Criar campos editáveis dinamicamente
+    infoListEl.innerHTML = `
+      <label>Nome: <input type="text" id="editNome" value="${usuario.nome || ""}" /></label>
+      <label>CPF: <input type="text" id="editCpf" value="${usuario.cpf || ""}" /></label>
+      <label>Instituição: <input type="text" id="editInstituicao" value="${usuario.instituicao || ""}" /></label>
+      <label>Curso: <input type="text" id="editCurso" value="${usuario.curso || ""}" /></label>
+      <label>Turno: <input type="text" id="editTurno" value="${usuario.turno || ""}" /></label>
+      <button id="saveChangesBtn" class="save-button">Salvar alterações</button>
+    `;
+
+    const saveBtn = document.getElementById("saveChangesBtn");
+    saveBtn.addEventListener("click", async () => {
+      const novosDados = {
+        nome: document.getElementById("editNome").value.trim(),
+        cpf: document.getElementById("editCpf").value.trim(),
+        instituicao: document.getElementById("editInstituicao").value.trim(),
+        curso: document.getElementById("editCurso").value.trim(),
+        turno: document.getElementById("editTurno").value.trim(),
+        email: usuario.email,
+        status: "aguardando_aprovacao",
+        estudante: true,
+        alteracaoSolicitadaEm: new Date().toISOString(),
       };
 
-      // Limpar lista antes de preencher
-      infoListEl.innerHTML = ''; 
+      try {
+        await addDoc(collection(db, "pending_students"), novosDados);
+        mostrarAlerta("Solicitação enviada ao administrador para aprovação.", "sucesso");
 
-      // Preencher a lista de informações
-      Object.keys(infoMap).forEach(key => {
-        const info = infoMap[key];
-        let valor = usuario[key] || 'Não informado';
-
-        // Formatar data de nascimento
-        if (key === 'nascimento' && usuario.nascimento) {
-          try {
-            const partes = usuario.nascimento.split('-'); // ["YYYY","MM","DD"]
-            if (partes.length === 3) {
-              valor = `${partes[2]}/${partes[1]}/${partes[0]}`;
-            }
-          } catch (e) {
-             console.error("Erro ao formatar data de nascimento:", e);
-             valor = usuario.nascimento; // Mantém o valor original se der erro
-          }
-        }
-        
-        // Criar o item da lista
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'info-item';
-        itemDiv.innerHTML = `
-          <div class="info-icon">${info.icon}</div>
-          <div class="info-text">
-            <span class="info-label">${info.label}:</span> ${valor}
-          </div>
-        `;
-        infoListEl.appendChild(itemDiv);
-      });
-
-      // Botão Voltar
-      if (backButton) {
-        backButton.addEventListener('click', () => window.history.back());
-      }
-
-      // Botão Editar
-      if (editBtn) {
-        editBtn.addEventListener('click', () => {
-          mostrarAlerta('Funcionalidade de edição em desenvolvimento', 'aviso');
-          // Futuro: window.location.href = 'editar-perfil-estudante.html'; 
-        });
+        // Volta ao modo visual após 2 segundos
+        setTimeout(() => preencherPerfil(novosDados), 2000);
+      } catch (error) {
+        console.error(error);
+        mostrarAlerta("Erro ao enviar alterações.", "erro");
       }
     });
+  });
+});
