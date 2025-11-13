@@ -307,6 +307,7 @@
 /* ===== ESTILO DO CARD DE VERIFICAÇÃO ===== */
     .verification-card {
       background-color: #FFD84D;
+
       border-radius: 16px;
       padding: 1.8rem;
       margin: 2rem auto;
@@ -322,7 +323,7 @@
     }
 
     .verification-card h2 {
-      color: #000;
+      color: #333;
       margin-bottom: 0.5rem;
       font-size: 1.5rem;
       font-weight: 700;
@@ -339,7 +340,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      background-color: #000;
+      background-color: #333;
       color: #FFD84D;
       text-decoration: none;
       font-weight: 600;
@@ -362,6 +363,7 @@
     .verification-card {
   background-color: #FFD54F; /* amarelo chamativo */
   color: #333;
+
   padding: 1.8rem;
   border-radius: 16px;
   margin: 1.5rem auto;
