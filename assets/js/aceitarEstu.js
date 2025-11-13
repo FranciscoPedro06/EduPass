@@ -9,6 +9,7 @@ import {
   query,
   where,
   updateDoc,
+  serverTimestamp, // ✅ necessário para o createdAt funcionar corretamente
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import {
   getAuth,
@@ -18,7 +19,9 @@ import {
 const auth = getAuth();
 let estudanteSelecionado = null;
 
-backButton.addEventListener("click", () => window.history.back());
+// === Botão voltar ===
+const backButton = document.getElementById("backButton");
+if (backButton) backButton.addEventListener("click", () => window.history.back());
 
 // === Alerta visual ===
 function mostrarAlerta(mensagem, tipo = "info") {
@@ -35,6 +38,27 @@ function mostrarAlerta(mensagem, tipo = "info") {
   setTimeout(() => alerta.remove(), 4000);
 }
 
+// === Envia notificação ao usuário ===
+async function enviarNotificacao(email, mensagem, tipo = "info") {
+  if (!email || !mensagem) {
+    console.error("❌ Notificação inválida: email ou mensagem ausente!");
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "notifications"), {
+      userEmail: email.trim().toLowerCase(), // 🔒 padroniza o e-mail
+      message: mensagem,
+      type: tipo,
+      read: false,
+      createdAt: serverTimestamp(), // 🔥 campo de data correta
+    });
+    console.log("✅ Notificação salva com sucesso:", mensagem);
+  } catch (err) {
+    console.error("Erro ao salvar notificação:", err);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const lista = document.getElementById("listaPendentes");
   const modal = document.getElementById("modalDetalhes");
@@ -43,7 +67,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnAprovar = document.getElementById("btnAprovar");
   const btnRecusar = document.getElementById("btnRecusar");
 
-  // Fecha o modal
+  if (!lista || !modal) return;
+
   btnFechar.addEventListener("click", () => (modal.style.display = "none"));
 
   try {
@@ -65,18 +90,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
         <button class="btn-detalhes" data-id="${docSnap.id}">Ver detalhes</button>
       `;
-
       lista.appendChild(li);
     });
 
-    // Abre o modal ao clicar em "Ver detalhes"
+    // === Ao clicar em "Ver detalhes" ===
     document.querySelectorAll(".btn-detalhes").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const id = btn.dataset.id;
         const ref = doc(db, "pending_students", id);
         const snap = await getDoc(ref);
-
         if (!snap.exists()) return;
+
         const dados = snap.data();
         estudanteSelecionado = { id, dados };
 
@@ -98,26 +122,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
 
-    // Aprovar
+    // === Aprovar cadastro ===
     btnAprovar.addEventListener("click", async () => {
       if (!estudanteSelecionado) return;
       const { id, dados } = estudanteSelecionado;
 
       if (dados.ref_original) {
-        // 🔄 Atualização de perfil existente
         await aprovarAlteracao(id, dados);
       } else {
-        // 🆕 Novo cadastro
         await aprovarNovoCadastro(id, dados);
       }
 
       modal.style.display = "none";
     });
 
-    // Recusar
+    // === Recusar cadastro ===
     btnRecusar.addEventListener("click", async () => {
       if (!estudanteSelecionado) return;
-      await recusarCadastro(estudanteSelecionado.id);
+      await recusarCadastro(estudanteSelecionado.id, estudanteSelecionado.dados);
       modal.style.display = "none";
     });
   } catch (err) {
@@ -126,36 +148,36 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-
 // === 🆕 Aprovação de novo cadastro ===
 async function aprovarNovoCadastro(id, dados) {
   try {
-    // Verifica se já existe estudante com o mesmo email
     const userQuery = query(collection(db, "students"), where("email", "==", dados.email));
     const existingUser = await getDocs(userQuery);
 
-    // Cria conta no Auth (opcional)
     if (existingUser.empty) {
       try {
         if (dados.senha) {
           await createUserWithEmailAndPassword(auth, dados.email, dados.senha);
-        } else {
-          console.warn("Usuário sem senha — criado apenas no Firestore.");
         }
       } catch (authErr) {
         if (authErr.code !== "auth/email-already-in-use") throw authErr;
       }
     }
 
-    // Adiciona no Firestore
     await addDoc(collection(db, "students"), {
       ...dados,
       status: "aprovado",
       aprovadoEm: new Date().toISOString(),
     });
 
-    // Remove da coleção de pendentes
     await deleteDoc(doc(db, "pending_students", id));
+
+    // ✅ Envia notificação ao estudante
+    await enviarNotificacao(
+      dados.email,
+      "Seu cadastro foi aprovado! 🎉 Você já pode acessar sua conta.",
+      "sucesso"
+    );
 
     mostrarAlerta(`Estudante ${dados.nome} aprovado com sucesso!`, "sucesso");
     setTimeout(() => location.reload(), 1500);
@@ -165,8 +187,7 @@ async function aprovarNovoCadastro(id, dados) {
   }
 }
 
-
-// === 🔄 Aprovação de alteração de dados existente ===
+// === 🔄 Aprovação de alteração existente ===
 async function aprovarAlteracao(pendingId, dados) {
   try {
     const studentRef = doc(db, "students", dados.ref_original);
@@ -183,6 +204,13 @@ async function aprovarAlteracao(pendingId, dados) {
 
     await deleteDoc(doc(db, "pending_students", pendingId));
 
+    // ✅ Envia notificação ao estudante
+    await enviarNotificacao(
+      dados.email,
+      "Suas informações foram atualizadas com sucesso! ✅",
+      "sucesso"
+    );
+
     mostrarAlerta("Alteração de cadastro aprovada!", "sucesso");
     setTimeout(() => location.reload(), 1500);
   } catch (err) {
@@ -191,11 +219,18 @@ async function aprovarAlteracao(pendingId, dados) {
   }
 }
 
-
 // === ❌ Recusar solicitação ===
-async function recusarCadastro(id) {
+async function recusarCadastro(id, dados) {
   try {
     await deleteDoc(doc(db, "pending_students", id));
+
+    // ✅ Envia notificação ao estudante
+    await enviarNotificacao(
+      dados.email,
+      "Sua solicitação foi recusada. Verifique seus dados e tente novamente.",
+      "aviso"
+    );
+
     mostrarAlerta("Solicitação recusada e removida!", "aviso");
     setTimeout(() => location.reload(), 1500);
   } catch (err) {

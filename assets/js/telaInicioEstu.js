@@ -1,9 +1,54 @@
-import { app, auth, db, storage } from "./firebase-config.js";
-import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { db } from "./firebase-config.js";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  limit,
+  updateDoc,
+  doc,
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 // ===== FUNÇÃO DE ALERTA =====
 function mostrarAlerta(msg, tipo = "info") {
   alert(msg);
+  console.log(`[${tipo.toUpperCase()}] ${msg}`);
+}
+
+// ====== FUNÇÃO PARA VERIFICAR NOTIFICAÇÕES ======
+async function verificarNotificacoes(email) {
+  if (!email) return;
+
+  try {
+    const q = query(
+      collection(db, "notifications"),
+      where("userEmail", "==", email),
+      where("read", "==", false),
+      orderBy("createdAt", "desc"),
+      limit(5)
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      console.log("📭 Nenhuma notificação nova para", email);
+      return;
+    }
+
+    snapshot.forEach(async (docSnap) => {
+      const notif = docSnap.data();
+
+      // Evita mostrar notificação sem mensagem
+      if (notif.message) mostrarAlerta(notif.message, notif.type);
+
+      // Marca como lida
+      const ref = doc(db, "notifications", docSnap.id);
+      await updateDoc(ref, { read: true });
+    });
+  } catch (err) {
+    console.error("Erro ao verificar notificações:", err);
+  }
 }
 
 // ===== LÓGICA DO DASHBOARD =====
@@ -16,7 +61,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+
+
   // Elementos da interface
+  const titulo = document.getElementById("titulo");
   const studentNameEl = document.getElementById("studentName");
   const studentInstitutionEl = document.getElementById("studentInstitution");
   const studentCourseEl = document.getElementById("studentCourse");
@@ -39,6 +87,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const estudante = snapshot.docs[0].data();
+
+    // === SAUDAÇÃO DINÂMICA ===
+    const hora = new Date().getHours();
+    let saudacao = "Olá";
+    if (hora >= 5 && hora < 12) {
+      saudacao = "Bom dia";
+    } else if (hora >= 12 && hora < 18) {
+      saudacao = "Boa tarde";
+    } else if (hora >= 18 && hora <= 23) {
+      saudacao = "Boa noite";
+    } else {
+      saudacao = "Boa madrugada";
+    }
+
+    if (titulo) {
+      titulo.textContent = `${saudacao}, ${estudante.nome || "Estudante"}! 🌟`;
+    }
 
     // === PREENCHER DADOS NA TELA ===
     if (studentNameEl) studentNameEl.textContent = estudante.nome || "Sem nome";
@@ -64,18 +129,30 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (userAvatarEl) userAvatarEl.style.backgroundImage = `url(${estudante.foto})`;
     }
 
-    // === QR CODE PLACEHOLDER ===
+    // === QR CODE ===
     if (qrCodePlaceholderEl) {
-      qrCodePlaceholderEl.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-        </svg>`;
+      qrCodePlaceholderEl.innerHTML = ""; // limpa texto "Carregando..."
+      try {
+        new QRCode(qrCodePlaceholderEl, {
+          text: emailLogado,
+          width: 200,
+          height: 200,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H,
+        });
+      } catch (e) {
+        console.error("Erro ao gerar QR Code:", e);
+        qrCodePlaceholderEl.textContent = "Erro ao gerar QR Code.";
+      }
     }
+
+    // 🔔 Verifica notificações do estudante após carregar dados
+    await verificarNotificacoes(estudante.email);
+
   } catch (error) {
     console.error("Erro ao carregar dados do estudante:", error);
-    mostrarAlerta("Erro ao buscar dados do estudante.");
+    mostrarAlerta("Erro ao buscar dados do estudante.", "erro");
   }
 
   // === LOGOUT ===

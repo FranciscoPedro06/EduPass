@@ -325,3 +325,16 @@
         .qr-code { width: 250px; height: 250px; }
         .bottom-nav { gap: 48px; padding: 16px 32px; }
     }
+
+.qr-card {
+  
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   text-align: center;
+}
+
+.qr-code img, .qr-code canvas {
+    width: 100% !important;
+    height: 100% !important;
+}

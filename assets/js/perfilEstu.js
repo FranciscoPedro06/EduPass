@@ -80,6 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
         </svg>`;
     }
 
+    // Mostra aviso fixo se estiver aguardando análise
+    const avisoHTML = user.status === "aguardando_aprovacao"
+      ? `<div class="status-aviso">Suas alterações estão em análise pelo administrador.</div>`
+      : "";
+
     const campos = [
       { label: "Email", valor: user.email },
       { label: "CPF", valor: user.cpf },
@@ -88,14 +93,17 @@ document.addEventListener("DOMContentLoaded", () => {
       { label: "Turno", valor: user.turno },
     ];
 
-    infoListEl.innerHTML = campos
-      .map(
-        (c) => `
-        <div class="info-item">
-          <strong>${c.label}:</strong> <span>${c.valor || "Não informado"}</span>
-        </div>`
-      )
-      .join("");
+    infoListEl.innerHTML = `
+      ${avisoHTML}
+      ${campos
+        .map(
+          (c) => `
+          <div class="info-item">
+            <strong>${c.label}:</strong> <span>${c.valor || "Não informado"}</span>
+          </div>`
+        )
+        .join("")}
+    `;
   }
 
   // === Botão Voltar ===
@@ -105,18 +113,50 @@ document.addEventListener("DOMContentLoaded", () => {
   editBtn.addEventListener("click", async () => {
     if (!usuario) return mostrarAlerta("Usuário não carregado.", "erro");
 
-    // Criar campos editáveis dinamicamente
+    // Impede edição se já houver solicitação pendente
+    if (usuario.status === "aguardando_aprovacao") {
+      return mostrarAlerta("Você já possui uma solicitação em análise.", "aviso");
+    }
+
+    editBtn.disabled = true;
+
+    // === Campos editáveis ===
     infoListEl.innerHTML = `
-      <label>Nome: <input type="text" id="editNome" value="${usuario.nome || ""}" /></label>
-      <label>CPF: <input type="text" id="editCpf" value="${usuario.cpf || ""}" /></label>
-      <label>Instituição: <input type="text" id="editInstituicao" value="${usuario.instituicao || ""}" /></label>
-      <label>Curso: <input type="text" id="editCurso" value="${usuario.curso || ""}" /></label>
-      <label>Turno: <input type="text" id="editTurno" value="${usuario.turno || ""}" /></label>
-      <button id="saveChangesBtn" class="save-button">Salvar alterações</button>
-      <button id="cancelChangesBtn" class="save-button">Cancelar alterações</button>
+      <div class="form-group">
+        <label for="editNome">Nome:</label>
+        <input type="text" id="editNome" value="${usuario.nome || ""}">
+      </div>
+      <div class="form-group">
+        <label for="editCpf">CPF:</label>
+        <input type="text" id="editCpf" value="${usuario.cpf || ""}">
+      </div>
+      <div class="form-group">
+        <label for="editInstituicao">Instituição:</label>
+        <input type="text" id="editInstituicao" value="${usuario.instituicao || ""}">
+      </div>
+      <div class="form-group">
+        <label for="editCurso">Curso:</label>
+        <input type="text" id="editCurso" value="${usuario.curso || ""}">
+      </div>
+      <div class="form-group">
+        <label for="editTurno">Turno:</label>
+        <select id="editTurno">
+          <option value="Manhã" ${usuario.turno === "Manhã" ? "selected" : ""}>Manhã</option>
+          <option value="Tarde" ${usuario.turno === "Tarde" ? "selected" : ""}>Tarde</option>
+          <option value="Noite" ${usuario.turno === "Noite" ? "selected" : ""}>Noite</option>
+        </select>
+      </div>
+      
+      <div class="form-button-group">
+        <button id="cancelChangesBtn" class="save-button secondary">Cancelar</button>
+        <button id="saveChangesBtn" class="save-button primary">Salvar alterações</button>
+      </div>
     `;
 
+    // === Lógica dos botões ===
     const saveBtn = document.getElementById("saveChangesBtn");
+    const cancelBtn = document.getElementById("cancelChangesBtn");
+
     saveBtn.addEventListener("click", async () => {
       const novosDados = {
         nome: document.getElementById("editNome").value.trim(),
@@ -124,28 +164,49 @@ document.addEventListener("DOMContentLoaded", () => {
         instituicao: document.getElementById("editInstituicao").value.trim(),
         curso: document.getElementById("editCurso").value.trim(),
         turno: document.getElementById("editTurno").value.trim(),
-        email: usuario.email,
-        estudante: true,
-        status: "aguardando_aprovacao",
-        alteracaoSolicitadaEm: new Date().toISOString(),
-        ref_original: userDocId, // 🔗 referência ao documento original
       };
 
+      // Verifica se há mudanças em relação aos dados atuais
+      const alterouAlgo = Object.keys(novosDados).some(
+        (campo) => novosDados[campo] !== (usuario[campo] || "")
+      );
+
+      if (!alterouAlgo) {
+        mostrarAlerta("Nenhuma alteração detectada.", "aviso");
+        return;
+      }
+
+      saveBtn.textContent = "Enviando...";
+      saveBtn.disabled = true;
+
       try {
-        await addDoc(collection(db, "pending_students"), novosDados);
+        await addDoc(collection(db, "pending_students"), {
+          ...novosDados,
+          email: usuario.email,
+          estudante: true,
+          status: "aguardando_aprovacao",
+          alteracaoSolicitadaEm: new Date().toISOString(),
+          ref_original: userDocId,
+        });
+
         mostrarAlerta("Solicitação de alteração enviada ao administrador.", "sucesso");
 
-        // volta ao modo de visualização
-        setTimeout(() => preencherPerfil(usuario), 2000);
+        // Atualiza o estado local e exibe o aviso
+        usuario.status = "aguardando_aprovacao";
+        preencherPerfil(usuario);
+        editBtn.disabled = false;
+
       } catch (error) {
         console.error(error);
         mostrarAlerta("Erro ao enviar solicitação!", "erro");
+        saveBtn.textContent = "Salvar alterações";
+        saveBtn.disabled = false;
       }
     });
 
-      const cancelBtn = document.getElementById("cancelChangesBtn");
-    cancelBtn.addEventListener("click", async () => {
-      window.location.reload();
+    cancelBtn.addEventListener("click", () => {
+      preencherPerfil(usuario);
+      editBtn.disabled = false;
     });
   });
 });
