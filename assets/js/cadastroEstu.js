@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sessionStorage.setItem("usuarioLogado", dadosCadastro.email);
 
       mostrarAlerta("✅ Cadastro enviado com sucesso! Aguarde a aprovação do administrador.");
-      setTimeout(() => window.location.href = "/index.html", 1500);
+      setTimeout(() => window.location.href = "index.html", 1500);
     } catch (err) {
       console.error(err);
       mostrarAlerta("Erro ao cadastrar!");
