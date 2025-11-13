@@ -4,19 +4,19 @@
 Alterar a rodapé das telas. ***** IMPORTANTE *****
 Padronizar as barras de navegações das telas. (cores)  ***** IMPORTANTE *****
 
-
-Atualizar a tela de inicio dos usuários. *                                                                                                          
+                                                                                                      
 Tela de Minhas Viagens funcional.  *
 Tela de Verificação de Embarque funcional e diferente da tela de verificar do estudante. *
 
 editar tela Inicio Motorista
 editar tela de Rotas
-Editar tela Inicio Usuario
-Editar tela Inicio ADM
+
+
 
 
 
 ** Mudar a conta do Firebase par uma com o Storage funcionando. **
+
 
 
 
