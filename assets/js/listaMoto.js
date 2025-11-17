@@ -69,7 +69,7 @@ function abrirModal(m) {
     // Botão de deletar
     deleteBtn.onclick = async () => {
         if (confirm(`Deseja realmente excluir ${m.nome}?`)) {
-            await deleteDoc(doc(db, "pending_motorists", m.id));
+            await deleteDoc(doc(db, "motoristas", m.id));
             alert("Motorista excluído com sucesso!");
             modal.classList.add("hidden");
             carregarMotoristas(); // atualizar lista
