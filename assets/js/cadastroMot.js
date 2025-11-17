@@ -54,11 +54,10 @@ document.getElementById('motoristForm').addEventListener('submit', async (e) => 
         mostrarAlerta('Salvando dados no Firestore...', 'info');
 
         // --- Salva apenas dados básicos ---
-        await addDoc(collection(db, 'pending_motorists'), {
-            uid,
+        await addDoc(collection(db, 'motoristas'), {
             nome,
             email,
-            status: 'aguardando',
+            status:'Aprovado',
             criadoEm: new Date(),
             motorista: true
         });
@@ -77,4 +76,41 @@ document.getElementById('motoristForm').addEventListener('submit', async (e) => 
         submitBtn.disabled = false;
         submitBtn.textContent = 'Concluir';
     }
+});
+
+// === ATUALIZAÇÃO VISUAL DOS ANEXOS ===
+document.addEventListener("DOMContentLoaded", () => {
+    const fileInputs = document.querySelectorAll(".file-input");
+
+    fileInputs.forEach(input => {
+        const label = input.previousElementSibling; // o label vem ANTES no seu HTML
+        const fileNameSpan = label.querySelector(".file-name");
+        const labelText = label.querySelector(".file-label-text");
+
+        input.addEventListener("change", () => {
+            if (input.files && input.files.length > 0) {
+                const nomeArquivo = input.files[0].name;
+
+                // mostra o nome do arquivo
+                fileNameSpan.textContent = nomeArquivo;
+
+                // adiciona estilo visual "selecionado"
+                label.classList.add("selected");
+
+                // muda o texto com check
+                labelText.textContent = "✅ Arquivo anexado";
+            } else {
+                // remove estilo caso o arquivo seja removido
+                fileNameSpan.textContent = "";
+                label.classList.remove("selected");
+
+                // volta ao texto original
+                if (input.id === "photo") {
+                    labelText.textContent = "Anexar arquivo (.jpg, .png)";
+                } else {
+                    labelText.textContent = "Anexar arquivo (.pdf, .jpg, .png)";
+                }
+            }
+        });
+    });
 });

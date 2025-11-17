@@ -242,3 +242,24 @@
          border: 1px solid rgba(239, 68, 68, 0.3); 
          display: block; 
         } 
+        .file-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f1f1f1;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.file-label.selected {
+    background: #d4f8d4;
+    border: 1px solid #2e8b2e;
+}
+
+.file-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
