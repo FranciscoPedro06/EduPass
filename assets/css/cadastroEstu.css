@@ -314,7 +314,7 @@
   gap: 10px;
 }
 
-.btn-primario {
+.btn-primario, .btn-captura-facial {
   background-color: #007bff;
   color: white;
   border: none;
@@ -341,3 +341,78 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* === ESTILOS PARA CAPTURA FACIAL === */
+.modal-captura-facial {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+.modal-captura-facial.hidden {
+  display: none;
+}
+
+.camera-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+}
+
+.camera-container video {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.camera-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background: rgba(0,0,0,0.4);
+}
+
+.scan-frame {
+  width: 200px;
+  height: 200px;
+  border: 3px solid #4CAF50;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { border-color: #4CAF50; }
+  50% { border-color: #2196F3; }
+  100% { border-color: #4CAF50; }
+}
+
+
+.btn-captura-facial:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.captura-success {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.captura-error {
+  color: #ef4444;
+  font-weight: 600;
+}

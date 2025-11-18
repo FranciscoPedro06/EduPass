@@ -1,3 +1,8 @@
+// Importações do Firebase que vamos precisar
+import { db } from "./firebase-config.js"; 
+// Você pode precisar de 'doc' e 'updateDoc' se for registrar a verificação
+// import { doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
 // ===== FUNÇÃO DE ALERTA GLOBAL =====
 function mostrarAlerta(mensagem, tipo = 'info') {
   let containerAlertas = document.getElementById('container-alertas');
@@ -28,48 +33,60 @@ function mostrarAlerta(mensagem, tipo = 'info') {
   }, 4000);
 }
 
-// ===== LÓGICA DA PÁGINA DE RECONHECIMENTO FACIAL =====
+// ===== CONSTANTES E VARIÁVEIS GLOBAIS =====
+const API_URL = "https://unpoetically-stampedable-lorena.ngrok-free.dev"; // ⚠️ Sua API DeepFace
+
 const video = document.getElementById("video");
 const message = document.getElementById("message");
 const popup1 = document.getElementById("popup1");
 const popup2 = document.getElementById("popup2");
 const backButton = document.getElementById("backButton");
+const btnVerificarRosto = document.getElementById("btnVerificarRosto");
 
+let streamAtivo = null;
+
+// ===== LÓGICA DA PÁGINA =====
+
+// Botão Voltar
 if (backButton) {
   backButton.addEventListener("click", () => {
-    if (video.srcObject) {
-      const tracks = video.srcObject.getTracks();
-      tracks.forEach((track) => track.stop());
-      console.log("[v0] Stream da câmera encerrado ao voltar");
-    }
+    pararCamera();
     window.history.back();
   });
 }
 
-function showPopup2() {
+// Fluxo dos Popups
+window.showPopup2 = function() {
   popup1.classList.add("hidden");
   popup2.classList.remove("hidden");
 }
 
-function startVerification() {
+window.startVerification = function() {
   popup2.classList.add("hidden");
   startCamera();
 }
 
+// Parar a câmera
+function pararCamera() {
+  if (streamAtivo) {
+    streamAtivo.getTracks().forEach((track) => track.stop());
+    streamAtivo = null;
+    console.log("[v0] Stream da câmera encerrado");
+  }
+}
+
+// Iniciar a Câmera
 async function startCamera() {
   try {
-    // Recupera tipo de usuário (salvo no login, por exemplo)
-    const userType = sessionStorage.getItem("tipoUsuario"); 
-    // Valor esperado: "motorista" ou "estudante"
-
-    // Define qual câmera usar
+    // Recupera tipo de usuário
+    const userType = sessionStorage.getItem("tipoUsuario") || "motorista"; // Padrão motorista
     const facingMode = userType === "motorista" ? "environment" : "user";
 
     message.textContent = "Abrindo câmera...";
     message.classList.remove("error-message");
     console.log(`[v0] Solicitando câmera (${facingMode})...`);
 
-    const stream = await navigator.mediaDevices.getUserMedia({
+    streamAtivo = await navigator.mediaDevices.getUserMedia({
       video: {
         facingMode: { ideal: facingMode },
         width: { ideal: 1280 },
@@ -80,37 +97,98 @@ async function startCamera() {
 
     console.log("[v0] Permissão concedida, iniciando stream...");
     message.textContent = "Câmera iniciada!";
-    video.srcObject = stream;
+    video.srcObject = streamAtivo;
 
     video.onloadedmetadata = () => {
       console.log("[v0] Vídeo carregado");
       video.classList.add("loaded");
+      message.textContent = "Posicione o rosto do aluno no oval";
+      btnVerificarRosto.style.display = "block"; // Mostra o botão de verificar
     };
 
   } catch (error) {
     console.error("[v0] Erro ao acessar a câmera:", error);
     message.classList.add("error-message");
-
+    // ... (seu código de tratamento de erro da câmera) ...
     if (error.name === "NotAllowedError") {
-      message.textContent = "Permissão da câmera negada.";
-      mostrarAlerta("Permissão da câmera negada. Ative o acesso à câmera nas configurações do navegador.", "erro");
-    } else if (error.name === "NotFoundError") {
-      message.textContent = "Nenhuma câmera encontrada.";
-      mostrarAlerta("Nenhuma câmera foi encontrada no seu dispositivo.", "erro");
-    } else if (error.name === "NotReadableError") {
-      message.textContent = "Câmera em uso ou com problema.";
-      mostrarAlerta("Não foi possível acessar a câmera. Ela pode estar em uso por outro app.", "erro");
+       message.textContent = "Permissão da câmera negada.";
     } else {
-      message.textContent = "Erro desconhecido.";
-      mostrarAlerta(`Erro: ${error.message}`, "erro");
+       message.textContent = "Erro ao iniciar a câmera.";
     }
   }
 }
 
-window.addEventListener("beforeunload", () => {
-  if (video.srcObject) {
-    const tracks = video.srcObject.getTracks();
-    tracks.forEach((track) => track.stop());
-    console.log("[v0] Stream da câmera encerrado ao sair da página");
+// ===== LÓGICA DE VERIFICAÇÃO (NOVA) =====
+
+// Listener do botão de verificar
+btnVerificarRosto.addEventListener("click", capturarEVerificarRosto);
+
+function capturarEVerificarRosto() {
+  if (!streamAtivo) {
+    mostrarAlerta("Câmera não iniciada.", "erro");
+    return;
   }
+
+  message.textContent = "Verificando...";
+  btnVerificarRosto.disabled = true; // Desabilita para evitar cliques duplos
+
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  
+  // Desenha o vídeo no canvas
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Converte para Blob e envia para a API
+  canvas.toBlob(async (blob) => {
+    await verificarRostoAPI(blob);
+  }, 'image/jpeg', 0.8);
+}
+
+// Função que chama a API de VERIFICAÇÃO
+async function verificarRostoAPI(blob) {
+  try {
+    const formData = new FormData();
+    formData.append('file', blob, 'rosto_verificar.jpg');
+    
+    // ⚠️ ATENÇÃO AQUI: Mudamos para o endpoint '/verificar'
+    const response = await fetch(`${API_URL}/verificar`, {
+      method: 'POST',
+      body: formData
+    });
+    
+    const data = await response.json();
+    
+    if (data.success && data.nome) {
+      // SUCESSO!
+      message.textContent = `Aluno Verificado: ${data.nome}`;
+      mostrarAlerta(`✅ Verificado: ${data.nome}`, "sucesso");
+      
+      // Opcional: Registre essa verificação no Firestore
+      // await addDoc(collection(db, "verificacoes"), {
+      //   alunoNome: data.nome,
+      //   motoristaId: sessionStorage.getItem("motoristaLogadoId"), // Você precisaria ter isso
+      //   timestamp: serverTimestamp()
+      // });
+
+    } else {
+      // FALHA (Rosto não encontrado ou erro)
+      message.textContent = "Aluno não reconhecido. Tente novamente.";
+      mostrarAlerta(data.error || "Rosto não encontrado.", "erro");
+    }
+
+  } catch (error) {
+    console.error("Erro ao verificar rosto:", error);
+    message.textContent = "Erro de conexão. Tente novamente.";
+    mostrarAlerta("Erro de conexão com o servidor.", "erro");
+  } finally {
+    // Reabilita o botão para uma nova tentativa
+    btnVerificarRosto.disabled = false;
+  }
+}
+
+// Parar câmera ao sair
+window.addEventListener("beforeunload", () => {
+  pararCamera();
 });
