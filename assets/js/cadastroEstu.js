@@ -164,12 +164,12 @@ async function iniciarCameraCaptura() {
       canvasCaptura.width = videoCaptura.videoWidth;
       canvasCaptura.height = videoCaptura.videoHeight;
       btnCapturarRosto.disabled = false;
-      resultadoCaptura.innerHTML = '<div class="captura-success">✅ Câmera pronta! Clique em "Capturar Rosto"</div>';
+      resultadoCaptura.innerHTML = '<div class="captura-success"> Câmera pronta! Clique em "Capturar Rosto"</div>';
     });
     
   } catch (error) {
     console.error('Erro na câmera:', error);
-    resultadoCaptura.innerHTML = '<div class="captura-error">❌ Erro ao acessar câmera</div>';
+    resultadoCaptura.innerHTML = '<div class="captura-error"> Erro ao acessar câmera</div>';
   }
 }
 
@@ -187,7 +187,7 @@ btnCapturarRosto.addEventListener('click', async () => {
     }, 'image/jpeg', 0.8);
     
   } catch (error) {
-    resultadoCaptura.innerHTML = '<div class="captura-error">❌ Erro ao capturar imagem</div>';
+    resultadoCaptura.innerHTML = '<div class="captura-error"> Erro ao capturar imagem</div>';
   }
 });
 
@@ -228,7 +228,7 @@ async function cadastrarRostoAPI(blob) {
     } else {
       resultadoCaptura.innerHTML = `
         <div class="captura-error">
-          ❌ Erro: ${data.error || data.message}
+           Erro: ${data.error || data.message}
           ${data.dica ? `<br><small>💡 ${data.dica}</small>` : ''}
         </div>
       `;
@@ -237,7 +237,7 @@ async function cadastrarRostoAPI(blob) {
   } catch (error) {
     resultadoCaptura.innerHTML = `
       <div class="captura-error">
-        ❌ Erro de conexão com o servidor
+         Erro de conexão com o servidor
         <br><small>Verifique se o backend está rodando</small>
       </div>
     `;
