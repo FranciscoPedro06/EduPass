@@ -1,14 +1,18 @@
 import { app, auth, db, storage } from "./firebase-config.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+// ⚠️ Lembre-se de importar o Auth para corrigir a senha!
+// import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+// ⚠️ Lembre-se de importar o Storage para os arquivos!
+// import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
 
 // === ALERTA UNIFICADO ===
 function mostrarAlerta(msg, tipo = "info") {
-  alert(msg); // pode trocar depois pelo seu alerta estilizado
+  alert(msg); // (Substitua pelo seu alerta)
 }
 
-backButton.addEventListener("click", () => window.history.back());
+document.getElementById("backButton").addEventListener("click", () => window.history.back());
 
-// === LÓGICA PRINCIPAL ===
+// === LÓGICA PRINCIPAL (TUDO EM UM DOMContentLoaded) ===
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("cadastroForm");
   const modalTermo = document.getElementById("modalTermo");
@@ -16,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCancelarTermo = document.getElementById("btnCancelarTermo");
   const checkboxTermo = document.getElementById("checkboxTermo");
 
-  let dadosCadastro = null; // variável temporária para guardar dados antes de enviar
+  let dadosCadastro = null;
 
   // === Habilita botão ao marcar checkbox ===
   checkboxTermo.addEventListener("change", () => {
@@ -30,30 +34,45 @@ document.addEventListener("DOMContentLoaded", () => {
     btnAceitarTermo.disabled = true;
   });
 
-  // === Aceitar Termo ===
+  // === Aceitar Termo (MODIFICADO PARA REDIRECIONAR) ===
   btnAceitarTermo.addEventListener("click", async () => {
     modalTermo.classList.add("hidden");
 
     try {
-      // salva dados no Firestore
-      await addDoc(collection(db, "pending_students"), dadosCadastro);
+      // 🚨 ALERTA DE SEGURANÇA: Corrija isso! Use Firebase Auth.
+      // 1. Crie o usuário no Auth (ex: createUserWithEmailAndPassword)
+      // 2. Pegue o UID retornado
+      // 3. Remova a senha do 'dadosCadastro'
+      delete dadosCadastro.senha; 
+      
+      // 🚨 LÓGICA FALTANDO: Faça o upload dos 5 arquivos para o Storage aqui
+      // e adicione as URLs de download ao 'dadosCadastro'.
 
-      // salva e-mail do usuário na sessão
+      // Salva dados no Firestore
+      const docRef = await addDoc(collection(db, "pending_students"), dadosCadastro);
+
+      // Salva e-mail do usuário na sessão (para o novo login)
       sessionStorage.setItem("usuarioLogado", dadosCadastro.email);
 
-      mostrarAlerta("✅ Cadastro enviado com sucesso! Aguarde a aprovação do administrador.");
-      setTimeout(() => window.location.href = "index.html", 1500);
+      mostrarAlerta("✅ Cadastro enviado! Agora, vamos cadastrar seu rosto.", "sucesso");
+
+      // === MUDANÇA PRINCIPAL: REDIRECIONAR ===
+      setTimeout(() => {
+        // Passa o modo, o ID do documento, e o nome pela URL
+        window.location.href = `reconhecimentoFace.html?modo=cadastro&id=${docRef.id}&nome=${dadosCadastro.nome}`;
+      }, 2000);
+
     } catch (err) {
       console.error(err);
-      mostrarAlerta("Erro ao cadastrar!");
+      mostrarAlerta("Erro ao salvar cadastro: " + err.message, "erro");
     }
   });
 
-  // === Quando o usuário tenta enviar o formulário ===
+  // === Envio do Formulário ===
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // pega valores do formulário
+    // Pega valores do formulário
     const nome = document.getElementById("nome").value.trim();
     const email = document.getElementById("email").value.trim();
     const senha = document.getElementById("senha").value.trim();
@@ -62,34 +81,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const instituicao = document.getElementById("instituicao").value.trim();
     const curso = document.getElementById("curso").value.trim();
     const turno = document.getElementById("turno").value.trim();
+    
+    // 🚨 Pegue os arquivos aqui (ex: const fotoFile = document.getElementById("foto").files[0];)
 
-    // validações
-    if (senha !== confirmarSenha) return mostrarAlerta("As senhas não coincidem!");
+    // Validações
+    if (senha !== confirmarSenha) return mostrarAlerta("As senhas não coincidem!", "aviso");
     if (!nome || !email || !cpf || !instituicao || !curso || !turno)
-      return mostrarAlerta("Preencha todos os campos obrigatórios!");
+      return mostrarAlerta("Preencha todos os campos obrigatórios!", "aviso");
+    // 🚨 Valide os arquivos aqui
 
-    // guarda dados temporariamente e exibe o termo
+    // Guarda dados temporariamente
     dadosCadastro = {
       nome,
       email,
-      senha, // (futuramente criptografar)
+      senha, // 🚨 Lembre-se de remover isso ao usar Auth
       cpf,
       instituicao,
       curso,
       turno,
       status: "aguardando",
       estudante: true,
-      foto: ""
+      foto: "", // 🚨 Preencher com a URL da foto 3x4 após upload
+      // 🚨 Adicione os outros arquivos aqui (residenciaUrl, tituloUrl, etc.)
     };
 
     modalTermo.classList.remove("hidden");
   });
-});
 
-// === ATUALIZAÇÃO VISUAL DOS ANEXOS ===
-document.addEventListener("DOMContentLoaded", () => {
+  // === ATUALIZAÇÃO VISUAL DOS ANEXOS ===
   const fileInputs = document.querySelectorAll(".file-input");
-
   fileInputs.forEach(input => {
     const label = input.nextElementSibling;
     const fileNameSpan = label.querySelector(".file-name");
@@ -108,185 +128,4 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-
-  // === RECONHECIMENTO FACIAL NO CADASTRO ===
-const API_URL = "https://unpoetically-stampedable-lorena.ngrok-free.dev"; // API DeepFace
-
-// Elementos do modal facial
-const modalCapturaFacial = document.getElementById('modalCapturaFacial');
-const btnIniciarCaptura = document.getElementById('btnIniciarCaptura');
-const btnCapturarRosto = document.getElementById('btnCapturarRosto');
-const btnCancelarCaptura = document.getElementById('btnCancelarCaptura');
-const videoCaptura = document.getElementById('videoCaptura');
-const canvasCaptura = document.getElementById('canvasCaptura');
-const resultadoCaptura = document.getElementById('resultadoCaptura');
-const statusCaptura = document.getElementById('statusCaptura');
-
-let streamCaptura = null;
-let facialEmbedding = null;
-
-// Abrir modal de captura
-btnIniciarCaptura.addEventListener('click', () => {
-  const nome = document.getElementById('nome').value.trim();
-  if (!nome) {
-    mostrarAlerta("Digite o nome do aluno primeiro", "aviso");
-    return;
-  }
-  
-  modalCapturaFacial.classList.remove('hidden');
-  iniciarCameraCaptura();
-});
-
-// Fechar modal
-btnCancelarCaptura.addEventListener('click', () => {
-  fecharModalCaptura();
-});
-
-// Iniciar câmera para captura
-async function iniciarCameraCaptura() {
-  try {
-    if (streamCaptura) {
-      streamCaptura.getTracks().forEach(track => track.stop());
-    }
-    
-    const constraints = {
-      video: {
-        width: { ideal: 640 },
-        height: { ideal: 480 },
-        facingMode: 'user'
-      }
-    };
-    
-    streamCaptura = await navigator.mediaDevices.getUserMedia(constraints);
-    videoCaptura.srcObject = streamCaptura;
-    
-    videoCaptura.addEventListener('loadedmetadata', () => {
-      canvasCaptura.width = videoCaptura.videoWidth;
-      canvasCaptura.height = videoCaptura.videoHeight;
-      btnCapturarRosto.disabled = false;
-      resultadoCaptura.innerHTML = '<div class="captura-success"> Câmera pronta! Clique em "Capturar Rosto"</div>';
-    });
-    
-  } catch (error) {
-    console.error('Erro na câmera:', error);
-    resultadoCaptura.innerHTML = '<div class="captura-error"> Erro ao acessar câmera</div>';
-  }
-}
-
-// Capturar rosto
-btnCapturarRosto.addEventListener('click', async () => {
-  const ctx = canvasCaptura.getContext('2d');
-  ctx.drawImage(videoCaptura, 0, 0, canvasCaptura.width, canvasCaptura.height);
-  
-  resultadoCaptura.innerHTML = '<div style="color: #2196F3;">🔄 Processando reconhecimento facial...</div>';
-  
-  try {
-    // Converter para blob e enviar para API
-    canvasCaptura.toBlob(async (blob) => {
-      await cadastrarRostoAPI(blob);
-    }, 'image/jpeg', 0.8);
-    
-  } catch (error) {
-    resultadoCaptura.innerHTML = '<div class="captura-error"> Erro ao capturar imagem</div>';
-  }
-});
-
-// Cadastrar rosto na API DeepFace
-async function cadastrarRostoAPI(blob) {
-  try {
-    const nome = document.getElementById('nome').value.trim();
-    
-    const formData = new FormData();
-    formData.append('file', blob, 'rosto.jpg');
-    formData.append('nome', nome);
-    
-    const response = await fetch(`${API_URL}/cadastrar`, {
-      method: 'POST',
-      body: formData
-    });
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      facialEmbedding = data.user_id; // Salva o ID do usuário no sistema facial
-      
-      resultadoCaptura.innerHTML = `
-        <div class="captura-success">
-          ✅ ${data.message}
-          <br><small>Embedding: ${data.embedding_size} dimensões</small>
-        </div>
-      `;
-      
-      statusCaptura.innerHTML = '✅ Rosto cadastrado com sucesso!';
-      statusCaptura.style.color = '#10b981';
-      
-      // Fechar modal após 2 segundos
-      setTimeout(() => {
-        fecharModalCaptura();
-      }, 2000);
-      
-    } else {
-      resultadoCaptura.innerHTML = `
-        <div class="captura-error">
-           Erro: ${data.error || data.message}
-          ${data.dica ? `<br><small>💡 ${data.dica}</small>` : ''}
-        </div>
-      `;
-    }
-    
-  } catch (error) {
-    resultadoCaptura.innerHTML = `
-      <div class="captura-error">
-         Erro de conexão com o servidor
-        <br><small>Verifique se o backend está rodando</small>
-      </div>
-    `;
-  }
-}
-
-function fecharModalCaptura() {
-  modalCapturaFacial.classList.add('hidden');
-  if (streamCaptura) {
-    streamCaptura.getTracks().forEach(track => track.stop());
-    streamCaptura = null;
-  }
-  resultadoCaptura.innerHTML = '';
-}
-
-// Modificar o evento de submit do formulário para incluir o facialEmbedding
-// (Substitua o evento submit existente por este)
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  // Validações existentes
-  const nome = document.getElementById('nome').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const senha = document.getElementById('senha').value.trim();
-  const confirmarSenha = document.getElementById('confirmarSenha').value.trim();
-  const cpf = document.getElementById('cpf').value.trim();
-  const instituicao = document.getElementById('instituicao').value.trim();
-  const curso = document.getElementById('curso').value.trim();
-  const turno = document.getElementById('turno').value.trim();
-
-  if (senha !== confirmarSenha) return mostrarAlerta("As senhas não coincidem!");
-  if (!nome || !email || !cpf || !instituicao || !curso || !turno)
-    return mostrarAlerta("Preencha todos os campos obrigatórios!");
-
-  // ✅ AGORA INCLUI O FACIAL_EMBEDDING
-  dadosCadastro = {
-    nome,
-    email,
-    senha,
-    cpf,
-    instituicao,
-    curso,
-    turno,
-    status: "aguardando",
-    estudante: true,
-    foto: "",
-    facial_id: facialEmbedding // ✅ ID do sistema de reconhecimento facial
-  };
-
-  modalTermo.classList.remove('hidden');
-});
 });

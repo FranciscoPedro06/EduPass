@@ -17,8 +17,7 @@
     <h1 class="header-title">Reconhecimento facial</h1>
   </header>
 
-  <div id="popup1" class="popup-overlay">
-    <div class="popup-content">
+  <div id="popup1" class="popup-overlay hidden"> <div class="popup-content">
       <h2 class="popup-title">Iniciar a verificação</h2>
       <p class="popup-description">
         Este processo foi criado para confirmar sua identidade e proteger você contra roubo de identidade.
@@ -57,12 +56,14 @@
         <video id="video" autoplay playsinline></video>
         <div id="message">Aguardando permissão da câmera...</div>
       </div>
-
+      
       <button id="btnVerificarRosto" class="popup-button" style="margin-top: 24px; display: none;">
-        📸 Verificar Rosto
+        Carregando...
       </button>
-      </div>
+    </div>
   </div>
+  
+  <div id="container-alertas"></div>
 
   <script type="module" src="./assets/js/reconhecimentoFace.js"></script>
 </body>

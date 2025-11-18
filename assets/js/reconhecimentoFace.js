@@ -1,9 +1,23 @@
-// Importações do Firebase que vamos precisar
 import { db } from "./firebase-config.js"; 
-// Você pode precisar de 'doc' e 'updateDoc' se for registrar a verificação
-// import { doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js"; 
 
-// ===== FUNÇÃO DE ALERTA GLOBAL =====
+// ===== CONSTANTES GLOBAIS =====
+const API_URL = "https://unpoetically-stampedable-lorena.ngrok-free.dev"; 
+
+const video = document.getElementById("video");
+const message = document.getElementById("message");
+const popup1 = document.getElementById("popup1");
+const popup2 = document.getElementById("popup2");
+const backButton = document.getElementById("backButton");
+const btnVerificarRosto = document.getElementById("btnVerificarRosto"); // O botão de captura/verificação
+
+// Variáveis de Estado (lidas da URL)
+let modo = null;         // 'cadastro' ou 'verificar'
+let docId = null;        // ID do documento (para modo cadastro)
+let nomeAluno = null;    // Nome do aluno (para modo cadastro)
+let streamAtivo = null;
+
+// ===== FUNÇÃO DE ALERTA (Sua função) =====
 function mostrarAlerta(mensagem, tipo = 'info') {
   let containerAlertas = document.getElementById('container-alertas');
   if (!containerAlertas) {
@@ -33,40 +47,8 @@ function mostrarAlerta(mensagem, tipo = 'info') {
   }, 4000);
 }
 
-// ===== CONSTANTES E VARIÁVEIS GLOBAIS =====
-const API_URL = "https://unpoetically-stampedable-lorena.ngrok-free.dev"; // ⚠️ Sua API DeepFace
+// ===== LÓGICA DA CÂMERA =====
 
-const video = document.getElementById("video");
-const message = document.getElementById("message");
-const popup1 = document.getElementById("popup1");
-const popup2 = document.getElementById("popup2");
-const backButton = document.getElementById("backButton");
-const btnVerificarRosto = document.getElementById("btnVerificarRosto");
-
-let streamAtivo = null;
-
-// ===== LÓGICA DA PÁGINA =====
-
-// Botão Voltar
-if (backButton) {
-  backButton.addEventListener("click", () => {
-    pararCamera();
-    window.history.back();
-  });
-}
-
-// Fluxo dos Popups
-window.showPopup2 = function() {
-  popup1.classList.add("hidden");
-  popup2.classList.remove("hidden");
-}
-
-window.startVerification = function() {
-  popup2.classList.add("hidden");
-  startCamera();
-}
-
-// Parar a câmera
 function pararCamera() {
   if (streamAtivo) {
     streamAtivo.getTracks().forEach((track) => track.stop());
@@ -75,16 +57,18 @@ function pararCamera() {
   }
 }
 
-// Iniciar a Câmera
 async function startCamera() {
   try {
-    // Recupera tipo de usuário
-    const userType = sessionStorage.getItem("tipoUsuario") || "motorista"; // Padrão motorista
-    const facingMode = userType === "motorista" ? "environment" : "user";
+    let facingMode;
+
+    if (modo === 'cadastro') {
+      facingMode = 'user'; // CADASTRO = Câmera Frontal (Selfie)
+    } else {
+      facingMode = 'environment'; // VERIFICAR = Câmera Traseira (Motorista)
+    }
 
     message.textContent = "Abrindo câmera...";
     message.classList.remove("error-message");
-    console.log(`[v0] Solicitando câmera (${facingMode})...`);
 
     streamAtivo = await navigator.mediaDevices.getUserMedia({
       video: {
@@ -95,100 +79,163 @@ async function startCamera() {
       audio: false,
     });
 
-    console.log("[v0] Permissão concedida, iniciando stream...");
-    message.textContent = "Câmera iniciada!";
     video.srcObject = streamAtivo;
 
     video.onloadedmetadata = () => {
-      console.log("[v0] Vídeo carregado");
       video.classList.add("loaded");
-      message.textContent = "Posicione o rosto do aluno no oval";
-      btnVerificarRosto.style.display = "block"; // Mostra o botão de verificar
+      btnVerificarRosto.style.display = "block"; // Mostra o botão
+      
+      // Espelha o vídeo se for a câmera frontal
+      video.style.transform = (facingMode === 'user') ? "scaleX(-1)" : "none";
+      
+      // Muda o texto do botão e da mensagem
+      if (modo === 'cadastro') {
+        message.textContent = "Posicione o rosto para cadastrar";
+        btnVerificarRosto.textContent = "📸 Cadastrar Rosto";
+      } else {
+        message.textContent = "Posicione o rosto para verificar";
+        btnVerificarRosto.textContent = "📸 Verificar Rosto";
+      }
     };
 
   } catch (error) {
     console.error("[v0] Erro ao acessar a câmera:", error);
     message.classList.add("error-message");
-    // ... (seu código de tratamento de erro da câmera) ...
     if (error.name === "NotAllowedError") {
-       message.textContent = "Permissão da câmera negada.";
+      message.textContent = "Permissão da câmera negada.";
     } else {
-       message.textContent = "Erro ao iniciar a câmera.";
+      message.textContent = "Erro ao iniciar a câmera.";
     }
   }
 }
 
-// ===== LÓGICA DE VERIFICAÇÃO (NOVA) =====
+// ===== LÓGICA DE CAPTURA E API =====
 
-// Listener do botão de verificar
-btnVerificarRosto.addEventListener("click", capturarEVerificarRosto);
+btnVerificarRosto.addEventListener("click", () => {
+  if (!streamAtivo) return;
 
-function capturarEVerificarRosto() {
-  if (!streamAtivo) {
-    mostrarAlerta("Câmera não iniciada.", "erro");
-    return;
-  }
-
-  message.textContent = "Verificando...";
-  btnVerificarRosto.disabled = true; // Desabilita para evitar cliques duplos
+  message.textContent = "Processando...";
+  btnVerificarRosto.disabled = true;
 
   const canvas = document.createElement('canvas');
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   const ctx = canvas.getContext('2d');
   
-  // Desenha o vídeo no canvas
+  // Corrige o espelhamento ao desenhar no canvas
+  if (video.style.transform === "scaleX(-1)") {
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+  }
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  // Converte para Blob e envia para a API
   canvas.toBlob(async (blob) => {
-    await verificarRostoAPI(blob);
+    // AQUI O SCRIPT DECIDE O QUE FAZER
+    if (modo === 'cadastro') {
+      await cadastrarRostoAPI(blob);
+    } else {
+      await verificarRostoAPI(blob);
+    }
   }, 'image/jpeg', 0.8);
+});
+
+// FUNÇÃO 1: Cadastrar Rosto (para Alunos)
+async function cadastrarRostoAPI(blob) {
+  try {
+    const formData = new FormData();
+    formData.append('file', blob, 'rosto.jpg');
+    formData.append('nome', nomeAluno); // Usa o nome vindo da URL
+
+    const response = await fetch(`${API_URL}/cadastrar`, { // Endpoint /cadastrar
+      method: 'POST',
+      body: formData
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      const facialId = data.user_id;
+      // Atualiza o documento no Firestore
+      const alunoRef = doc(db, "pending_students", docId);
+      await updateDoc(alunoRef, { facial_id: facialId });
+      
+      mostrarAlerta("✅ Rosto cadastrado com sucesso!", "sucesso");
+      pararCamera();
+      setTimeout(() => window.location.href = "index.html", 2000); // Volta para o login
+    } else {
+      throw new Error(data.error || "Não foi possível cadastrar o rosto.");
+    }
+  } catch (error) {
+    console.error("Erro ao cadastrar rosto:", error);
+    mostrarAlerta(error.message, "erro");
+    btnVerificarRosto.disabled = false; // Tente de novo
+  }
 }
 
-// Função que chama a API de VERIFICAÇÃO
+// FUNÇÃO 2: Verificar Rosto (para Motoristas)
 async function verificarRostoAPI(blob) {
   try {
     const formData = new FormData();
     formData.append('file', blob, 'rosto_verificar.jpg');
     
-    // ⚠️ ATENÇÃO AQUI: Mudamos para o endpoint '/verificar'
-    const response = await fetch(`${API_URL}/verificar`, {
+    const response = await fetch(`${API_URL}/verificar`, { // Endpoint /verificar
       method: 'POST',
       body: formData
     });
-    
     const data = await response.json();
-    
-    if (data.success && data.nome) {
-      // SUCESSO!
-      message.textContent = `Aluno Verificado: ${data.nome}`;
-      mostrarAlerta(`✅ Verificado: ${data.nome}`, "sucesso");
-      
-      // Opcional: Registre essa verificação no Firestore
-      // await addDoc(collection(db, "verificacoes"), {
-      //   alunoNome: data.nome,
-      //   motoristaId: sessionStorage.getItem("motoristaLogadoId"), // Você precisaria ter isso
-      //   timestamp: serverTimestamp()
-      // });
 
+    if (data.success && data.nome) {
+      mostrarAlerta(`✅ Verificado: ${data.nome}`, "sucesso");
     } else {
-      // FALHA (Rosto não encontrado ou erro)
-      message.textContent = "Aluno não reconhecido. Tente novamente.";
       mostrarAlerta(data.error || "Rosto não encontrado.", "erro");
     }
-
   } catch (error) {
-    console.error("Erro ao verificar rosto:", error);
-    message.textContent = "Erro de conexão. Tente novamente.";
     mostrarAlerta("Erro de conexão com o servidor.", "erro");
   } finally {
-    // Reabilita o botão para uma nova tentativa
-    btnVerificarRosto.disabled = false;
+    btnVerificarRosto.disabled = false; // Tente de novo
   }
 }
 
-// Parar câmera ao sair
-window.addEventListener("beforeunload", () => {
+// ===== INICIALIZAÇÃO =====
+
+// Popups (precisam ser globais para o onclick do HTML)
+window.showPopup2 = () => {
+  popup1.classList.add("hidden");
+  popup2.classList.remove("hidden");
+};
+window.startVerification = () => {
+  popup2.classList.add("hidden");
+  startCamera();
+};
+
+// Botão Voltar
+backButton.addEventListener("click", () => {
   pararCamera();
+  window.history.back();
+});
+window.addEventListener("beforeunload", pararCamera);
+
+// Evento Principal: Ler a URL e decidir o que fazer
+document.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  // Tenta pegar os parâmetros de cadastro
+  const cadastroId = urlParams.get('id');
+  const cadastroNome = urlParams.get('nome');
+
+  if (urlParams.get('modo') === 'cadastro' && cadastroId && cadastroNome) {
+    // --- MODO CADASTRO ---
+    modo = 'cadastro';
+    docId = cadastroId;
+    nomeAluno = cadastroNome;
+    
+    // Pula o primeiro popup e vai direto para as instruções
+    popup1.classList.add("hidden");
+    popup2.classList.remove("hidden");
+    
+  } else {
+    // --- MODO VERIFICAÇÃO (Padrão) ---
+    modo = 'verificar';
+    // O motorista (ou quem abrir sem params) vê o popup 1
+    popup1.classList.remove("hidden");
+  }
 });
