@@ -15,25 +15,25 @@
       
       --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
       --card-radius: 16px; /* Padronizado */
-    }
+}
 
-    * {
+* {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-    }
+}
 
-    body {
+body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--primary-text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-    }
+}
 
-    /* 2. Header (Padrão) */
-    .header {
+/* 2. Header (Padrão) */
+.header {
       background-color: var(--card-color);
       padding: 12px 16px;
       display: flex;
@@ -41,9 +41,9 @@
       justify-content: center;
       position: relative;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
+}
 
-    .back-button {
+.back-button {
       position: absolute;
       left: 12px;
       width: 44px;
@@ -57,44 +57,80 @@
       cursor: pointer;
       transition: all 0.2s ease;
       color: var(--primary-color);
-    }
+}
 
-    .back-button:hover {
+.back-button:hover {
       background-color: var(--bg-color);
       transform: scale(1.05);
-    }
-    
-    /* Botão de voltar padronizado */
-    .back-button svg {
+}
+
+/* Botão de voltar padronizado */
+.back-button svg {
       width: 24px;
       height: 24px;
-    }
+}
 
-    .header-title {
+.header-title {
       color: var(--primary-color);
       font-size: 20px;
       font-weight: 700;
       text-align: center;
-    }
+}
 
-    /* 3. Conteúdo Principal */
-    .main-content {
+/* 3. Conteúdo Principal */
+.main-content {
       flex: 1;
       padding: 24px 16px;
       overflow-y: auto;
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
-    }
+}
 
-    #studentsContainer {
+/* ======================== */
+/* 3.5 - Barra de Pesquisa 
+/* ======================== */
+.search-container {
+  position: relative;
+  margin-bottom: 24px; /* Espaço entre a barra e a lista */
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 16px 14px 48px; /* Padding à esquerda para o ícone */
+  font-size: 16px;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border-color);
+  background-color: var(--card-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-tint); /* Destaque ao focar */
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: var(--secondary-text);
+  pointer-events: none; /* Permite clicar "através" do ícone */
+}
+
+#studentsContainer {
       display: flex;
       flex-direction: column;
       gap: 16px;
-    }
+}
 
-    /* 4. VARIAÇÃO: "Empty State" com Ilustração */
-    .empty-state {
+/* 4. VARIAÇÃO: "Empty State" com Ilustração */
+.empty-state {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -104,29 +140,35 @@
       background-color: var(--card-color);
       border-radius: var(--card-radius);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    .empty-icon {
+}
+.empty-icon {
       width: 80px;
       height: 80px;
       color: var(--primary-color);
       opacity: 0.8;
-    }
-    .empty-title {
+}
+.empty-title {
       font-size: 18px;
       font-weight: 600;
       color: var(--primary-text);
       margin-top: 24px;
-    }
-    .empty-description {
+}
+.empty-description {
       font-size: 14px;
       color: var(--secondary-text);
       margin-top: 8px;
       max-width: 300px;
-    }
+}
+.loading {
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+  color: var(--secondary-text);
+}
 
 
-    /* 5. Card de Estudante (Mobile First) */
-    .student-card {
+/* 5. Card de Estudante (Mobile First) */
+.student-card {
       background-color: var(--card-color);
       border-radius: var(--card-radius);
       padding: 16px;
@@ -135,14 +177,14 @@
       gap: 16px;
       align-items: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .student-card:hover {
+}
+
+.student-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--card-shadow);
-    }
+}
 
-    .student-avatar {
+.student-avatar {
       width: 60px;
       height: 60px;
       border-radius: 50%;
@@ -150,29 +192,29 @@
       overflow: hidden;
       background-size: cover;
       background-position: center;
-    }
+}
 
-    .student-avatar.default {
+.student-avatar.default {
       display: flex;
       align-items: center;
       justify-content: center;
       background-color: var(--primary-tint);
       color: var(--primary-color);
-    }
+}
 
-    .student-avatar.default svg {
+.student-avatar.default svg {
       width: 28px;
       height: 28px;
-    }
+}
 
-    .student-info {
+.student-info {
       flex: 1;
       display: flex;
       flex-direction: column;
       min-width: 0;
-    }
+}
 
-    .student-name {
+.student-name {
       font-size: 16px;
       font-weight: 600;
       color: var(--primary-text);
@@ -180,24 +222,24 @@
       overflow: hidden;
       text-overflow: ellipsis;
       margin-bottom: 4px;
-    }
+}
 
-    .student-detail {
+.student-detail {
       font-size: 14px;
       color: var(--secondary-text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 1.4;
-    }
+}
 
-    .student-detail strong {
+.student-detail strong {
       color: var(--primary-text);
       font-weight: 500;
-    }
+}
 
-    /* 6. Media Queries (Responsivo) */
-    @media (min-width: 768px) {
+/* 6. Media Queries (Responsivo) */
+@media (min-width: 768px) {
       .header-title {
         font-size: 24px;
       }
@@ -242,9 +284,9 @@
         text-align: left;
         white-space: normal;
       }
-    }
+}
 
-    @media (min-width: 1024px) {
+@media (min-width: 1024px) {
       .header-title {
         font-size: 28px;
       }
@@ -272,8 +314,8 @@
       .student-detail {
         font-size: 15px;
       }
-    }
-    .student-card.pending {
+}
+.student-card.pending {
   background-color: #fff7d6;
   border-left: 6px solid #f1c232;
 }

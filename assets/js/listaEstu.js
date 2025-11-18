@@ -1,6 +1,64 @@
 import { db } from "./firebase-config.js";
 import { collection, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+// Variável para guardar a lista mestre de estudantes
+let allStudents = [];
+
+/**
+ * Renderiza os cards de estudante na tela.
+ * @param {Array} studentsToRender - A lista (filtrada ou completa) de estudantes a ser exibida.
+ */
+function renderStudents(studentsToRender) {
+  const container = document.getElementById("studentsContainer");
+
+  // Verifica se a lista para renderizar está vazia
+  if (studentsToRender.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2Zm0-8a1 1 0 0 1 2 0v5a1 1 0 0 1-2 0V9Zm8.9-3.9 1.4 1.4L4.1 21.3l-1.4-1.4L19.9 5.1Z"></path><path d="m14 7 5.5 5.5m-1.5 5.5 1 1"></path></svg>
+        <h3 class="empty-title">Nenhum estudante encontrado</h3>
+        <p class="empty-description">Tente ajustar os termos da sua pesquisa.</p>
+      </div>`;
+    return;
+  }
+
+  // Cria o HTML para cada estudante
+  container.innerHTML = studentsToRender.map(student => `
+    <div class="student-card ${student.tipo === "pendente" ? "pending" : ""}" 
+         data-id="${student.id}" data-tipo="${student.tipo}">
+      ${student.foto && student.foto.trim() !== "" ?
+        `<div class="student-avatar" style="background-image: url('${student.foto}')"></div>` :
+        `<div class="student-avatar default">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+             <circle cx="12" cy="7" r="4"></circle>
+           </svg>
+         </div>`}
+      <div class="student-info">
+        <div class="student-name">${student.nome || "Nome não informado"}</div>
+        <div class="student-detail"><strong>Instituição:</strong> ${student.instituicao || "Não informado"}</div>
+        <div class="student-detail"><strong>Curso:</strong> ${student.curso || "Não informado"}</div>
+      </div>
+    </div>
+  `).join("");
+
+  // Adiciona evento de clique para abrir o modal
+  document.querySelectorAll(".student-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = card.dataset.id;
+      const tipo = card.dataset.tipo;
+      // Encontra o estudante na lista MESTRE para garantir todos os dados
+      const student = allStudents.find(s => s.id === id); 
+      if (student) {
+        openModal(student, tipo);
+      }
+    });
+  });
+}
+
+/**
+ * Busca os estudantes do Firebase (apenas uma vez).
+ */
 async function loadStudents() {
   const container = document.getElementById("studentsContainer");
   container.innerHTML = `<p class="loading">Carregando estudantes...</p>`;
@@ -11,51 +69,39 @@ async function loadStudents() {
       getDocs(collection(db, "pending_students")),
     ]);
 
-    if (approvedSnap.empty && pendingSnap.empty) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <h3>Nenhum estudante encontrado</h3>
-        </div>`;
-      return;
-    }
-
     const approvedStudents = approvedSnap.docs.map(doc => ({ id: doc.id, ...doc.data(), tipo: "aprovado" }));
     const pendingStudents = pendingSnap.docs.map(doc => ({ id: doc.id, ...doc.data(), tipo: "pendente" }));
-    const allStudents = [...approvedStudents, ...pendingStudents];
+    
+    // Armazena na variável global
+    allStudents = [...approvedStudents, ...pendingStudents]; 
+    
+    // Ordena por nome (opcional, mas recomendado)
+    allStudents.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
 
-    container.innerHTML = allStudents.map(student => `
-      <div class="student-card ${student.tipo === "pendente" ? "pending" : ""}" 
-           data-id="${student.id}" data-tipo="${student.tipo}">
-        ${student.foto && student.foto.trim() !== "" ?
-          `<div class="student-avatar" style="background-image: url('${student.foto}')"></div>` :
-          `<div class="student-avatar default">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </div>`}
-        <div class="student-info">
-          <div class="student-name">${student.nome || "Nome não informado"}</div>
-          <div class="student-detail"><strong>Instituição:</strong> ${student.instituicao || "Não informado"}</div>
-          <div class="student-detail"><strong>Curso:</strong> ${student.curso || "Não informado"}</div>
-        </div>
-      </div>
-    `).join("");
-
-    // Adiciona evento de clique para abrir o modal
-    document.querySelectorAll(".student-card").forEach(card => {
-      card.addEventListener("click", () => {
-        const id = card.dataset.id;
-        const tipo = card.dataset.tipo;
-        const student = allStudents.find(s => s.id === id);
-        openModal(student, tipo);
-      });
-    });
+    // Renderiza a lista completa pela primeira vez
+    renderStudents(allStudents);
 
   } catch (error) {
     console.error("Erro ao carregar estudantes:", error);
     container.innerHTML = `<p>Erro ao carregar dados.</p>`;
   }
+}
+
+/**
+ * Filtra e re-renderiza a lista de estudantes com base na pesquisa.
+ */
+function handleSearch() {
+  const searchBar = document.getElementById("searchBar");
+  const searchTerm = searchBar.value.toLowerCase().trim();
+
+  const filteredStudents = allStudents.filter(student => {
+    // Garante que 'student.nome' existe antes de chamar .toLowerCase()
+    const studentName = (student.nome || "").toLowerCase();
+    return studentName.includes(searchTerm);
+  });
+
+  // Re-renderiza a lista apenas com os estudantes filtrados
+  renderStudents(filteredStudents);
 }
 
 // === Função para abrir o modal ===
@@ -76,19 +122,32 @@ function openModal(student, tipo) {
 
   deleteBtn.onclick = async () => {
     if (confirm(`Deseja realmente excluir ${student.nome}?`)) {
-      await deleteDoc(doc(db, tipo === "pendente" ? "pending_students" : "students", student.id));
-      alert("Estudante excluído com sucesso!");
-      modal.classList.add("hidden");
-      loadStudents(); // recarrega lista
+      try {
+        await deleteDoc(doc(db, tipo === "pendente" ? "pending_students" : "students", student.id));
+        alert("Estudante excluído com sucesso!");
+        modal.classList.add("hidden");
+        loadStudents(); // Recarrega a lista mestre do zero
+      } catch (error) {
+        console.error("Erro ao excluir estudante:", error);
+        alert("Erro ao excluir estudante.");
+      }
     }
   };
 
   modal.classList.remove("hidden");
 }
 
-// === Fechar modal ===
-document.getElementById("closeModal").addEventListener("click", () => {
-  document.getElementById("studentModal").classList.add("hidden");
-});
+// === Event Listeners ===
+document.addEventListener("DOMContentLoaded", () => {
+  // Carrega os estudantes
+  loadStudents();
 
-document.addEventListener("DOMContentLoaded", loadStudents);
+  // Adiciona o listener para a barra de pesquisa
+  const searchBar = document.getElementById("searchBar");
+  searchBar.addEventListener("input", handleSearch);
+
+  // Adiciona o listener para fechar o modal
+  document.getElementById("closeModal").addEventListener("click", () => {
+    document.getElementById("studentModal").classList.add("hidden");
+  });
+});
