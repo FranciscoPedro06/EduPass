@@ -1,31 +1,21 @@
 :root {
-      --primary-color: #007BFF;
-      --primary-dark: #0069D9;
-      --primary-tint: rgba(0, 123, 255, 0.08); 
-      --primary-tint-border: rgba(0, 123, 255, 0.2);
-      
-      --bg-color: #F3F4F6;
-      --card-color: #FFFFFF;
-      
-      --primary-text: #111827;
-      --secondary-text: #6B7280;
-      
-      --border-color: #D1D5DB;
-      --input-bg: #F9FAFB;
-      --list-border: #E5E7EB; 
-      
-      --success: #10b981;
-      --error: #ef4444;
-      --warning: #f59e0b;
-      --info: #3b82f6;
+  --primary-color: #007BFF;
+  --primary-dark: #0069D9;
+  --success-color: #10b981;
+  --bg-color: #F3F4F6;
+  --card-color: #FFFFFF;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --border-color: #D1D5DB;
+}
 
-      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-      --card-radius: 24px;
-      --button-radius: 12px;
-      --item-radius: 16px; 
-    }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+  
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -42,11 +32,11 @@
       padding: 12px 16px;
       display: flex;
       align-items: center;
-      justify-content: center; 
+      justify-content: center;
       position: relative;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      flex-shrink: 0;
     }
+
     .back-button {
       position: absolute;
       left: 12px;
@@ -62,149 +52,337 @@
       transition: all 0.2s ease;
       color: var(--primary-color);
     }
-    .back-button:hover { background-color: var(--bg-color); transform: scale(1.05); }
-    .back-button svg { width: 24px; height: 24px; }
+    .back-button:hover {
+      background-color: var(--bg-color);
+      transform: scale(1.05);
+    }
+    .back-button svg {
+      width: 24px;
+      height: 24px;
+    }
     .header-title {
       font-size: 20px;
       font-weight: 700;
       color: var(--primary-color);
-      padding-left: 56px; 
-      padding-right: 56px;
-      text-align: center;
-      flex: 1;
     }
     
     /* 3. Conteúdo Específico da Página */
     .main-content {
-      flex: 1;
       padding: 24px 16px;
       display: flex;
       justify-content: center;
-      align-items: flex-start; 
-      overflow-y: auto; 
-    }
-    .card-container { 
-      width: 100%;
-      max-width: 600px; 
-    }
-    .routes-card { 
-      background-color: var(--card-color);
-      border-radius: var(--card-radius);
-      padding: 24px; 
-      box-shadow: var(--card-shadow);
-    }
-
-    .section {
-      margin-bottom: 32px; 
-    }
-    .section:last-child {
-      margin-bottom: 0;
-    }
-    /* Título da Seção Melhorado */
-    .section-title {
-      font-size: 14px; /* Menor */
-      font-weight: 600;
-      color: var(--secondary-text); /* Cinza */
-      margin-bottom: 12px; /* Menos espaço */
-      text-transform: uppercase; /* Caixa alta */
-      letter-spacing: 0.05em; /* Leve espaçamento */
-      padding-left: 4px; /* Alinhamento sutil */
-    }
-
-    /* Lista de Rotas Melhorada */
-    .route-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px; 
-    }
-    .route-item {
-      display: flex;
-      align-items: center;
-      gap: 12px; /* Reduzido */
-      background-color: var(--card-color); 
-      border: 1px solid var(--list-border); 
-      border-radius: var(--item-radius); 
-      padding: 14px 16px; /* Ajustado */
-      font-size: 16px;
-      font-weight: 500; 
-      color: var(--primary-text);
-      cursor: pointer;
-      transition: all 0.15s ease-out; /* Mais rápido */
-    }
-    /* Hover State Melhorado */
-    .route-item:hover {
-      background-color: var(--primary-tint); 
-      border-color: var(--primary-tint-border);
-      /* Leve sombra azul */
-      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1); 
-      transform: none; /* Remove scale no hover, deixa para o active */
-    }
-    /* Active State (Clique) */
-    .route-item:active {
-      transform: scale(0.98); /* Efeito de pressionar */
-      background-color: rgba(0, 123, 255, 0.15); /* Um pouco mais escuro */
-    }
-    /* Ícone Melhorado (Chevron) */
-    .route-icon svg { 
-      width: 20px; /* Menor */
-      height: 20px;
-      color: var(--secondary-text); /* Cinza por padrão */
-      flex-shrink: 0;
-      transition: color 0.15s ease-out;
-    }
-    .route-item:hover .route-icon svg {
-        color: var(--primary-color); /* Azul no hover */
-    }
-    
-    .route-name {
+      align-items: flex-start;
       flex: 1;
-      text-align: left; 
     }
+
+.screen {
+  width: 100%;
+  max-width: 500px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.screen.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  background-color: var(--card-color);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Tela 1: Períodos e Rotas */
+.period-section {
+  margin-bottom: 32px;
+}
+
+.period-section:last-child {
+  margin-bottom: 0;
+}
+
+.period-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.routes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.route-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  background-color: var(--card-color);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.route-btn:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 123, 255, 0.08);
+}
+
+.route-btn:active {
+  transform: scale(0.98);
+}
+
+.route-btn svg {
+  width: 24px;
+  height: 24px;
+  color: var(--text-secondary);
+}
+
+.route-btn:hover svg {
+  color: var(--primary-color);
+}
+
+/* Tela 2 e 3: Formulários */
+.selection-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.selection-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.selection-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.select-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  background-color: var(--card-color);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
+  padding-right: 40px;
+}
+
+.select-input:hover {
+  border-color: var(--primary-color);
+}
+
+.select-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Confirmação */
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.confirmation-item {
+  padding: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.confirmation-item .label {
+  margin-bottom: 6px;
+}
+
+.confirmation-item p {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.success-message {
+  padding: 20px;
+  background-color: var(--success-color);
+  color: white;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Botões */
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn {
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  flex: 1;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  width: 50px;
+  height: 50px;
+  padding: 0;
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 123, 255, 0.08);
+}
+
+.btn-secondary svg {
+  width: 24px;
+  height: 24px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Alertas */
+#alertas-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 350px;
+}
+
+.alerta {
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  animation: slideIn 0.3s ease-out;
+  color: white;
+}
+
+.alerta-erro {
+  background-color: #ef4444;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (min-width: 640px) {
+  .card {
+    padding: 32px;
+    border-radius: 32px;
+  }
+}
+
+.display-input {
+  background-color: #f3f4f6; /* Cor de fundo (ajuste conforme seu design) */
+  border: 1px solid #d1d5db; /* Borda (ajuste conforme seu design) */
+  border-radius: 8px;       /* Raio da borda (use o mesmo do .select-input) */
+  padding: 12px 16px;       /* Espaçamento (use o mesmo do .select-input) */
+  font-size: 16px;
+  color: #374151;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 48px; /* Altura similar ao select */
+  display: flex;
+  align-items: center;
+}
+
+/* Estilo para o select de motorista quando desabilitado */
+.select-input:disabled {
+  background-color: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+/* Para esconder botões (usado no JS) */
+.hidden {
+  display: none !important;
+}
+
+
+
     
-    /* Classe para feedback visual ao clicar */
-    .route-item.selected-flash {
-        animation: selectFlash 0.4s ease-out;
-    }
-    @keyframes selectFlash {
-        0% { background-color: var(--card-color); }
-        50% { background-color: var(--primary-tint); border-color: var(--primary-tint-border); }
-        100% { background-color: var(--card-color); }
-    }
-
-
-    /* Sistema de Alerta (Necessário para JS) */
-    #container-alertas {
-      position: fixed; top: 20px; right: 20px; z-index: 1000;
-      display: flex; flex-direction: column; gap: 10px; max-width: 350px;
-    }
-    .alerta {
-      padding: 15px 20px; color: white; border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: 500;
-      animation: slideIn 0.3s ease-out; word-wrap: break-word; line-height: 1.5;
-    }
-    .alerta-sucesso { background-color: var(--success); }
-    .alerta-erro    { background-color: var(--error); }
-    .alerta-aviso   { background-color: var(--warning); }
-    .alerta-info    { background-color: var(--info); }
-    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
-     .alerta strong {
-      display: block; 
-      margin-bottom: 4px; 
-    }
-
-    /* Media Queries */
-    @media (min-width: 640px) {
-      .header { padding: 16px 24px; }
-      .back-button { left: 24px; width: 48px; height: 48px; }
-      .header-title { font-size: 24px; padding-left: 72px; padding-right: 72px;}
-      .main-content { padding: 32px 24px; }
-      .routes-card { padding: 32px; border-radius: 32px; }
-      .section-title { font-size: 15px; margin-bottom: 16px; }
-      .route-item { padding: 18px 24px; font-size: 17px; }
-    }
-     @media (min-width: 1024px) {
-       .header-title { font-size: 28px; }
-       .routes-card { padding: 40px; }
-       .section-title { font-size: 16px; }
-     }

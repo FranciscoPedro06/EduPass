@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function identificarTipoUsuario(uid, email) {
   try {
     const colecoes = [
-      { nome: "pending_motorists", tipo: "motorista" },
+      { nome: "motoristas", tipo: "motorista" },
       { nome: "students", tipo: "estudante" },
       { nome: "admins", tipo: "admin" }
     ];
