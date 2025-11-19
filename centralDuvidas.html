@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central de Dúvidas - EduPass</title>
+  <link rel="stylesheet" href="./assets/css/telaInicioEstu.css">
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-left" style="flex: 1;">
+      <button class="icon-button" onclick="history.back()" style="margin-right: 8px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h1 class="header-title" style="padding: 0; text-align: left;">Central de Dúvidas</h1>
+    </div>
+  </div>
+
+  <div class="main-content faq-container">
+    
+    <div class="faq-section">
+      <h2 class="section-title">1. Checklist de Embarque</h2>
+      
+      <details class="faq-item">
+        <summary>Como faço para confirmar meu embarque?</summary>
+        <div class="faq-answer">
+          Acesse o menu <strong>Checklist</strong>, escolha o turno (Manhã, Tarde ou Noite) e siga para o reconhecimento facial.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Não aparece o botão de confirmar turno. O que pode ser?</summary>
+        <div class="faq-answer">
+          Isso pode acontecer quando:
+          <ul>
+            <li>A administração ainda não liberou os turnos do dia;</li>
+            <li>Você já confirmou seu embarque;</li>
+            <li>Você está sem internet.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Posso confirmar o embarque para mais de um turno no mesmo dia?</summary>
+        <div class="faq-answer">
+          Não. Cada estudante só pode confirmar para o turno em que está autorizado.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Escolhi o turno errado sem querer. Consigo mudar?</summary>
+        <div class="faq-answer">
+          Depende das regras da sua instituição, mas geralmente:
+          <ul>
+            <li><strong>Se ainda não passou o horário limite:</strong> pode cancelar e refazer.</li>
+            <li><strong>Após o horário limite:</strong> só a administração pode alterar.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <div class="faq-section">
+      <h2 class="section-title">2. Reconhecimento Facial</h2>
+
+      <details class="faq-item">
+        <summary>O que é o reconhecimento facial no EDUPASS?</summary>
+        <div class="faq-answer">
+          É o processo de verificação de identidade que garante que o estudante presente é realmente quem está registrado no sistema.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Por que preciso fazer a selfie toda vez?</summary>
+        <div class="faq-answer">
+          Para evitar fraudes e garantir segurança no transporte.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>A câmera não abre. O que fazer?</summary>
+        <div class="faq-answer">
+          Verifique:
+          <ul>
+            <li>Se o navegador/app tem permissão para usar a câmera;</li>
+            <li>Se nenhum outro app está usando a câmera;</li>
+            <li>Se o celular não está com bloqueio de privacidade.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Minha selfie não foi aprovada. E agora?</summary>
+        <div class="faq-answer">
+          Tente novamente em um local bem iluminado, sem objetos cobrindo o rosto.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Posso usar máscara, óculos ou boné na selfie?</summary>
+        <div class="faq-answer">
+          Não é recomendado. Itens que tampam o rosto podem fazer a verificação falhar.
+        </div>
+      </details>
+    </div>
+
+    <div class="faq-section">
+      <h2 class="section-title">3. Perfil do Estudante</h2>
+
+      <details class="faq-item">
+        <summary>Meu curso, turno ou instituição estão errados. Como alterar?</summary>
+        <div class="faq-answer">
+          Esses dados só podem ser ajustados pela administração do transporte.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Minha situação está “Em análise”. O que significa?</summary>
+        <div class="faq-answer">
+          Seu cadastro ainda está sendo revisado pela administração. Enquanto isso, algumas funções podem estar bloqueadas.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Minha situação está como “Reprovado”. O que devo fazer?</summary>
+        <div class="faq-answer">
+          Procure a coordenação do transporte para saber o motivo (documentação, inconsistência de dados, falta de comprovação etc.).
+        </div>
+      </details>
+    </div>
+
+    <div class="faq-section">
+      <h2 class="section-title">4. Sobre o QR Code</h2>
+
+      <details class="faq-item">
+        <summary>Para que serve o meu QR Code?</summary>
+        <div class="faq-answer">
+          Ele permite que o motorista confirme sua presença ao embarcar.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>O QR Code não está aparecendo para mim. Por quê?</summary>
+        <div class="faq-answer">
+          Pode ser por:
+          <ul>
+            <li>Cadastro reprovado;</li>
+            <li>Informação pendente;</li>
+            <li>Falha momentânea no carregamento;</li>
+            <li>Falta de conexão.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Preciso mostrar o QR Code mesmo confirmando o turno?</summary>
+        <div class="faq-answer">
+          Sim. O QR Code é a prova de embarque para o motorista.
+        </div>
+      </details>
+    </div>
+
+    <div class="faq-section">
+      <h2 class="section-title">5. Rotas</h2>
+
+      <details class="faq-item">
+        <summary>Como vejo a rota que meu transporte faz?</summary>
+        <div class="faq-answer">
+          Abra o menu Rotas. Lá você verá a rota de Ida e Volta, além do motorista.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>A rota sumiu do meu app. Por quê?</summary>
+        <div class="faq-answer">
+          A administração pode atualizá-la ou ainda não ter liberado a rota do dia.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>A ordem das instituições está errada. Posso alterar?</summary>
+        <div class="faq-answer">
+          Não. Apenas o administrador pode editar rotas.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>O nome do motorista mostrado não é o motorista real. O que fazer?</summary>
+        <div class="faq-answer">
+          Informe imediatamente à administração — pode ser uma troca ainda não atualizada.
+        </div>
+      </details>
+    </div>
+
+    <div class="faq-section">
+      <h2 class="section-title">6. Funcionamento Geral</h2>
+
+      <details class="faq-item">
+        <summary>O app não carrega ou fica travando. O que posso fazer?</summary>
+        <div class="faq-answer">
+          <ul>
+            <li>Atualize a página;</li>
+            <li>Feche e abra novamente;</li>
+            <li>Verifique a internet.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>O botão “Rota Confirmada” não reage. É erro?</summary>
+        <div class="faq-answer">
+          Não. Esse botão é apenas informativo — serve para mostrar que a rota está ativa.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Posso usar o app sem internet?</summary>
+        <div class="faq-answer">
+          Não. Todas as ações (checklist, verificação facial e acessos) exigem conexão.
+        </div>
+      </details>
+    </div>
+
+    <div class="faq-section">
+      <h2 class="section-title">7. Segurança e Privacidade</h2>
+
+      <details class="faq-item">
+        <summary>Meus dados pessoais e faciais são protegidos?</summary>
+        <div class="faq-answer">
+          Sim. O EDUPASS utiliza protocolos de segurança para proteger identidade e informações sensíveis.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>O motorista tem acesso aos meus dados completos?</summary>
+        <div class="faq-answer">
+          Não. Ele apenas recebe:
+          <ul>
+            <li>Seu nome;</li>
+            <li>Sua confirmação de presença;</li>
+            <li>O status do QR Code;</li>
+            <li>Validação do rosto.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+    <a href="perfilEstu.html" class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
+      <div class="nav-label">Perfil</div>
+    </a>
+    <a href="reconhecimentoFace.html" class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      </div>
+      <div class="nav-label">Verificar</div>
+    </a>
+    <a href="confirmarEmbarque.html" class="nav-item">
+      <div class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            <path d="m9 14 2 2 4-4"></path>
+        </svg>
+      </div>
+      <div class="nav-label">Checklist</div>
+    </a>
+    <a href="rotas.html" class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
+      <div class="nav-label">Rotas</div>
+    </a>
+    <a href="centralDuvidas.html" class="nav-item" aria-current="page">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <div class="nav-label">Ajuda</div>
+    </a>
+  </div>
+
+</body>
+</html>

@@ -17,7 +17,7 @@ let docId = null;        // ID do documento (para modo cadastro)
 let nomeAluno = null;    // Nome do aluno (para modo cadastro)
 let streamAtivo = null;
 
-// ===== FUNÇÃO DE ALERTA (Sua função) =====
+
 function mostrarAlerta(mensagem, tipo = 'info') {
   let containerAlertas = document.getElementById('container-alertas');
   if (!containerAlertas) {
@@ -47,13 +47,11 @@ function mostrarAlerta(mensagem, tipo = 'info') {
   }, 4000);
 }
 
-// ===== LÓGICA DA CÂMERA =====
-
 function pararCamera() {
   if (streamAtivo) {
     streamAtivo.getTracks().forEach((track) => track.stop());
     streamAtivo = null;
-    console.log("[v0] Stream da câmera encerrado");
+    console.log("Stream da câmera encerrado");
   }
 }
 
@@ -62,9 +60,9 @@ async function startCamera() {
     let facingMode;
 
     if (modo === 'cadastro') {
-      facingMode = 'user'; // CADASTRO = Câmera Frontal (Selfie)
+      facingMode = 'user'; 
     } else {
-      facingMode = 'environment'; // VERIFICAR = Câmera Traseira (Motorista)
+      facingMode = 'environment';
     }
 
     message.textContent = "Abrindo câmera...";
@@ -91,7 +89,7 @@ async function startCamera() {
       // Muda o texto do botão e da mensagem
       if (modo === 'cadastro') {
         message.textContent = "Posicione o rosto para cadastrar";
-        btnVerificarRosto.textContent = "📸 Cadastrar Rosto";
+        btnVerificarRosto.textContent = " Cadastrar Rosto";
       } else {
         message.textContent = "Posicione o rosto para verificar";
         btnVerificarRosto.textContent = "📸 Verificar Rosto";
