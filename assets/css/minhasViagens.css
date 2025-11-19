@@ -1,0 +1,113 @@
+/* ===== Layout Geral ===== */
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: #f5f6fa;
+  padding: 20px;
+  margin: 0;
+}
+
+/* ===== Header de Título ===== */
+.header-viagens {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header-viagens h2 {
+  font-size: 26px;
+  margin: 0;
+  color: #333;
+}
+
+.header-viagens p {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: #666;
+}
+
+/* ===== Container ===== */
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ===== Área de Cartões ===== */
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ===== Card de Rota ===== */
+.card-rota {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+  border: 1px solid #eaeaea;
+}
+
+/* Cabeçalho do Card */
+.card-header {
+  padding: 15px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Cores por Período */
+.card-header.matutino { background-color: #FF9800; }
+.card-header.vespertino { background-color: #2196F3; }
+.card-header.noturno   { background-color: #3F51B5; }
+
+/* Badge */
+.badge {
+  background: rgba(255,255,255,0.25);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+/* Corpo do Card */
+.card-body {
+  padding: 15px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* ===== Estado vazio ===== */
+.card-vazio {
+  text-align: center;
+  padding: 25px;
+  color: #777;
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* ===== Texto de Carregamento ===== */
+.loading-text {
+  text-align: center;
+  color: #888;
+  font-size: 15px;
+}
+
+/* ===== Botão Voltar ===== */
+.btn-secondary {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #ddd;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #ccc;
+}

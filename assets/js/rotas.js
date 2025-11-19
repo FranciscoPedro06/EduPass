@@ -15,6 +15,8 @@ import {
 
 let userRole = null; // "admin" | "motorista" | "estudante"
 
+// Substitua a sua função carregarTipoUsuario atual por esta versão melhorada:
+
 async function carregarTipoUsuario() {
   const emailLogado = sessionStorage.getItem("usuarioLogado");
   if (!emailLogado) return;
@@ -31,6 +33,18 @@ async function carregarTipoUsuario() {
 
     if (!snap.empty) {
       userRole = col.tipo;
+      
+      // --- NOVO: Se for motorista, salva o NOME exato dele ---
+      if (userRole === "motorista") {
+        const dados = snap.docs[0].data();
+        sessionStorage.setItem("nomeMotorista", dados.nome);
+        
+        // Mostra o botão de "Minhas Viagens" apenas para motoristas
+        const btnViagens = document.getElementById("btnAbrirMinhasViagens");
+        if(btnViagens) btnViagens.style.display = "block"; 
+      }
+      // -------------------------------------------------------
+
       console.log("Tipo de usuário:", userRole);
       aplicarRestricoes();
       return;
