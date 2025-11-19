@@ -5,6 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Central de Dúvidas - EduPass</title>
   <link rel="stylesheet" href="./assets/css/telaInicioEstu.css">
+  <style>
+    .contact-card {
+      background-color: var(--card-color);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      margin-top: 20px;
+      border: 1px solid var(--border-color);
+    }
+    .contact-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-text);
+      margin-bottom: 8px;
+    }
+    .contact-text {
+      font-size: 14px;
+      color: var(--secondary-text);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .btn-email {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px;
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    }
+    .btn-email:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    .btn-email svg {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
 </head>
 <body>
 
@@ -247,7 +293,20 @@
       </details>
     </div>
 
-  </div>
+    <div class="contact-card">
+      <h3 class="contact-title">Ainda precisa de ajuda?</h3>
+      <p class="contact-text">
+        Se não encontrou a resposta que procurava, entre em contato com nosso suporte técnico.
+      </p>
+      <a href="mailto:pedro2006francisco@gmail.com" class="btn-email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        Enviar E-mail
+      </a>
+    </div>
+    </div>
 
   <div class="bottom-nav">
     <a href="perfilEstu.html" class="nav-item">
