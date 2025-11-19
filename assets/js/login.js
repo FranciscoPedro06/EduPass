@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  mostrarAlerta("✅ Login realizado com sucesso!", "success");
+  mostrarAlerta("Login realizado com sucesso!", "success");
   sessionStorage.setItem("usuarioLogado", email);
 
   if (role === "motorista") {
@@ -88,9 +88,9 @@ document.addEventListener("DOMContentLoaded", () => {
 } catch (error) {
   console.error(error);
   if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
-    mostrarAlerta("❌ E-mail ou senha inválidos!", "error");
+    mostrarAlerta("E-mail ou senha inválidos!", "error");
   } else if (error.code === "auth/user-not-found") {
-    mostrarAlerta("❌ Usuário não encontrado!", "error");
+    mostrarAlerta("Usuário não encontrado!", "error");
   } else {
     mostrarAlerta("Erro inesperado ao fazer login.", "error");
   }
@@ -113,9 +113,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error(error);
       if (error.code === "auth/user-not-found") {
-        mostrarAlerta("❌ Nenhum usuário encontrado com este e-mail!");
+        mostrarAlerta("Nenhum usuário encontrado com este e-mail!");
       } else if (error.code === "auth/invalid-email") {
-        mostrarAlerta("❌ E-mail inválido!");
+        mostrarAlerta("E-mail inválido!");
       } else {
         mostrarAlerta("Erro ao enviar e-mail de redefinição.");
       }

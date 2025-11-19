@@ -62,7 +62,7 @@ document.getElementById('motoristForm').addEventListener('submit', async (e) => 
             motorista: true
         });
 
-        mostrarAlerta('✅ Cadastro concluído com sucesso!', 'success');
+        mostrarAlerta('Cadastro concluído com sucesso!', 'success');
         setTimeout(() => window.location.href = '/index.html', 2000);
 
     } catch (erro) {
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 label.classList.add("selected");
 
                 // muda o texto com check
-                labelText.textContent = "✅ Arquivo anexado";
+                labelText.textContent = "Arquivo anexado";
             } else {
                 // remove estilo caso o arquivo seja removido
                 fileNameSpan.textContent = "";

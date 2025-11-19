@@ -41,7 +41,7 @@ function mostrarAlerta(mensagem, tipo = "info") {
 // === Envia notificação ao usuário ===
 async function enviarNotificacao(email, mensagem, tipo = "info") {
   if (!email || !mensagem) {
-    console.error("❌ Notificação inválida: email ou mensagem ausente!");
+    console.error("Notificação inválida: email ou mensagem ausente!");
     return;
   }
 
@@ -53,7 +53,7 @@ async function enviarNotificacao(email, mensagem, tipo = "info") {
       read: false,
       createdAt: serverTimestamp(), // 🔥 campo de data correta
     });
-    console.log("✅ Notificação salva com sucesso:", mensagem);
+    console.log("Notificação salva com sucesso:", mensagem);
   } catch (err) {
     console.error("Erro ao salvar notificação:", err);
   }

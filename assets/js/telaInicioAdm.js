@@ -89,8 +89,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const li = document.createElement("li");
       li.innerHTML = `
         <strong>${dados.nome}</strong> (${dados.email})<br>
-        <button class="btn-aceitar" data-id="${docSnap.id}">✅ Aceitar</button>
-        <button class="btn-recusar" data-id="${docSnap.id}">❌ Recusar</button>
+        <button class="btn-aceitar" data-id="${docSnap.id}"> Aceitar</button>
+        <button class="btn-recusar" data-id="${docSnap.id}"> Recusar</button>
       `;
       lista.appendChild(li);
     });

@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const nomeArquivo = input.files[0].name;
         fileNameSpan.textContent = nomeArquivo;
         label.classList.add("selected");
-        labelText.textContent = "✅ Arquivo anexado";
+        labelText.textContent = "Arquivo anexado";
       } else {
         fileNameSpan.textContent = "";
         label.classList.remove("selected");
