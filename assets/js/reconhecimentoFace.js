@@ -151,11 +151,6 @@ async function cadastrarRostoAPI(blob) {
     const data = await response.json();
 
     if (data.success) {
-      const facialId = data.user_id;
-      // Atualiza o documento no Firestore
-      const alunoRef = doc(db, "pending_students", docId);
-      await updateDoc(alunoRef, { facial_id: facialId });
-      
       mostrarAlerta("✅ Rosto cadastrado com sucesso!", "sucesso");
       pararCamera();
       setTimeout(() => window.location.href = "index.html", 2000); // Volta para o login
@@ -181,8 +176,8 @@ async function verificarRostoAPI(blob) {
     });
     const data = await response.json();
 
-    if (data.success && data.nome) {
-      mostrarAlerta(`✅ Verificado: ${data.nome}`, "sucesso");
+    if (data.success) {
+      mostrarAlerta(`✅ Verificado: ${data.usuario.nome}`, "sucesso");
     } else {
       mostrarAlerta(data.error || "Rosto não encontrado.", "erro");
     }

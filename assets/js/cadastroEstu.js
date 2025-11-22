@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // 1. Crie o usuário no Auth (ex: createUserWithEmailAndPassword)
       // 2. Pegue o UID retornado
       // 3. Remova a senha do 'dadosCadastro'
-      delete dadosCadastro.senha; 
+
       
       // 🚨 LÓGICA FALTANDO: Faça o upload dos 5 arquivos para o Storage aqui
       // e adicione as URLs de download ao 'dadosCadastro'.
