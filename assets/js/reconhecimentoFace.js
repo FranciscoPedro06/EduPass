@@ -170,7 +170,7 @@ async function verificarRostoAPI(blob) {
     const formData = new FormData();
     formData.append('file', blob, 'rosto_verificar.jpg');
     
-    const response = await fetch(`${API_URL}/verificar`, { // Endpoint /verificar
+    const response = await fetch(`${API_URL}/reconhecer`, { // Endpoint /verificar
       method: 'POST',
       body: formData
     });
