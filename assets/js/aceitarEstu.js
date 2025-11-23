@@ -20,6 +20,10 @@ import {
 const auth = getAuth();
 let estudanteSelecionado = null;
 
+// === Botão voltar ===
+const backButton = document.getElementById("backButton");
+if (backButton) backButton.addEventListener("click", () => window.history.back());
+
 /* ============================================================
    ALERTA VISUAL
 ============================================================ */
