@@ -9,6 +9,58 @@ import {
   updateDoc,
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { supabase } from "./supabase-client.js";
+
+async function uploadAnexo(usuario, nomeCampoNoStorage, arquivo) {
+  // Se não enviaram um novo arquivo → mantém o arquivo antigo
+  const campoUrl = `${nomeCampoNoStorage}Url`;
+  if (!arquivo) return usuario[campoUrl] || null;
+
+  let path;
+
+  const urlExistente = usuario[campoUrl];
+
+  if (urlExistente) {
+    /**
+     * Se já existe URL → extrair o path real dentro do bucket
+     * Exemplo:
+     * https://xxxxx.supabase.co/storage/v1/object/public/edupass/alunos/000/foto3x4.jpg
+     *
+     * O que queremos extrair:
+     * alunos/000/foto3x4.jpg
+     */
+    const split = urlExistente.split("/object/public/edupass/");
+    
+    if (split.length > 1) {
+      path = split[1];
+    } else {
+      // fallback (NÃO deve acontecer, mas está aqui para segurança)
+      const extensao = arquivo.name.split(".").pop();
+      path = `alunos/${usuario.cpf}/${nomeCampoNoStorage}.${extensao}`;
+    }
+  } else {
+    // Não existe arquivo anterior → criar
+    const extensao = arquivo.name.split(".").pop();
+    path = `alunos/${usuario.cpf}/${nomeCampoNoStorage}.${extensao}`;
+  }
+
+  // Faz upload com upsert = true → ATUALIZA o arquivo existente
+  const { error } = await supabase.storage
+    .from("edupass")
+    .update(path, arquivo,)
+
+  if (error) throw error;
+
+  // Retorna URL atualizada
+  const { data: urlInfo } = supabase.storage
+    .from("edupass")
+    .getPublicUrl(path);
+
+  return urlInfo.publicUrl;
+}
+
+
+
 
 // ====== Função global de alerta ======
 function mostrarAlerta(mensagem, tipo = "info") {
@@ -70,8 +122,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function preencherPerfil(user) {
     studentNameEl.textContent = user.nome || "Nome não disponível";
 
-    if (user.foto) {
-      profileAvatarEl.innerHTML = `<img src="${user.foto}" alt="Foto do aluno" />`;
+    if (user.foto3x4Url) {
+      profileAvatarEl.innerHTML = `<img src="${user.foto3x4Url}" alt="Foto do aluno" />`;
     } else {
       profileAvatarEl.innerHTML = `
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -122,87 +174,140 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === Campos editáveis ===
     infoListEl.innerHTML = `
-      <div class="form-group">
-        <label for="editNome">Nome:</label>
-        <input type="text" id="editNome" value="${usuario.nome || ""}">
-      </div>
-      <div class="form-group">
-        <label for="editCpf">CPF:</label>
-        <input type="text" id="editCpf" value="${usuario.cpf || ""}">
-      </div>
-      <div class="form-group">
-        <label for="editInstituicao">Instituição:</label>
-        <input type="text" id="editInstituicao" value="${usuario.instituicao || ""}">
-      </div>
-      <div class="form-group">
-        <label for="editCurso">Curso:</label>
-        <input type="text" id="editCurso" value="${usuario.curso || ""}">
-      </div>
-      <div class="form-group">
-        <label for="editTurno">Turno:</label>
-        <select id="editTurno">
-          <option value="Manhã" ${usuario.turno === "Manhã" ? "selected" : ""}>Manhã</option>
-          <option value="Tarde" ${usuario.turno === "Tarde" ? "selected" : ""}>Tarde</option>
-          <option value="Noite" ${usuario.turno === "Noite" ? "selected" : ""}>Noite</option>
-        </select>
-      </div>
-      
-      <div class="form-button-group">
-        <button id="cancelChangesBtn" class="save-button secondary">Cancelar</button>
-        <button id="saveChangesBtn" class="save-button primary">Salvar alterações</button>
-      </div>
-    `;
+  <div class="form-group">
+    <label for="editNome">Nome:</label>
+    <input type="text" id="editNome" value="${usuario.nome || ""}">
+  </div>
+
+  <div class="form-group">
+    <label for="editCpf">CPF:</label>
+    <input type="text" id="editCpf" value="${usuario.cpf || ""}">
+  </div>
+
+  <div class="form-group">
+    <label for="editInstituicao">Instituição:</label>
+    <input type="text" id="editInstituicao" value="${usuario.instituicao || ""}">
+  </div>
+
+  <div class="form-group">
+    <label for="editCurso">Curso:</label>
+    <input type="text" id="editCurso" value="${usuario.curso || ""}">
+  </div>
+
+  <div class="form-group">
+    <label for="editTurno">Turno:</label>
+    <select id="editTurno">
+      <option value="Manhã" ${usuario.turno === "Manhã" ? "selected" : ""}>Manhã</option>
+      <option value="Tarde" ${usuario.turno === "Tarde" ? "selected" : ""}>Tarde</option>
+      <option value="Noite" ${usuario.turno === "Noite" ? "selected" : ""}>Noite</option>
+    </select>
+  </div>
+
+  <h3 class="doc-title">📎 Atualizar Documentos</h3>
+
+  <div class="form-group">
+    <label>Foto 3x4:</label>
+    <input type="file" id="editFoto3x4" accept="image/*">
+  </div>
+
+  <div class="form-group">
+    <label>Comprovante de Residência:</label>
+    <input type="file" id="editResidencia" accept="image/*,application/pdf">
+  </div>
+
+  <div class="form-group">
+    <label>Título de Eleitor:</label>
+    <input type="file" id="editTitulo" accept="image/*,application/pdf">
+  </div>
+
+  <div class="form-group">
+    <label>Documento RG:</label>
+    <input type="file" id="editRg" accept="image/*,application/pdf">
+  </div>
+
+  <div class="form-group">
+    <label>Documento CPF:</label>
+    <input type="file" id="editCpfDoc" accept="image/*,application/pdf">
+  </div>
+
+  <div class="form-button-group">
+    <button id="cancelChangesBtn" class="save-button secondary">Cancelar</button>
+    <button id="saveChangesBtn" class="save-button primary">Salvar alterações</button>
+  </div>
+`;
+
 
     // === Lógica dos botões ===
     const saveBtn = document.getElementById("saveChangesBtn");
     const cancelBtn = document.getElementById("cancelChangesBtn");
 
     saveBtn.addEventListener("click", async () => {
-      const novosDados = {
-        nome: document.getElementById("editNome").value.trim(),
-        cpf: document.getElementById("editCpf").value.trim(),
-        instituicao: document.getElementById("editInstituicao").value.trim(),
-        curso: document.getElementById("editCurso").value.trim(),
-        turno: document.getElementById("editTurno").value.trim(),
-      };
+  const novosDados = {
+    nome: document.getElementById("editNome").value.trim(),
+    cpf: document.getElementById("editCpf").value.trim(),
+    instituicao: document.getElementById("editInstituicao").value.trim(),
+    curso: document.getElementById("editCurso").value.trim(),
+    turno: document.getElementById("editTurno").value.trim(),
+  };
 
-      // Verifica se há mudanças em relação aos dados atuais
-      const alterouAlgo = Object.keys(novosDados).some(
-        (campo) => novosDados[campo] !== (usuario[campo] || "")
-      );
+  const alterouAlgo = Object.keys(novosDados).some(
+    (campo) => novosDados[campo] !== (usuario[campo] || "")
+  );
 
-      if (!alterouAlgo) {
-        mostrarAlerta("Nenhuma alteração detectada.", "aviso");
-        return;
-      }
+  const foto3x4File = document.getElementById("editFoto3x4").files[0];
+  const residenciaFile = document.getElementById("editResidencia").files[0];
+  const tituloFile = document.getElementById("editTitulo").files[0];
+  const rgFile = document.getElementById("editRg").files[0];
+  const cpfDocFile = document.getElementById("editCpfDoc").files[0];
 
-      saveBtn.textContent = "Enviando...";
-      saveBtn.disabled = true;
+  const alterouArquivos =
+    foto3x4File || residenciaFile || tituloFile || rgFile || cpfDocFile;
 
-      try {
-        await addDoc(collection(db, "pending_students"), {
-          ...novosDados,
-          email: usuario.email,
-          estudante: true,
-          status: "aguardando_aprovacao",
-          alteracaoSolicitadaEm: new Date().toISOString(),
-          ref_original: userDocId,
-        });
+  if (!alterouAlgo && !alterouArquivos) {
+    mostrarAlerta("Nenhuma alteração detectada.", "aviso");
+    return;
+  }
 
-        mostrarAlerta("Solicitação de alteração enviada ao administrador.", "sucesso");
+  saveBtn.textContent = "Enviando...";
+  saveBtn.disabled = true;
 
-        // Atualiza o estado local e exibe o aviso
-        usuario.status = "aguardando_aprovacao";
-        preencherPerfil(usuario);
-        editBtn.disabled = false;
+  try {
+    // Uploads dos arquivos (mantém o atual se não enviar novo)
+    const foto3x4Url = await uploadAnexo(usuario, "foto3x4", foto3x4File);
+    const residenciaUrl = await uploadAnexo(usuario, "comprovante_residencia", residenciaFile);
+    const tituloUrl = await uploadAnexo(usuario, "titulo_eleitor", tituloFile);
+    const rgUrl = await uploadAnexo(usuario, "rg", rgFile);
+    const cpfUrl = await uploadAnexo(usuario, "cpf", cpfDocFile);
 
-      } catch (error) {
-        console.error(error);
-        mostrarAlerta("Erro ao enviar solicitação!", "erro");
-        saveBtn.textContent = "Salvar alterações";
-        saveBtn.disabled = false;
-      }
+    await addDoc(collection(db, "pending_students"), {
+      ...novosDados,
+      email: usuario.email,
+      estudante: true,
+      status: "aguardando_aprovacao",
+      alteracaoSolicitadaEm: new Date().toISOString(),
+      ref_original: userDocId,
+
+      foto3x4Url,
+      residenciaUrl,
+      tituloUrl,
+      rgUrl,
+      cpfUrl,
     });
+
+    mostrarAlerta("Solicitação enviada para análise.", "sucesso");
+
+    usuario.status = "aguardando_aprovacao";
+    preencherPerfil(usuario);
+    editBtn.disabled = false;
+
+  } catch (error) {
+    console.error(error);
+    mostrarAlerta("Erro ao enviar solicitação!", "erro");
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Salvar alterações";
+  }
+});
+
 
     cancelBtn.addEventListener("click", () => {
       preencherPerfil(usuario);
@@ -210,3 +315,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+

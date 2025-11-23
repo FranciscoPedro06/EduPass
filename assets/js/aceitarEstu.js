@@ -281,15 +281,24 @@ async function aprovarAlteracao(pendingId, dados) {
   try {
     const studentRef = doc(db, "students", dados.ref_original);
 
-    await updateDoc(studentRef, {
-      nome: dados.nome,
-      cpf: dados.cpf,
-      instituicao: dados.instituicao,
-      curso: dados.curso,
-      turno: dados.turno,
-      status: "aprovado",
-      aprovadoEm: new Date().toISOString(),
-    });
+   await updateDoc(studentRef, {
+  nome: dados.nome,
+  cpf: dados.cpf,
+  instituicao: dados.instituicao,
+  curso: dados.curso,
+  turno: dados.turno,
+  
+  // 🔥 ATUALIZA OS DOCUMENTOS
+  foto3x4Url: dados.foto3x4Url || null,
+  residenciaUrl: dados.residenciaUrl || null,
+  tituloUrl: dados.tituloUrl || null,
+  rgUrl: dados.rgUrl || null,
+  cpfUrl: dados.cpfUrl || null,
+
+  status: "aprovado",
+  aprovadoEm: new Date().toISOString(),
+});
+
 
     await deleteDoc(doc(db, "pending_students", pendingId));
 
