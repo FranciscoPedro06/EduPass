@@ -110,23 +110,65 @@ function openModal(student, tipo) {
   const modalDetails = document.getElementById("modalDetails");
   const deleteBtn = document.getElementById("deleteStudentBtn");
 
+  // Função estilizada para exibir documentos
+  const renderDoc = (label, url) => {
+    return `
+      <div class="doc-card">
+        <div class="doc-info">
+          <div class="doc-icon">📄</div>
+          <div class="doc-text">
+            <strong>${label}</strong>
+            <span>${url ? "Arquivo enviado" : "Não enviado"}</span>
+          </div>
+        </div>
+
+        ${
+          url
+            ? `<button class="btn-doc" data-url="${url}">Ver</button>`
+            : `<span class="doc-missing">—</span>`
+        }
+      </div>
+    `;
+  };
+
   modalDetails.innerHTML = `
     <h2>${student.nome || "Nome não informado"}</h2>
+
     <p><strong>Instituição:</strong> ${student.instituicao || "Não informado"}</p>
     <p><strong>Curso:</strong> ${student.curso || "Não informado"}</p>
     <p><strong>Turno:</strong> ${student.turno || "Não informado"}</p>
     <p><strong>CPF:</strong> ${student.cpf || "Não informado"}</p>
     <p><strong>Email:</strong> ${student.email || "Não informado"}</p>
     <p><strong>Status:</strong> ${student.status || tipo}</p>
+
+    <h3 class="docs-title">📎 Documentos enviados</h3>
+
+    <div class="docs-grid">
+      ${renderDoc("Foto 3x4", student.foto3x4Url)}
+      ${renderDoc("Comprovante de residência", student.residenciaUrl)}
+      ${renderDoc("Título de Eleitor", student.tituloUrl)}
+      ${renderDoc("Documento RG", student.rgUrl)}
+      ${renderDoc("Documento CPF", student.cpfUrl)}
+    </div>
   `;
 
+  // Botões de abrir arquivos
+  modalDetails.querySelectorAll(".btn-doc").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const url = btn.dataset.url;
+      if (!url) return alert("Arquivo não encontrado!");
+      window.open(url, "_blank");
+    });
+  });
+
+  // === Botão deletar estudante ===
   deleteBtn.onclick = async () => {
     if (confirm(`Deseja realmente excluir ${student.nome}?`)) {
       try {
         await deleteDoc(doc(db, tipo === "pendente" ? "pending_students" : "students", student.id));
         alert("Estudante excluído com sucesso!");
         modal.classList.add("hidden");
-        loadStudents(); // Recarrega a lista mestre do zero
+        loadStudents();
       } catch (error) {
         console.error("Erro ao excluir estudante:", error);
         alert("Erro ao excluir estudante.");
@@ -136,6 +178,7 @@ function openModal(student, tipo) {
 
   modal.classList.remove("hidden");
 }
+
 
 // === Event Listeners ===
 document.addEventListener("DOMContentLoaded", () => {

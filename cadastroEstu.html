@@ -20,136 +20,130 @@
   <div class="main-content">
     <div class="form-card">
       <h2 class="form-title">Informações e Documentos</h2>
+
+      <!-- FORMULÁRIO CORRETO -->
       <form id="cadastroForm">
 
-        <form id="cadastroForm"> 
-          <div class="form-group">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" id="nome" class="form-input" placeholder="Digite o seu nome" required>
-          </div>
+        <div class="form-group">
+          <label for="nome" class="form-label">Nome</label>
+          <input type="text" id="nome" class="form-input" placeholder="Digite o seu nome" required>
+        </div>
 
-          <div class="form-group">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" id="email" class="form-input" placeholder="Digite o email" required>
-          </div>
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" class="form-input" placeholder="Digite o email" required>
+        </div>
 
-          <div class="form-group">
-            <label for="senha" class="form-label">Senha</label>
-            <input type="password" id="senha" class="form-input" placeholder="Digite a senha" required>
-          </div>
+        <div class="form-group">
+          <label for="senha" class="form-label">Senha</label>
+          <input type="password" id="senha" class="form-input" placeholder="Digite a senha" required>
+        </div>
 
-          <div class="form-group">
-            <label for="confirmarSenha" class="form-label">Confirmação de Senha</label>
-            <input type="password" id="confirmarSenha" class="form-input" placeholder="Digite a senha novamente" required>
-          </div>
+        <div class="form-group">
+          <label for="confirmarSenha" class="form-label">Confirmação de Senha</label>
+          <input type="password" id="confirmarSenha" class="form-input" placeholder="Digite a senha novamente" required>
+        </div>
 
-          <div class="form-group">
-            <label for="cpf" class="form-label">CPF</label>
-            <input type="text" id="cpf" class="form-input" placeholder="Digite o seu CPF" required>
-          </div>
+        <div class="form-group">
+          <label for="cpf" class="form-label">CPF</label>
+          <input type="text" id="cpf" class="form-input" placeholder="Digite o seu CPF" required>
+        </div>
 
-          <div class="form-group">
-            <label for="instituicao" class="form-label">Instituição</label>
-            <input type="text" id="instituicao" class="form-input" placeholder="Nome da instituição" required>
-          </div>
+        <div class="form-group">
+          <label for="instituicao" class="form-label">Instituição</label>
+          <input type="text" id="instituicao" class="form-input" placeholder="Nome da instituição" required>
+        </div>
 
-          <div class="form-group">
-            <label for="curso" class="form-label">Curso</label>
-            <input type="text" id="curso" class="form-input" placeholder="Nome do curso" required>
-          </div>
+        <div class="form-group">
+          <label for="curso" class="form-label">Curso</label>
+          <input type="text" id="curso" class="form-input" placeholder="Nome do curso" required>
+        </div>
 
-          <div class="form-group">
-            <label for="turno" class="form-label">Turno</label>
-            <select id="turno" class="form-input" required>
-              <option value="Manhã">Manhã</option>
-              <option value="Tarde">Tarde</option>
-              <option value="Noite">Noite</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <label for="turno" class="form-label">Turno</label>
+          <select id="turno" class="form-input" required>
+            <option value="Manhã">Manhã</option>
+            <option value="Tarde">Tarde</option>
+            <option value="Noite">Noite</option>
+          </select>
+        </div>
 
+        <!-- DOCUMENTOS CORRIGIDOS PARA BATER COM O JS -->
+        <div class="form-group">
+          <label for="comprovanteResidencia" class="form-label">Comprovante de Residência</label>
+          <input type="file" id="comprovanteResidencia" class="file-input" accept=".pdf,.jpg,.png" required>
+          <label for="comprovanteResidencia" class="file-label">
+            <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+            <span class="file-name"></span>
+          </label>
+        </div>
 
-          <div class="form-group">
-            <label for="residencia" class="form-label">Comprovante de Residência</label>
-            <input type="file" id="residencia" class="file-input" accept=".pdf,.jpg,.png" required>
-            <label for="residencia" class="file-label">
-              <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
-              <span class="file-name"></span>
-            </label>
-          </div>
+        <div class="form-group">
+          <label for="tituloEleitor" class="form-label">Título de Eleitor</label>
+          <input type="file" id="tituloEleitor" class="file-input" accept=".pdf,.jpg,.png" required>
+          <label for="tituloEleitor" class="file-label">
+            <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+            <span class="file-name"></span>
+          </label>
+        </div>
 
-          <div class="form-group">
-            <label for="titulo" class="form-label">Título de Eleitor</label>
-            <input type="file" id="titulo" class="file-input" accept=".pdf,.jpg,.png" required>
-            <label for="titulo" class="file-label">
-              <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
-              <span class="file-name"></span>
-            </label>
-          </div>
+        <div class="form-group">
+          <label for="documentoRG" class="form-label">Documento RG</label>
+          <input type="file" id="documentoRG" class="file-input" accept=".pdf,.jpg,.png" required>
+          <label for="documentoRG" class="file-label">
+            <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+            <span class="file-name"></span>
+          </label>
+        </div>
 
-          <div class="form-group">
-            <label for="matricula" class="form-label">Comprovante de Matrícula</label>
-            <input type="file" id="matricula" class="file-input" accept=".pdf,.jpg,.png" required>
-            <label for="matricula" class="file-label">
-              <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
-              <span class="file-name"></span>
-            </label>
-          </div>
+        <div class="form-group">
+          <label for="documentoCPF" class="form-label">Documento CPF</label>
+          <input type="file" id="documentoCPF" class="file-input" accept=".pdf,.jpg,.png" required>
+          <label for="documentoCPF" class="file-label">
+            <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
+            <span class="file-name"></span>
+          </label>
+        </div>
 
-          <div class="form-group">
-            <label for="foto" class="form-label">Foto 3x4</label>
-            <input type="file" id="foto" class="file-input" accept=".jpg,.png" required>
-            <label for="foto" class="file-label">
-              <span class="file-label-text">Anexar arquivo (.jpg, .png)</span>
-              <span class="file-name"></span>
-            </label>
-          </div>
+        <div class="form-group">
+          <label for="foto3x4" class="form-label">Foto 3x4</label>
+          <input type="file" id="foto3x4" class="file-input" accept=".jpg,.png" required>
+          <label for="foto3x4" class="file-label">
+            <span class="file-label-text">Anexar arquivo (.jpg, .png)</span>
+            <span class="file-name"></span>
+          </label>
+        </div>
 
-          <div class="form-group">
-            <label for="vacina" class="form-label">Cartão de Vacina</label>
-            <input type="file" id="vacina" class="file-input" accept=".pdf,.jpg,.png" required>
-            <label for="vacina" class="file-label">
-              <span class="file-label-text">Anexar arquivo (.pdf, .jpg, .png)</span>
-              <span class="file-name"></span>
-            </label>
-          </div>
-          
-          <button type="submit" class="btn-primary">Concluído</button>
-        </form>
+        <button type="submit" class="btn-primary">Concluído</button>
       </form>
     </div>
   </div>
 
+  <!-- MODAL DO TERMO -->
   <div id="modalTermo" class="modal-termo hidden">
-  <div class="modal-content">
-    <h2>Termo de Concordância e Privacidade</h2>
+    <div class="modal-content">
+      <h2>Termo de Concordância e Privacidade</h2>
 
-    <div class="termo-scroll">
-      <p>
-        Ao utilizar este aplicativo e fornecer seus dados pessoais, você concorda
-        com a coleta, uso, armazenamento e tratamento das informações conforme a
-        LGPD (Lei nº 13.709/2018).
-      </p>
-      <p><strong>1. Finalidade:</strong> Identificação, cadastro e comunicação.</p>
-      <p><strong>2. Segurança:</strong> Seus dados serão protegidos contra acessos não autorizados.</p>
-      <p><strong>3. Compartilhamento:</strong> Nenhum dado será compartilhado sem sua autorização.</p>
-      <p><strong>4. Direitos:</strong> Você pode solicitar atualização, exclusão ou revogação do consentimento.</p>
-      <p><strong>5. Armazenamento:</strong> Os dados serão mantidos pelo tempo necessário conforme a lei.</p>
-    </div>
+      <div class="termo-scroll">
+        <p>
+          Ao utilizar este aplicativo e fornecer seus dados pessoais, você concorda
+          com a coleta, uso e armazenamento conforme a LGPD.
+        </p>
+      </div>
 
-    <div class="modal-actions">
-      <label>
-        <input type="checkbox" id="checkboxTermo">
-        Li e concordo com o termo de uso.
-      </label>
+      <div class="modal-actions">
+        <label>
+          <input type="checkbox" id="checkboxTermo">
+          Li e concordo com o termo de uso.
+        </label>
 
-      <div class="modal-buttons">
-        <button id="btnCancelarTermo" class="btn-secundario">Cancelar</button>
-        <button id="btnAceitarTermo" class="btn-primario" disabled>Concordar</button>
+        <div class="modal-buttons">
+          <button id="btnCancelarTermo" class="btn-secundario">Cancelar</button>
+          <button id="btnAceitarTermo" class="btn-primario" disabled>Concordar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
 
   <script type="module" src="./assets/js/cadastroEstu.js"></script>
 </body>
