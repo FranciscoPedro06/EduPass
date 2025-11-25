@@ -130,59 +130,102 @@
     }
 
     /* Grid do Menu */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-    .menu-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      color: inherit;
-      padding: 8px;
-      border-radius: var(--item-radius);
-      transition: background-color 0.2s ease;
-    }
-     .menu-item:hover {
-        background-color: var(--bg-color);
-     }
+    .main-content {
+  flex: 1;
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
 
-    .menu-button {
-      width: 80px;
-      height: 80px;
-      border: 1px solid var(--list-border);
-      border-radius: var(--item-radius);
-      background-color: var(--primary-tint);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .menu-item:hover .menu-button {
-       border-color: var(--primary-tint-border);
-       transform: translateY(-2px);
-       box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
-    }
-    .menu-item:active .menu-button {
-        transform: translateY(0);
-        box-shadow: none;
-    }
-    .menu-button svg {
-      width: 36px;
-      height: 36px;
-      color: var(--primary-color);
-    }
-    .menu-label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--secondary-text);
-      text-align: center;
-      line-height: 1.4;
-    }
+.dashboard-card {
+  background-color: var(--card-color);
+  border-radius: var(--card-radius);
+  padding: 24px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: var(--card-shadow);
+}
+
+/* GRID */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+
+/* ITEM */
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  padding: 8px;
+  border-radius: var(--item-radius);
+  transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: var(--bg-color);
+}
+
+/* BOTÃO */
+.menu-button {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--item-radius);
+  border: 1px solid var(--list-border);
+  background-color: var(--primary-tint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover .menu-button {
+  border-color: var(--primary-tint-border);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+}
+
+.menu-button svg {
+  width: 36px;
+  height: 36px;
+  color: var(--primary-color);
+}
+
+/* TEXTO */
+.menu-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--secondary-text);
+}
+
+/* Desktop responsivo */
+@media (min-width: 640px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .menu-button {
+    width: 100px;
+    height: 100px;
+  }
+
+  .menu-button svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .menu-label {
+    font-size: 14px;
+  }
+}
+
 
     /* 4. Navegação Inferior */
     .bottom-nav {
@@ -420,4 +463,91 @@
   align-items: center;
   gap: 50px;
   padding-bottom: 80px;
+}
+
+
+
+
+
+/* GRID RESPONSIVO PERFEITO */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+/* ITEM */
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  padding: 8px;
+  border-radius: var(--item-radius);
+  transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: var(--bg-color);
+}
+
+/* BOTÃO */
+.menu-button {
+  width: 100px;
+  height: 100px;
+  border-radius: var(--item-radius);
+  border: 1px solid var(--list-border);
+  background-color: var(--primary-tint);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover .menu-button {
+  border-color: var(--primary-tint-border);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+.menu-button svg {
+  width: 40px;
+  height: 40px;
+  color: var(--primary-color);
+}
+
+/* TEXTO */
+.menu-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--secondary-text);
+}
+
+/* ====== RESPONSIVO ====== */
+
+/* Tablets */
+@media (min-width: 640px) {
+  .menu-button {
+    width: 110px;
+    height: 110px;
+  }
+  .menu-button svg {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Desktops */
+@media (min-width: 1024px) {
+  .dashboard-card {
+    padding: 32px;
+  }
+  .menu-grid {
+    gap: 32px;
+  }
 }

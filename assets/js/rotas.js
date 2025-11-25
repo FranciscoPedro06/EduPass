@@ -38,6 +38,7 @@ async function carregarTipoUsuario() {
       if (userRole === "motorista") {
         const dados = snap.docs[0].data();
         sessionStorage.setItem("nomeMotorista", dados.nome);
+        sessionStorage.setItem("emailMotorista", dados.email);
         
         // Mostra o botão de "Minhas Viagens" apenas para motoristas
         const btnViagens = document.getElementById("btnAbrirMinhasViagens");
@@ -226,7 +227,8 @@ async function carregarMotoristas() {
     snapshot.forEach((doc) => {
       const dados = doc.data();
       const option = document.createElement("option");
-      option.value = dados.nome;
+      option.value = dados.email;       // value = email
+      option.dataset.nome = dados.nome; // nome separado
       option.textContent = dados.nome;
       select.appendChild(option);
     });
@@ -236,6 +238,7 @@ async function carregarMotoristas() {
     mostrarAlerta("Erro ao carregar motoristas", "erro");
   }
 }
+
 
 
 /* ============================================================
@@ -273,12 +276,14 @@ async function salvarRotaConfirmada() {
   await addDoc(collection(db, "rotasConfirmadas"), {
     periodo: state.periodo,
     rota: state.rota,
-    motorista: state.motorista,
+    motorista: state.motorista,          // nome
+    motoristaEmail: state.motoristaEmail, // email
     ida: dados.ida,
     volta: dados.volta,
     timestamp: new Date()
   });
 }
+
 
 
 /* ============================================================
@@ -372,7 +377,8 @@ confirmarBtn.addEventListener("click", async () => {
 
   await deletarRotaSalva(state.periodo, state.rota);
 
-  state.motorista = motoristaSelect.value;
+  state.motorista = motoristaSelect.selectedOptions[0].dataset.nome;
+  state.motoristaEmail = motoristaSelect.value; // email
 
   const dados = rotasData[state.periodo][state.rota];
 
@@ -391,6 +397,7 @@ confirmarBtn.addEventListener("click", async () => {
   screen2.classList.add("hidden");
   screen3.classList.remove("hidden");
 });
+
 
 
 /* ============================================================

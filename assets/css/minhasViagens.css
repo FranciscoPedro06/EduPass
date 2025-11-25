@@ -1,7 +1,7 @@
 /* ===== Layout Geral ===== */
 body {
   font-family: 'Inter', Arial, sans-serif;
-  background: #f5f6fa;
+  background: #ffffff42;
   padding: 20px;
   margin: 0;
 }
@@ -103,9 +103,10 @@ body {
   font-weight: bold;
   border: none;
   border-radius: 8px;
-  background: #ddd;
+  background: #5a5a5a;
   cursor: pointer;
   transition: 0.2s;
+  color: white;
 }
 
 .btn-secondary:hover {

@@ -77,8 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
   mostrarAlerta("Login realizado com sucesso!", "success");
   sessionStorage.setItem("usuarioLogado", email);
 
-  if (role === "motorista") {
-    setTimeout(() => window.location.href = "telaInicioMot.html", 1000);
+ if (role === "motorista") {
+
+  sessionStorage.setItem("usuarioLogado", email);
+  sessionStorage.setItem("emailMotorista", email); // <-- ESSENCIAL
+
+  setTimeout(() => window.location.href = "telaInicioMot.html", 1000);
   } else if (role === "estudante") {
     setTimeout(() => window.location.href = "telaInicioEstu.html", 1000);
   } else {
