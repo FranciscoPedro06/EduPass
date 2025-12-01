@@ -1,12 +1,12 @@
 import { auth, db } from "./firebase-config.js";
-import {
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
 import {
   collection,
   addDoc,
   serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 // ====== FUNÇÃO DE ALERTA ======
 function mostrarAlerta(mensagem, tipo = 'info') {
@@ -74,15 +74,19 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const attendanceData = {
-        userId: user.uid,
-        shift: shift || "Não especificado",
-        days: Array.from(checkboxes).map(cb => ({
-          day: cb.dataset.day,
-          route: cb.dataset.trip,
-        })),
-        createdAt: serverTimestamp()
-      };
+     const attendanceData = { 
+      userId: user.uid,
+      userEmail: user.email,
+      shift: shift || "Não especificado",
+      checklist: true,
+      days: Array.from(checkboxes).map(cb => ({
+        day: cb.dataset.day,
+        route: cb.dataset.trip,
+      })),
+      createdAt: serverTimestamp()
+    };
+
+
 
       try {
         await addDoc(collection(db, "presencas"), attendanceData);

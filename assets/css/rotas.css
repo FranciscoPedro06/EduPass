@@ -383,6 +383,21 @@
   display: none !important;
 }
 
+.checklist-btn {
+    margin-top: 10px;
+    padding: 10px;
+    background: #005eff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .checklist-btn:hover {
+    background: #0047c7;
+  }
 
 
     

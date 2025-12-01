@@ -9,6 +9,10 @@ import {
   where 
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+const editarChecklistBtn = document.getElementById("editarChecklist");
+const excluirChecklistBtn = document.getElementById("excluirChecklist");
+
+
 /* ============================================================
    1. IDENTIFICAR TIPO DE USUÁRIO
 ============================================================ */
@@ -56,6 +60,61 @@ async function carregarTipoUsuario() {
   aplicarRestricoes();
 }
 
+/* ============================================================
+   BUSCAR CHECKLIST E APLICAR FILTRO DE ROTAS
+============================================================ */
+async function aplicarFiltroDeRotasPorChecklist() {
+  const emailLogado = sessionStorage.getItem("usuarioLogado");
+  if (!emailLogado) return;
+
+  const snapChecklist = await getDocs(query(
+    collection(db, "presencas"),
+    where("userEmail", "==", emailLogado),
+    where("checklist", "==", true)
+  ));
+
+  if (snapChecklist.empty) {
+    console.log("Nenhum checklist encontrado → mostrar tudo.");
+    return;
+  }
+
+  const dados = snapChecklist.docs[0].data();
+  const turnoChecklist = (dados.shift || "").toUpperCase();
+
+  console.log("Checklist encontrado. Turno recebido:", turnoChecklist);
+
+  // 🔥 NORMALIZAÇÃO PADRÃO
+  let turnoNormalizado = turnoChecklist;
+
+  if (turnoChecklist === "NOITE") turnoNormalizado = "NOTURNO";
+  if (turnoChecklist === "TARDE") turnoNormalizado = "VESPERTINO";
+  if (turnoChecklist === "MANHÃ") turnoNormalizado = "MATUTINO";
+
+  console.log("Turno normalizado:", turnoNormalizado);
+
+  filtrarRotas(turnoNormalizado);
+}
+
+
+
+
+/* ============================================================
+   FILTRAR BOTÕES DE ROTA PELO TURNO DO CHECKLIST
+============================================================ */
+
+function filtrarRotas(turno) {
+  document.querySelectorAll(".route-btn").forEach(btn => {
+    const turnoRota = btn.dataset.period; // EX: MATUTINO
+
+    if (turnoRota !== turno) {
+      btn.style.display = "none"; // Esconde
+    } else {
+      btn.style.display = "flex"; // Mostra somente as do turno correto
+    }
+  });
+}
+
+
 
 /* ============================================================
    2. SISTEMA DE ALERTAS
@@ -70,6 +129,76 @@ function mostrarAlerta(mensagem, tipo = "erro") {
 
   setTimeout(() => alerta.remove(), 4000);
 }
+
+
+async function buscarChecklistDoUsuario(email) {
+  const snap = await getDocs(query(
+    collection(db, "presencas"),
+    where("userEmail", "==", email),
+    where("checklist", "==", true)
+  ));
+
+  return snap.empty ? null : snap.docs[0];
+}
+
+async function excluirChecklist() {
+  try {
+    const email = sessionStorage.getItem("usuarioLogado");
+    if (!email) {
+      mostrarAlerta("Usuário não identificado.", "erro");
+      console.error("excluirChecklist: sessionStorage usuarioLogado vazio");
+      return;
+    }
+
+    // Busca todos os documentos de presencas que correspondem ao usuário
+    const snap = await getDocs(query(
+      collection(db, "presencas"),
+      where("userEmail", "==", email),
+      where("checklist", "==", true)
+    ));
+
+    if (snap.empty) {
+      mostrarAlerta("Nenhum checklist encontrado.", "erro");
+      console.log("excluirChecklist: snap vazio — nenhum documento encontrado para", email);
+      return;
+    }
+
+    // Se houver mais de um doc (caso raro), vamos deletar todos (com confirmação automática)
+    const docsToDelete = snap.docs;
+    console.log("excluirChecklist: documentos encontrados:", docsToDelete.map(d => ({ id: d.id, data: d.data() })));
+
+    // Deleta cada documento (aguarda todas)
+    const promises = docsToDelete.map(d => {
+      const docId = d.id;
+      return deleteDoc(doc(db, "presencas", docId));
+    });
+
+    await Promise.all(promises);
+
+    mostrarAlerta("Checklist excluído com sucesso!", "sucesso");
+    console.log("excluirChecklist: exclusão concluída para", email);
+
+    // Recarrega a página após breve atraso
+    setTimeout(() => {
+      location.reload();
+    }, 1200);
+
+  } catch (err) {
+    console.error("excluirChecklist: erro ao excluir checklist:", err);
+    mostrarAlerta("Erro ao excluir checklist. Veja console para detalhes.", "erro");
+  }
+}
+
+
+editarChecklistBtn.addEventListener("click", () => {
+  window.location.href = "confirmarEmbarque.html"; // altere se seu arquivo tiver outro nome
+});
+
+excluirChecklistBtn.addEventListener("click", async () => {
+  if (!confirm("Tem certeza que deseja excluir sua confirmação?")) return;
+  await excluirChecklist();
+});
+
 
 
 /* ============================================================
@@ -414,6 +543,28 @@ alterarBtn.addEventListener("click", () => {
   carregarMotoristas();
 });
 
+// Mostrar/ocultar botões de editar e excluir checklist conforme existência do checklist
+async function validarExibicaoDeChecklistButtons() {
+  const emailLogado = sessionStorage.getItem("usuarioLogado");
+  if (!emailLogado) return;
+
+  const snap = await getDocs(query(
+    collection(db, "presencas"),
+    where("userEmail", "==", emailLogado),
+    where("checklist", "==", true)
+  ));
+
+  if (!snap.empty) {
+    // Checklist existe → mostrar botões
+    editarChecklistBtn.style.display = "block";
+    excluirChecklistBtn.style.display = "block";
+  } else {
+    // Checklist NÃO existe → esconder botões
+    editarChecklistBtn.style.display = "none";
+    excluirChecklistBtn.style.display = "none";
+  }
+}
+
 
 /* ============================================================
    12. RESTRIÇÕES POR PERMISSÃO
@@ -444,6 +595,9 @@ function aplicarRestricoes() {
    13. INICIALIZAÇÃO
 ============================================================ */
 
-document.addEventListener("DOMContentLoaded", () => {
-  carregarTipoUsuario();
+document.addEventListener("DOMContentLoaded", async () => {
+  await carregarTipoUsuario();
+  await aplicarFiltroDeRotasPorChecklist();
+  await validarExibicaoDeChecklistButtons();
 });
+
