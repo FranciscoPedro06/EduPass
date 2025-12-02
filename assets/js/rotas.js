@@ -597,7 +597,13 @@ function aplicarRestricoes() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await carregarTipoUsuario();
-  await aplicarFiltroDeRotasPorChecklist();
   await validarExibicaoDeChecklistButtons();
+  await aplicarFiltroDeRotasPorChecklist();
+
+  if (userRole == "admin") {
+    editarChecklistBtn.style.display = "none";
+    excluirChecklistBtn.style.display = "none";
+  }
 });
+
 
