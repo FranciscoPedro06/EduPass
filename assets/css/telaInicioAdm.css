@@ -316,3 +316,46 @@
   padding: 8px 12px;
   border-bottom: 1px solid #eee;
 }
+/* Modal básico e escondido por padrão */
+.modal { display: none; position: fixed; inset: 0; z-index: 2000; align-items: center; justify-content: center; }
+.modal.open { display: flex; }
+
+.modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+}
+
+.modal-panel {
+  position: relative;
+  width: min(760px, 92%);
+  max-height: 80vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 20px 28px;
+  box-shadow: 0 12px 40px rgba(2,6,23,0.35);
+  z-index: 2001;
+}
+
+.modal-close {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-content {
+  margin-top: 8px;
+  color: #111827;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-content ul { list-style: none; padding: 0; margin: 0; }
+.modal-content li { padding: 8px 0; border-bottom: 1px solid #eee; }
+.modal-content li:last-child { border-bottom: none; }

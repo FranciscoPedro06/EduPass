@@ -123,26 +123,24 @@
           <span class="menu-label">Verificar Cadastros</span>
         </a>
       </div>
-      <div class="dashboard-card">
         <h2>Estudantes Confirmados por Turno</h2>
 
-        <div class="turno-box">
-            <h3>Matutino</h3>
-            <ul id="listaMatutino"></ul>
-        </div>
-
-        <div class="turno-box">
-            <h3>Vespertino</h3>
-            <ul id="listaVespertino"></ul>
-        </div>
-
-        <div class="turno-box">
-            <h3>Noturno</h3>
-            <ul id="listaNoturno"></ul>
-        </div>
+      <div class="turno-box">
+          <h3 id="tituloMatutino" class="turno-titulo">Matutino</h3>
+          <ul id="listaMatutino"></ul>
       </div>
 
-    </div>
+      <div class="turno-box">
+          <h3 id="tituloVespertino" class="turno-titulo">Vespertino</h3>
+          <ul id="listaVespertino"></ul>
+      </div>
+
+      <div class="turno-box">
+          <h3 id="tituloNoturno" class="turno-titulo">Noturno</h3>
+          <ul id="listaNoturno"></ul>
+      </div>
+
+      </div>
   </div>
 
   <div class="bottom-nav">
@@ -178,6 +176,18 @@
       <span class="nav-label">Rotas</span>
     </a>
   </div>
+  <!-- Modal de confirmação (adicione no final do body) -->
+<div id="modalEmails" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal-panel" role="document">
+    <button id="modalCloseBtn" class="modal-close" aria-label="Fechar">×</button>
+    <h2 id="modalTitle">Estudantes confirmados</h2>
+    <div id="modalContent" class="modal-content">
+      <!-- lista será injetada aqui -->
+    </div>
+  </div>
+</div>
+
 <script type="module" src="./assets/js/telaInicioAdm.js"></script>
 </body>
 </html>

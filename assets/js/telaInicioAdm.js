@@ -1,5 +1,11 @@
 import { db } from "./firebase-config.js";
-import { collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { 
+  collection, 
+  getDocs, 
+  deleteDoc, 
+  doc,
+  addDoc      
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { auth } from "./firebase-config.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
@@ -195,54 +201,123 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   carregarEstudantesPorTurno();
+
+  // Clique para visualizar emails
+  document.getElementById("tituloMatutino").addEventListener("click", () => mostrarEmailsTurno("MATUTINO"));
+  document.getElementById("tituloVespertino").addEventListener("click", () => mostrarEmailsTurno("VESPERTINO"));
+  document.getElementById("tituloNoturno").addEventListener("click", () => mostrarEmailsTurno("NOTURNO"));
 });
+
+const gruposGlobal = {
+  MATUTINO: [],
+  VESPERTINO: [],
+  NOTURNO: []
+};
 
 async function carregarEstudantesPorTurno() {
   const snap = await getDocs(collection(db, "presencas"));
 
-  const grupos = {
-    MATUTINO: [],
-    VESPERTINO: [],
-    NOTURNO: []
-  };
+  gruposGlobal.MATUTINO = [];
+  gruposGlobal.VESPERTINO = [];
+  gruposGlobal.NOTURNO = [];
 
   snap.forEach(docSnap => {
     const dados = docSnap.data();
-
     if (dados.checklist !== true) return;
 
-    // Normalização
     let turno = (dados.shift || "").toUpperCase();
     if (turno === "MANHÃ") turno = "MATUTINO";
     if (turno === "TARDE") turno = "VESPERTINO";
     if (turno === "NOITE") turno = "NOTURNO";
 
-    if (grupos[turno]) {
-      grupos[turno].push({
+    if (gruposGlobal[turno]) {
+      gruposGlobal[turno].push({
         nome: dados.nomeEstudante || "Sem nome",
-        email: dados.userEmail || "",
-        horario: dados.hora || "",
+        email: dados.userEmail || ""
       });
     }
   });
 
-  preencherLista("listaMatutino", grupos.MATUTINO);
-  preencherLista("listaVespertino", grupos.VESPERTINO);
-  preencherLista("listaNoturno", grupos.NOTURNO);
+  atualizarTitulo("tituloMatutino", "Matutino", gruposGlobal.MATUTINO.length);
+  atualizarTitulo("tituloVespertino", "Vespertino", gruposGlobal.VESPERTINO.length);
+  atualizarTitulo("tituloNoturno", "Noturno", gruposGlobal.NOTURNO.length);
+
+  preencherLista("listaMatutino", gruposGlobal.MATUTINO);
+  preencherLista("listaVespertino", gruposGlobal.VESPERTINO);
+  preencherLista("listaNoturno", gruposGlobal.NOTURNO);
 }
 
-function preencherLista(elementId, lista) {
-  const ul = document.getElementById(elementId);
-  ul.innerHTML = "";
+function atualizarTitulo(id, baseText, total) {
+  document.getElementById(id).innerText = `${baseText} — ${total} confirmados`;
+}
 
-  if (lista.length === 0) {
-    ul.innerHTML = "<li>Nenhum estudante confirmado.</li>";
+// --- Modal elements (pegar referências)
+const modal = document.getElementById("modalEmails");
+const modalBackdrop = document.getElementById("modalBackdrop");
+const modalCloseBtn = document.getElementById("modalCloseBtn");
+const modalTitle = document.getElementById("modalTitle");
+const modalContent = document.getElementById("modalContent");
+
+// Abre o modal com a lista de um turno
+function mostrarEmailsTurno(turno) {
+  const grupo = gruposGlobal[turno] || [];
+  if (grupo.length === 0) {
+    // opcional: aviso breve
+    mostrarAlerta("Nenhum estudante confirmado neste turno.", "info");
     return;
   }
 
-  lista.forEach(est => {
-    const li = document.createElement("li");
-    li.textContent = `${est.nome} — ${est.email}`;
-    ul.appendChild(li);
-  });
+  modalTitle.textContent = `Estudantes confirmados — ${turno} (${grupo.length})`;
+
+  // constrói o HTML da lista (nome — email)
+  const html = `
+    <ul>
+      ${grupo.map(est => `
+        <li>
+          <strong>${escapeHtml(est.nome)}</strong><br>
+          <a href="mailto:${encodeURIComponent(est.email)}">${escapeHtml(est.email)}</a>
+        </li>
+      `).join("")}
+    </ul>
+    <div style="margin-top:12px; font-size:13px; color:#6b7280;">
+      Toque fora do modal ou no × para fechar.
+    </div>
+  `;
+
+  modalContent.innerHTML = html;
+
+  // abre modal
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+
+  // colocar foco em close para acessibilidade
+  modalCloseBtn.focus();
+}
+
+// Fecha o modal
+function fecharModal() {
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  modalContent.innerHTML = "";
+}
+
+// Eventos de fechamento
+modalCloseBtn.addEventListener("click", fecharModal);
+modalBackdrop.addEventListener("click", fecharModal);
+
+// fecha com ESC
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Escape" && modal.classList.contains("open")) fecharModal();
+});
+
+// função simples para escapar HTML (evita XSS se dados vindos do banco)
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+
 }
