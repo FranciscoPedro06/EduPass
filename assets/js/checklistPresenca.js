@@ -1,12 +1,15 @@
 import { auth, db } from "./firebase-config.js";
 
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-
 import {
   collection,
   addDoc,
+  getDocs,
+  query,
+  where,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
 
 // ====== FUNÇÃO DE ALERTA ======
 function mostrarAlerta(mensagem, tipo = 'info') {
@@ -37,8 +40,11 @@ function mostrarAlerta(mensagem, tipo = 'info') {
   }, 4000);
 }
 
+
+
 // ====== LÓGICA DO CHECKLIST ======
 document.addEventListener("DOMContentLoaded", () => {
+
   const backButton = document.getElementById("backButton");
   const confirmButton = document.getElementById("confirmButton");
   const title = document.getElementById("checklistTitle");
@@ -58,8 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
     confirmButton.addEventListener("click", confirmPresence);
   }
 
+
   // ====== Função principal ======
   async function confirmPresence() {
+
     const checkboxes = document.querySelectorAll('.checkbox-input:checked');
 
     if (checkboxes.length === 0) {
@@ -67,38 +75,66 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Espera o usuário logado
+    // Aguarda o usuário estar logado apenas uma vez
     onAuthStateChanged(auth, async (user) => {
+
       if (!user) {
         mostrarAlerta("Você precisa estar logado para confirmar presença.", "erro");
         return;
       }
 
-     const attendanceData = { 
-      userId: user.uid,
-      userEmail: user.email,
-      shift: shift || "Não especificado",
-      checklist: true,
-      days: Array.from(checkboxes).map(cb => ({
-        day: cb.dataset.day,
-        route: cb.dataset.trip,
-      })),
-      createdAt: serverTimestamp()
-    };
+      // ===== BUSCANDO NOME DO ALUNO =====
+      let nomeEstudante = "Sem nome";
+
+      try {
+        const q = query(collection(db, "students"), where("email", "==", user.email));
+        const studentsSnap = await getDocs(q);
+
+        if (!studentsSnap.empty) {
+          const dadosAluno = studentsSnap.docs[0].data();
+          nomeEstudante =
+            dadosAluno.nome ||
+            dadosAluno.nomeEstudante ||
+            dadosAluno.displayName ||
+            user.displayName ||
+            "Sem nome";
+        } else {
+          nomeEstudante = user.displayName || "Sem nome";
+        }
+      } catch (err) {
+        console.error("Erro ao buscar nome do estudante:", err);
+        nomeEstudante = user.displayName || "Sem nome";
+      }
 
 
+      // ===== SALVANDO PRESENÇA =====
+      const attendanceData = {
+        userId: user.uid,
+        userEmail: user.email,
+        nomeEstudante: nomeEstudante,
+        shift: shift || "Não especificado",
+        checklist: true,
+        days: Array.from(checkboxes).map(cb => ({
+          day: cb.dataset.day,
+          route: cb.dataset.trip,
+        })),
+        createdAt: serverTimestamp()
+      };
 
       try {
         await addDoc(collection(db, "presencas"), attendanceData);
         mostrarAlerta("Presença confirmada com sucesso!", 'sucesso');
-        
+
         setTimeout(() => {
           history.back();
         }, 1500);
+
       } catch (error) {
         console.error("Erro ao salvar presença:", error);
         mostrarAlerta("Erro ao salvar presença no servidor.", "erro");
       }
+
     });
   }
+
 });

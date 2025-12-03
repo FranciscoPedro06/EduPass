@@ -192,3 +192,57 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  carregarEstudantesPorTurno();
+});
+
+async function carregarEstudantesPorTurno() {
+  const snap = await getDocs(collection(db, "presencas"));
+
+  const grupos = {
+    MATUTINO: [],
+    VESPERTINO: [],
+    NOTURNO: []
+  };
+
+  snap.forEach(docSnap => {
+    const dados = docSnap.data();
+
+    if (dados.checklist !== true) return;
+
+    // Normalização
+    let turno = (dados.shift || "").toUpperCase();
+    if (turno === "MANHÃ") turno = "MATUTINO";
+    if (turno === "TARDE") turno = "VESPERTINO";
+    if (turno === "NOITE") turno = "NOTURNO";
+
+    if (grupos[turno]) {
+      grupos[turno].push({
+        nome: dados.nomeEstudante || "Sem nome",
+        email: dados.userEmail || "",
+        horario: dados.hora || "",
+      });
+    }
+  });
+
+  preencherLista("listaMatutino", grupos.MATUTINO);
+  preencherLista("listaVespertino", grupos.VESPERTINO);
+  preencherLista("listaNoturno", grupos.NOTURNO);
+}
+
+function preencherLista(elementId, lista) {
+  const ul = document.getElementById(elementId);
+  ul.innerHTML = "";
+
+  if (lista.length === 0) {
+    ul.innerHTML = "<li>Nenhum estudante confirmado.</li>";
+    return;
+  }
+
+  lista.forEach(est => {
+    const li = document.createElement("li");
+    li.textContent = `${est.nome} — ${est.email}`;
+    ul.appendChild(li);
+  });
+}
